@@ -21,6 +21,7 @@
 | name | string | . |
 | description | text | . |
 | isPublic | boolean | . |
+| songOrder | string | . |
 
 ## Albums
 | Column name | data type | details |
@@ -45,7 +46,6 @@
 | id | integer | PK |
 | songId | integer | . |
 | playlistId | integer| . |
-| songOrder | integer| . |
 
 ## Likes
 | Column name | data type | details |

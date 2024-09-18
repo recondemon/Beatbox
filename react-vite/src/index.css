@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+ /* Dark purple-black background */
+--background: #1a1a2e;
+ /* Light lavender-white for text */
+--foreground: #f0eaff;
+ /* Darker card background */
+--card: #23233a;
+ /* Soft purple card text */
+--card-foreground: #d1c4ff;
+ /* Dark popover background */
+--popover: #23233a;
+/* Light purple popover text */
+--popover-foreground: #d1c4ff; 
+/* Bright purple for primary elements */
+--primary: #9b59b6; 
+/* Dark text on purple */
+--primary-foreground: #1a1a2e; 
+/* Slightly lighter dark purple for secondary elements */
+--secondary: #2f2f4f;
+/* Soft purple text on secondary elements */
+--secondary-foreground: #d1c4ff;
+/* Muted dark gray-purple */
+--muted: #3b3b5a; 
+/* Muted purple for less prominent text */
+--muted-foreground: #b39ddb; 
+/* Bright purple accent */
+--accent: #8e44ad;
+/* Dark text on accent */
+--accent-foreground: #1a1a2e;
+/* Red for destructive actions */
+--destructive: #e74c3c; 
+/* White text on red */
+--destructive-foreground: #ffffff;
+/* Very dark border */
+--border: #121221; 
+/* Dark input background */
+--input: #2c2c4b; 
+/* Purple ring for focus states */
+--ring: #9b59b6; 
+/* Border radius */
+--radius: 0.5rem; 
+/* Soft shadow */
+--shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); 
+
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  input {
+    @apply bg-input text-secondary-foreground rounded-lg p-2 border-border;
+  }
+}
+

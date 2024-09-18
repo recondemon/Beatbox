@@ -27,8 +27,10 @@
     "name": "String",
     "url": "String",
     "album_id": "Album",
-    "artist_id": "Artist"
+    "artist_id": "Artist",
+    "relationships": { "album": ["Album", "songs"] }
   },
+  
   "PlaylistSong": {
     "song_index": "Integer",
     "playlist_id": "Playlist",

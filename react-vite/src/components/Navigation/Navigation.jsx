@@ -1,19 +1,26 @@
-import { NavLink } from "react-router-dom";
-import ProfileButton from "./ProfileButton";
-import "./Navigation.css";
+import React from 'react';
+import OpenModalMenuItem from './OpenModalMenuItem';
+import UploadSongModal from './UploadSongModal';
 
-function Navigation() {
+const Navigation = () => {
   return (
     <ul className="flex justify-between mx-8 mt-2 text-lg">
       <li>
-        <NavLink to="/">Home</NavLink>
+        {/* Other menu items */}
+        <a href="/">Home</a>
       </li>
-
       <li>
-        <ProfileButton />
+        <OpenModalMenuItem
+          modalComponent={<UploadSongModal />}
+          itemText="Upload Song"
+        />
+      </li>
+      <li>
+        {/* Example profile or other buttons */}
+        <a href="/profile">Profile</a>
       </li>
     </ul>
   );
-}
+};
 
 export default Navigation;

@@ -12,7 +12,6 @@ albums = Blueprint("albums", __name__)
 @albums.route("/")
 def all_albums():
     albums = Album.query.all()
-
     return jsonify([album.to_json() for album in albums])
 
 
@@ -20,47 +19,69 @@ def all_albums():
 @albums.route('/<int:album_id>')
 def album(album_id):
     album = Album.query.get(album_id)
-
     if not album:
         return jsonify({"error": "Album not found"}), 404
-    return jsonify(album.to_json())
+    return album.to_json()
+    
+
 
 #get all albums by user id
 @albums.route('/user/<int:user_id>')
 def user_albums(user_id):
     albums = Album.query.filter_by(artist_id=user_id).all()
-
     return jsonify([album.to_json() for album in albums])
 
 
 
-# # create an album, POST method still need to fix :(
-# @albums.route('/', methods=['POST'])
-# @login_required
-# def create_album():
-#     form = AlbumForm()
+# create an album, POST method 
+@albums.route('/', methods=['POST'])
+@login_required
+def create_album():
+    form = AlbumForm()
 
-#     if form.validate_on_submit():
-#         new_album = Album()
-        
-#         form.populate_obj(new_album)
-#         db.session.add(new_album)
-#         db.session.commit()
-
-#         return jsonify(new_album.to_json())
-
-# # edit an album still need to fix :(
-# @albums.route('/<int:album_id>',methods='PUT')
-# @login_required
-# def edit_album(album_id):
-#     album = Album.query.get(album_id)
+    if form.validate_on_submit():
+        new_album = Album()
+        form.populate_obj(new_album)
+        new_album.artist_id = current_user.id
+        db.session.add(new_album)
+        db.session.commit()
+        return new_album.to_json(), 201
     
-#     if not album:
-#         return jsonify({"error": "Album not found"}), 404
-#     if album.artist_id != current_user.id:
-#         return jsonify({"error": "Unauthorized User"})
+    return jsonify({"error": "Bad Data"}), 400
+
+
+# edit an album 
+@albums.route('/<int:album_id>',methods=['PUT'])
+def update_album(album_id):
+   
+    album = Album.query.get(album_id)
+    if not album:
+        return jsonify({"error": "Album not found"}), 404
+    if album.artist_id != current_user.id:
+        return jsonify({"error": "Unauthorized"}), 403
     
-#     return jsonify(album.to_json())
+    form = AlbumForm()
+
+    if form.validate_on_submit():
+        form.populate_obj(album)
+        db.session.commit()
+        return album.to_json()
+    
+    return jsonify({"error": "Bad Data"}), 400
 
 
+# delete an album
+@albums.route('/<int:album_id>', methods=['DELETE'])
+@login_required
+def delete_album(album_id):
+
+    album = Album.query.get(album_id)
+    if not album:
+        return jsonify({"error": "Album not found"}), 404
+    if album.artist_id != current_user.id:
+        return jsonify({"error": "Unauthorized"}), 403
+    
+    db.session.delete(album)
+    db.session.commit()
+    return jsonify({"message": "Album deleted successfully"}), 200
 

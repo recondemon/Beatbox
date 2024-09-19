@@ -1,7 +1,7 @@
 import React from 'react';
 import OpenModalMenuItem from './OpenModalMenuItem';
-import UploadSongModal from './UploadSongModal';
 import ProfileButton from './ProfileButton';
+import UploadSongModal from '../UploadSong/UploadSongModal';
 const Navigation = () => {
   return (
     <ul className="flex justify-between mx-8 mt-2 text-lg">

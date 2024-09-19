@@ -613,7 +613,7 @@ input {
   border-color: var(--border);
   background-color: var(--input);
   padding: 0.5rem;
-  color: var(--foreground);
+  color: var(--secondary-foreground);
 }
 
 .right-0 {
@@ -672,10 +672,6 @@ input {
 
 .bg-background {
   background-color: var(--background);
-}
-
-.text-center {
-  text-align: center;
 }
 
 .text-2xl {

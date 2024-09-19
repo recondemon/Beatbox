@@ -12,29 +12,34 @@ export const router = createBrowserRouter([
     element: <Layout />,
     children: [
       {
-        path: "/",
+        path: '/',
         element: <Home />,
+        loader: async () => {
+          const res = await fetch('/api/songs');
+          const data = await res.json();
+          return data;
+        },
       },
       {
-        path: "login",
+        path: 'login',
         element: <LoginFormPage />,
       },
       {
-        path: "signup",
+        path: 'signup',
         element: <SignupFormPage />,
       },
       {
-        path: "/album/:albumId",
-        element: <AlbumDetails />
+        path: '/album/:albumId',
+        element: <AlbumDetails />,
       },
       {
-        path: "/artist/:artistId",
-        element: <ArtistDetails />
+        path: '/artist/:artistId',
+        element: <ArtistDetails />,
       },
       {
-        path: "/playlist/:playlistId",
-        element: <PlaylistDetails />
-      }
+        path: '/playlist/:playlistId',
+        element: <PlaylistDetails />,
+      },
     ],
   },
 ]);

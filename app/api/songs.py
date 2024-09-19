@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from app.models import Models, db
 from flask_login import current_user, login_user, logout_user, login_required
-from aws_upload import get_unique_filename, upload_file_to_s3
+from app.api.aws_upload import get_unique_filename, upload_file_to_s3
 from app.forms.song_form import SongForm
 
 Song = Models.Song
@@ -15,14 +15,13 @@ def all_songs():
 
     query_dir = request.args.get("query")
 
-    if "genre" in query_dir:
+    if query_dir and "genre" in query_dir:
         query = query.filter(Song.genre.name == query_dir["genre"])
 
-    if "artist" in query_dir:
+    if query_dir and "artist" in query_dir:
         query = query.filter(Song.artist.name.like(f"%{query_dir['artist']}%"))
 
     songs = query.all()
-    print([song.to_json() for song in songs])
     return jsonify([song.to_json() for song in songs])
 
 

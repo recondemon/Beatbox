@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: b4fcadd13a49
+Revision ID: 494153d84742
 Revises: 
-Create Date: 2024-09-19 11:45:53.809276
+Create Date: 2024-09-19 12:04:43.281891
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'b4fcadd13a49'
+revision = '494153d84742'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -31,6 +31,13 @@ def upgrade():
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
     sa.UniqueConstraint('username')
+    )
+    op.create_table('genres',
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
+    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('name', sa.String(), nullable=True),
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('albums',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
@@ -62,8 +69,10 @@ def upgrade():
     sa.Column('url', sa.String(), nullable=True),
     sa.Column('album_id', sa.Integer(), nullable=True),
     sa.Column('artist_id', sa.Integer(), nullable=True),
+    sa.Column('genre_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['album_id'], ['albums.id'], ),
     sa.ForeignKeyConstraint(['artist_id'], ['artists.id'], ),
+    sa.ForeignKeyConstraint(['genre_id'], ['genres.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('likes',
@@ -97,5 +106,6 @@ def downgrade():
     op.drop_table('songs')
     op.drop_table('playlists')
     op.drop_table('albums')
+    op.drop_table('genres')
     op.drop_table('artists')
     # ### end Alembic commands ###

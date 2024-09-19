@@ -5,7 +5,7 @@
     "last_name": ["String", { "nullable": false }],
     "bio": ["String", { "nullable": false }],
     "relationships": {
-      "liked_songs": ["Song", "artists_that_like", "likes"]
+      "liked_songs": ["Song", "artists_that_liked", "likes"]
     }
   },
   "Playlist": {
@@ -31,7 +31,15 @@
     "url": "String",
     "album_id": "Album",
     "artist_id": "Artist",
+    "genre_id": "Genre",
     "relationships": { "album": ["Album", "songs"], "likes": ["Like", "song"] }
+  },
+
+  "Genre": {
+    "name": "String",
+    "relationships": {
+      "songs": ["Song", "genre"]
+    }
   },
 
   "Like": {

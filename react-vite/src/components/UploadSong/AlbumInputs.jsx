@@ -37,7 +37,7 @@ const AlbumInputs = ({ handleBackToSelect }) => {
                                 value={newAlbumName}
                                 onChange={(e) => setNewAlbumName(e.target.value)}
                                 placeholder="Enter album name"
-                                className='bg-input p-2 w-full mt-2'
+                                className='bg-input text-secondary-foreground p-2 w-full mt-2'
                             />
                         </div>
                         <div>
@@ -47,7 +47,7 @@ const AlbumInputs = ({ handleBackToSelect }) => {
                                 id="release-date"
                                 value={releaseDate}
                                 onChange={(e) => setReleaseDate(e.target.value)}
-                                className='bg-input p-2 w-full mt-2'
+                                className='bg-input text-secondary-foreground p-2 w-full mt-2'
                             />
                         </div>
                     </div>
@@ -58,7 +58,7 @@ const AlbumInputs = ({ handleBackToSelect }) => {
                         value={newAlbumDescription}
                         onChange={(e) => setNewAlbumDescription(e.target.value)}
                         placeholder='Enter album description'
-                        className='bg-input p-2 mt-2 w-full'
+                        className='bg-input text-secondary-foreground p-2 mt-2 w-full'
                     />
                 </div>
             </div>

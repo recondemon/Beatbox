@@ -16,13 +16,13 @@ const SongDetails = () => {
             id='song-name'
             type='text'
             placeholder='Song Name'
-            className='w-full bg-input p-2 h-10 rounded-lg'
+            className='w-full bg-input text-secondary-foreground p-2 h-10 rounded-lg'
             />
             <select 
             id='genre'
             type='text'
             placeholder='Genre'
-            className='w-full bg-input p-2 h-10 rounded-lg'
+            className='w-full bg-input text-secondary-foreground p-2 h-10 rounded-lg'
             >
                 <option value=''>Select Genre</option>
                 {genres.map((genre) => (

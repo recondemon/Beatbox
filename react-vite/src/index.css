@@ -876,6 +876,10 @@ input {
   color: var(--card-foreground);
 }
 
+.text-secondary-foreground {
+  color: var(--secondary-foreground);
+}
+
 .shadow {
   --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);

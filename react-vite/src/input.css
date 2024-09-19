@@ -57,6 +57,6 @@
     @apply bg-background text-foreground;
   }
   input {
-    @apply bg-input text-foreground rounded-lg p-2 border-border;
+    @apply bg-input text-secondary rounded-lg p-2 border-border;
   }
 }

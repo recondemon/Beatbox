@@ -46,14 +46,14 @@ function ProfileButton() {
       </button>
       {showMenu && (
         <ul
-          className='profile-dropdown text-base aboslute right-0 mr-4 w-max'
+          className='absolute right-0 mr-4 shadow-shadow text-base border px-3 py-2'
           ref={ulRef}
         >
           {user ? (
             <>
-              <li>{user.username}</li>
-              <li>{user.email}</li>
-              <li>
+              <li className='hover:cursor-pointer'>{user.username}</li>
+              <li className='hover:cursor-pointer'>{user.email}</li>
+              <li className='hover:cursor-pointer'>
                 <button onClick={logout}>Log Out</button>
               </li>
             </>

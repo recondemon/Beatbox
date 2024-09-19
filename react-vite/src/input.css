@@ -10,8 +10,6 @@
     --foreground: #f0eaff;
     /* Darker card background */
     --card: #23233a;
-    /* Soft purple card text */
-    --card-foreground: #d1c4ff;
     /* Dark popover background */
     --popover: #23233a;
     /* Light purple popover text */
@@ -46,6 +44,8 @@
     --radius: 0.5rem;
     /* Soft shadow */
     --shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    /* Soft purple card text */
+    --card-foreground: #d1c4ff;
   }
 }
 

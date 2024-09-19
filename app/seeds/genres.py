@@ -6,10 +6,10 @@ Genre = Models.Genre
 
 def seed_genres():
 
-    genre1= Genre(name="Rock"),
-    genre2= Genre(name="Pop"),
-    genre3= Genre(name="Hip Hop"),
-    genre4= Genre(name="Jazz"),
+    genre1= Genre(name="Rock")
+    genre2= Genre(name="Pop")
+    genre3= Genre(name="Hip Hop")
+    genre4= Genre(name="Jazz")
     genre5= Genre(name="Classical")
 
     db.session.add(genre1)

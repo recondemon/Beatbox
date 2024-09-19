@@ -3,11 +3,11 @@ from app.models import Models, db
 from flask_login import current_user, login_user, logout_user, login_required
 
 Song = Models.Song
-auth_routes = Blueprint("songs", __name__)
+songs = Blueprint("songs", __name__)
 
 
 @login_required
-@auth_routes.route("/")
+@songs.route("/")
 def all_songs():
     query = Song.query
 

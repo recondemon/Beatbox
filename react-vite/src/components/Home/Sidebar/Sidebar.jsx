@@ -1,12 +1,13 @@
-
 const Sidebar = () => {
   return (
-    <div className="flex flex-col gap-1">
-      <p className="border-muted border rounded-sm p-1">Sidebar</p>
-      <p className="border-muted border rounded-sm p-1">Goes</p>
-      <p className="border-muted border rounded-sm p-1">Here</p>
+    <div className='flex flex-col h-full bg-popover rounded-md'>
+      <nav className='flex flex-col p-4'>
+        <p className='border-accent border rounded-sm p-1 w-16 h-16'>A</p>
+        <p className='border-accent border rounded-sm p-1 w-16 h-16'>A</p>
+        <p className='border-accent border rounded-sm p-1 w-16 h-16'>A</p>
+      </nav>
     </div>
-  )
-}
+  );
+};
 
-export default Sidebar
+export default Sidebar;

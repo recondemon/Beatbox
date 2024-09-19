@@ -16,17 +16,17 @@ const Home = () => {
 
   return (
     <>
-      <div className='mt-14 ml-4 absolute left-0'>
+      <div className='absolute top-20 left-4'>
         <Sidebar />
       </div>
 
-      <div className='my-20 mx-40'>
+      <div className='my-20 mx-44'>
         {songs.length ? (
-          <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6'>
+          <div className='flex gap-6 max-w-1/2 min-h-40'>
             {songs.map(song => (
               <div
                 key={song.id}
-                className='bg-card p-6 max-w-72 rounded-lg shadow flex flex-col items-center text-card-foreground border-muted border-2 transition-transform transform hover:scale-105 hover:shadow-md hover:cursor-pointer'
+                className='bg-card p-6 max-w-64 rounded-lg shadow flex flex-col items-center text-foreground justify-center border-muted border-2 transition-transform transform hover:scale-105 hover:shadow-md hover:cursor-pointer'
               >
                 <p className='text-xl font-semibold'>{song.name}</p>
 

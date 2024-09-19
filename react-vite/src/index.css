@@ -620,22 +620,14 @@ input {
   right: 0px;
 }
 
-.m-20 {
-  margin: 5rem;
-}
-
-.m-60 {
-  margin: 15rem;
+.mx-60 {
+  margin-left: 15rem;
+  margin-right: 15rem;
 }
 
 .mx-8 {
   margin-left: 2rem;
   margin-right: 2rem;
-}
-
-.mx-60 {
-  margin-left: 15rem;
-  margin-right: 15rem;
 }
 
 .my-20 {
@@ -668,24 +660,12 @@ input {
   width: max-content;
 }
 
-.max-w-md {
-  max-width: 28rem;
-}
-
-.max-w-sm {
-  max-width: 24rem;
-}
-
 .flex-col {
   flex-direction: column;
 }
 
 .items-center {
   align-items: center;
-}
-
-.justify-start {
-  justify-content: flex-start;
 }
 
 .justify-center {
@@ -698,10 +678,6 @@ input {
 
 .overflow-hidden {
   overflow: hidden;
-}
-
-.text-center {
-  text-align: center;
 }
 
 .text-2xl {

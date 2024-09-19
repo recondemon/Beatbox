@@ -32,7 +32,11 @@
     "album_id": "Album",
     "artist_id": "Artist",
     "genre_id": "Genre",
-    "relationships": { "album": ["Album", "songs"], "likes": ["Like", "song"] }
+    "relationships": {
+      "album": ["Album", "songs"],
+      "likes": ["Like", "song"],
+      "artist": ["Artist", "songs"]
+    }
   },
 
   "Genre": {

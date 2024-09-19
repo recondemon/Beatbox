@@ -2,10 +2,20 @@ from flask import Blueprint, request
 from app.models import Models, db
 from flask_login import current_user, login_user, logout_user, login_required
 
-# Songs = Models.Songs
-songs = Blueprint("songs", __name__)
+Song = Models.Song
+auth_routes = Blueprint("songs", __name__)
 
 
-@songs.route("/")
+@login_required
+@auth_routes.route("/")
 def all_songs():
-    return {"Songs": []}
+    query = Song.query
+
+    if "genre" in request.args:
+        query = query.filter(Song.genre.name == request.args["genre"])
+
+    if "artist" in request.args:
+        query = query.filter(Song.artist.name.like(f"%{request.args['artist']}%"))
+
+    songs = query.all()
+    return [song.to_json() for song in songs]

@@ -47,15 +47,11 @@
     /* Soft purple card text */
     --card-foreground: #d1c4ff;
   }
-}
 
-@layer base {
-  * {
-    @apply border-border;
-  }
   body {
     @apply bg-background text-foreground;
   }
+
   input {
     @apply bg-input text-secondary rounded-lg p-2 border-border;
   }

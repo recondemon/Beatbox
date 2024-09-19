@@ -599,10 +599,6 @@ video {
   --card-foreground: #d1c4ff;
 }
 
-* {
-  border-color: var(--border);
-}
-
 body {
   background-color: var(--background);
   color: var(--foreground);
@@ -613,11 +609,15 @@ input {
   border-color: var(--border);
   background-color: var(--input);
   padding: 0.5rem;
-  color: var(--secondary-foreground);
+  color: var(--secondary);
 }
 
 .absolute {
   position: absolute;
+}
+
+.left-0 {
+  left: 0px;
 }
 
 .right-0 {
@@ -643,8 +643,16 @@ input {
   margin-bottom: 1rem;
 }
 
+.ml-4 {
+  margin-left: 1rem;
+}
+
 .mr-4 {
   margin-right: 1rem;
+}
+
+.mt-14 {
+  margin-top: 3.5rem;
 }
 
 .mt-2 {
@@ -723,6 +731,10 @@ input {
   justify-content: space-between;
 }
 
+.gap-1 {
+  gap: 0.25rem;
+}
+
 .gap-2 {
   gap: 0.5rem;
 }
@@ -743,6 +755,10 @@ input {
   border-radius: var(--radius);
 }
 
+.rounded-sm {
+  border-radius: calc(var(--radius) - 4px);
+}
+
 .border {
   border-width: 1px;
 }
@@ -751,12 +767,20 @@ input {
   border-width: 2px;
 }
 
+.border-\[1px\] {
+  border-width: 1px;
+}
+
 .border-b-2 {
   border-bottom-width: 2px;
 }
 
 .border-border {
   border-color: var(--border);
+}
+
+.border-muted {
+  border-color: var(--muted);
 }
 
 .bg-black {
@@ -773,11 +797,15 @@ input {
 }
 
 .bg-primary {
-  background-color: var(--primary-foreground);
+  background-color: var(--primary);
 }
 
 .bg-opacity-70 {
   --tw-bg-opacity: 0.7;
+}
+
+.p-1 {
+  padding: 0.25rem;
 }
 
 .p-2 {
@@ -842,6 +870,10 @@ input {
 
 .italic {
   font-style: italic;
+}
+
+.text-card-foreground {
+  color: var(--card-foreground);
 }
 
 .shadow {

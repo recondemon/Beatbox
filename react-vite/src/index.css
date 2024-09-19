@@ -706,7 +706,7 @@ input {
 }
 
 .bg-card {
-  background-color: var(--card-foreground);
+  background-color: var(--card);
 }
 
 .bg-opacity-70 {

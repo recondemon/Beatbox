@@ -29,7 +29,7 @@ const config = {
         muted: 'var(--muted-foreground)',
         accent: 'var(--accent-foreground)',
         popover: 'var(--popover-foreground)',
-        card: 'var(--card-foreground)',
+        card: 'var(--card)',
       },
       borderRadius: {
         lg: 'var(--radius)',

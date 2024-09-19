@@ -4,7 +4,6 @@ import { useLoaderData } from 'react-router-dom';
 const Home = () => {
   const user = useSelector(state => state.session.user);
   const data = useLoaderData();
-  console.log(data);
 
   if (!user) {
     return (
@@ -15,10 +14,16 @@ const Home = () => {
   }
 
   return (
-    <div className='h-[calc(100vh-64px)] flex flex-col items-center justify-center overflow-hidden'>
-      <h1 className='text-2xl'>Songs Go Here</h1>
-
-      {data.Songs ? data.Songs.forEach(song => <p>{song}</p>) : <p>No Songs Yet</p>}
+    <div
+      className='flex flex-col w-sm my-20 mx-60'
+    >
+      {data.Songs ? (
+        data.Songs.forEach(song => (
+            <p className='text-xl'>{song.title}</p>
+        ))
+      ) : (
+          <p className='text-xl'>No Songs Yet</p>
+      )}
     </div>
   );
 };

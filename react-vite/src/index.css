@@ -647,6 +647,10 @@ input {
   margin-top: 0.5rem;
 }
 
+.mt-6 {
+  margin-top: 1.5rem;
+}
+
 .flex {
   display: flex;
 }
@@ -657,6 +661,10 @@ input {
 
 .h-\[calc\(100vh-64px\)\] {
   height: calc(100vh - 64px);
+}
+
+.max-h-\[calc\(80vh-160px\)\] {
+  max-height: calc(80vh - 160px);
 }
 
 .w-max {
@@ -682,6 +690,10 @@ input {
 
 .overflow-hidden {
   overflow: hidden;
+}
+
+.overflow-y-auto {
+  overflow-y: auto;
 }
 
 .rounded-lg {

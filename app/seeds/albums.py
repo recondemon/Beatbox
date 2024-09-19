@@ -3,8 +3,10 @@ from sqlalchemy.sql import text
 from datetime import date
 
 Album = Models.Album
+User = Models.Artist
 
-def seed_albums(users):
+def seed_albums():
+    users = User.query.all()
     demo_album =  Album(
         name="Demo's Debut", 
         release_date=date(2022, 1, 1), 

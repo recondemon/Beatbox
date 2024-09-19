@@ -2,8 +2,12 @@ from app.models import db, Models, environment, SCHEMA
 from sqlalchemy.sql import text
 
 Song = Models.Song
+Album = Models.Album
+Genre = Models.Genre
 
-def seed_songs(albums, genres):
+def seed_songs():
+    albums = Album.query.all()
+    genres = Genre.query.all()
     demo_song = Song(
         name="Demo's Dream", 
         url="https://beatbox-bucket.s3.amazonaws.com/Piano+Sample+1+(85+BPM).m4a", 

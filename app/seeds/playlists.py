@@ -2,9 +2,10 @@ from app.models import db, Models, environment, SCHEMA
 from sqlalchemy.sql import text
 
 Playlist = Models.Playlist
+User = Models.Artist
 
-
-def seed_playlists(users):
+def seed_playlists():
+    users = User.query.all()
     demo_playlist = Playlist(
         name="Demo's Favorites",
         description="My all-time favorites",

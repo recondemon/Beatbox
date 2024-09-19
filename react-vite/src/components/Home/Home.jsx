@@ -1,11 +1,18 @@
-import React from 'react'
+import { useSelector } from 'react-redux';
 
 const Home = () => {
-  return (
-    <div
-    className='bg-background min-h-screen'
-    >Home</div>
-  )
-}
+  const user = useSelector(state => state.session.user);
 
-export default Home
+  if (!user) {
+    return (
+      <>
+        <h1>Unlock Your Music Adventure</h1>
+      </>
+    );
+  }
+
+  return <div className='bg-background min-h-screen'>Home</div>;
+};
+
+export default Home;
+

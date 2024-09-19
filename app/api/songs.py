@@ -1,6 +1,7 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from app.models import Models, db
 from flask_login import current_user, login_user, logout_user, login_required
+
 
 Song = Models.Song
 songs = Blueprint("songs", __name__)
@@ -18,4 +19,4 @@ def all_songs():
         query = query.filter(Song.artist.name.like(f"%{request.args['artist']}%"))
 
     songs = query.all()
-    return [song.to_json() for song in songs]
+    return jsonify([song.to_json() for song in songs])

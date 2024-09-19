@@ -645,6 +645,10 @@ input {
   height: calc(100vh - 64px);
 }
 
+.min-h-screen {
+  min-height: 100vh;
+}
+
 .w-max {
   width: -moz-max-content;
   width: max-content;

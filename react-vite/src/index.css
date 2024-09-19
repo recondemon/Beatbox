@@ -609,7 +609,7 @@ input {
   border-color: var(--border);
   background-color: var(--input);
   padding: 0.5rem;
-  color: var(--secondary);
+  color: var(--secondary-foreground);
 }
 
 .absolute {

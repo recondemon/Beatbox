@@ -4,6 +4,7 @@ import { useLoaderData } from 'react-router-dom';
 const Home = () => {
   const user = useSelector(state => state.session.user);
   const songs = useLoaderData();
+  console.log(songs)
 
   if (!user) {
     return (

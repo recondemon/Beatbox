@@ -620,9 +620,19 @@ input {
   right: 0px;
 }
 
+.mx-60 {
+  margin-left: 15rem;
+  margin-right: 15rem;
+}
+
 .mx-8 {
   margin-left: 2rem;
   margin-right: 2rem;
+}
+
+.my-20 {
+  margin-top: 5rem;
+  margin-bottom: 5rem;
 }
 
 .mb-4 {
@@ -637,6 +647,10 @@ input {
   margin-top: 0.5rem;
 }
 
+.mt-6 {
+  margin-top: 1.5rem;
+}
+
 .flex {
   display: flex;
 }
@@ -647,6 +661,10 @@ input {
 
 .h-\[calc\(100vh-64px\)\] {
   height: calc(100vh - 64px);
+}
+
+.max-h-\[calc\(80vh-160px\)\] {
+  max-height: calc(80vh - 160px);
 }
 
 .w-max {
@@ -674,6 +692,10 @@ input {
   overflow: hidden;
 }
 
+.overflow-y-auto {
+  overflow-y: auto;
+}
+
 .rounded-lg {
   border-radius: var(--radius);
 }
@@ -684,7 +706,7 @@ input {
 }
 
 .bg-card {
-  background-color: var(--card);
+  background-color: var(--card-foreground);
 }
 
 .bg-opacity-70 {
@@ -711,6 +733,11 @@ input {
 
 .text-lg {
   font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.text-xl {
+  font-size: 1.25rem;
   line-height: 1.75rem;
 }
 

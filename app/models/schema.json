@@ -3,7 +3,10 @@
   "Artist": {
     "first_name": ["String", { "nullable": false }],
     "last_name": ["String", { "nullable": false }],
-    "bio": ["String", { "nullable": false }]
+    "bio": ["String", { "nullable": false }],
+    "relationships": {
+      "liked_songs": ["Song", "artists_that_like", "likes"]
+    }
   },
   "Playlist": {
     "name": ["String", { "nullable": false }],
@@ -28,9 +31,14 @@
     "url": "String",
     "album_id": "Album",
     "artist_id": "Artist",
-    "relationships": { "album": ["Album", "songs"] }
+    "relationships": { "album": ["Album", "songs"], "likes": ["Like", "song"] }
   },
-  
+
+  "Like": {
+    "user_id": "Artist",
+    "song_id": "Song"
+  },
+
   "PlaylistSong": {
     "song_index": "Integer",
     "playlist_id": "Playlist",

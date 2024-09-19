@@ -18,7 +18,7 @@ const Home = () => {
     <div className='h-[calc(100vh-64px)] flex flex-col items-center justify-center overflow-hidden'>
       <h1 className='text-2xl'>Songs Go Here</h1>
 
-      {data.Songs.length ? data.Songs.forEach(song => <p>{song}</p>) : <p>No Songs Yet</p>}
+      {data.Songs ? data.Songs.forEach(song => <p>{song}</p>) : <p>No Songs Yet</p>}
     </div>
   );
 };

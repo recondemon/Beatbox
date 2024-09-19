@@ -616,36 +616,21 @@ input {
   color: var(--foreground);
 }
 
-.container {
-  width: 100%;
-  margin-right: auto;
-  margin-left: auto;
-  padding-right: 2rem;
-  padding-left: 2rem;
+.right-0 {
+  right: 0px;
 }
 
-@media (min-width: 1400px) {
-  .container {
-    max-width: 1400px;
-  }
+.mx-8 {
+  margin-left: 2rem;
+  margin-right: 2rem;
 }
 
-.mx-4 {
-  margin-left: 1rem;
+.mr-4 {
   margin-right: 1rem;
 }
 
-.my-auto {
-  margin-top: auto;
-  margin-bottom: auto;
-}
-
-.mt-auto {
-  margin-top: auto;
-}
-
-.mt-12 {
-  margin-top: 3rem;
+.mt-2 {
+  margin-top: 0.5rem;
 }
 
 .flex {
@@ -656,34 +641,13 @@ input {
   display: contents;
 }
 
-.max-h-min {
-  max-height: -moz-min-content;
-  max-height: min-content;
+.h-\[calc\(100vh-64px\)\] {
+  height: calc(100vh - 64px);
 }
 
-.max-h-\[1400px\] {
-  max-height: 1400px;
-}
-
-.max-h-\[1080px\] {
-  max-height: 1080px;
-}
-
-.min-h-screen {
-  min-height: 100vh;
-}
-
-.min-h-\[1080px\] {
-  min-height: 1080px;
-}
-
-.min-h-fit {
-  min-height: -moz-fit-content;
-  min-height: fit-content;
-}
-
-.min-h-dvh {
-  min-height: 100dvh;
+.w-max {
+  width: -moz-max-content;
+  width: max-content;
 }
 
 .flex-col {
@@ -692,10 +656,6 @@ input {
 
 .items-center {
   align-items: center;
-}
-
-.justify-end {
-  justify-content: flex-end;
 }
 
 .justify-center {
@@ -710,10 +670,6 @@ input {
   overflow: hidden;
 }
 
-.overflow-clip {
-  overflow: clip;
-}
-
 .bg-background {
   background-color: var(--background);
 }
@@ -722,12 +678,17 @@ input {
   text-align: center;
 }
 
-.text-lg {
-  font-size: 1.125rem;
-  line-height: 1.75rem;
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
 }
 
-.text-xl {
-  font-size: 1.25rem;
+.text-base {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
   line-height: 1.75rem;
 }

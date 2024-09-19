@@ -7,6 +7,5 @@ songs = Blueprint("songs", __name__)
 
 
 @songs.route("/")
-@login_required
 def all_songs():
     return {"Songs": []}

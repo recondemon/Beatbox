@@ -4,7 +4,6 @@ import { useLoaderData } from 'react-router-dom';
 const Home = () => {
   const user = useSelector(state => state.session.user);
   const songs = useLoaderData();
-  console.log();
 
   if (!user) {
     return (
@@ -18,7 +17,7 @@ const Home = () => {
     <div className='flex flex-col w-sm my-20 mx-60 max-h-[calc(80vh-160px)] overflow-y-auto'>
       {songs.length ? (
         songs.map(song => (
-          <div className='mt-6'>
+          <div key={song.id} className='mt-6'>
             <p className='text-xl'>{song.name}</p>
 
             <p className='text-lg'>

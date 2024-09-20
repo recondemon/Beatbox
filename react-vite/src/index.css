@@ -643,6 +643,11 @@ input {
   margin-bottom: 2rem;
 }
 
+.mx-1 {
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
+}
+
 .mb-2 {
   margin-bottom: 0.5rem;
 }
@@ -715,6 +720,14 @@ input {
   height: 100%;
 }
 
+.h-\[calc\(100vh-164px\)\] {
+  height: calc(100vh - 164px);
+}
+
+.h-2\/3 {
+  height: 66.666667%;
+}
+
 .min-h-40 {
   min-height: 10rem;
 }
@@ -747,6 +760,10 @@ input {
   width: 80%;
 }
 
+.w-48 {
+  width: 12rem;
+}
+
 .w-56 {
   width: 14rem;
 }
@@ -755,16 +772,8 @@ input {
   width: 100%;
 }
 
-.w-48 {
-  width: 12rem;
-}
-
 .min-w-\[40vw\] {
   min-width: 40vw;
-}
-
-.max-w-2xl {
-  max-width: 42rem;
 }
 
 .flex-1 {
@@ -845,8 +854,16 @@ input {
   margin-bottom: calc(1rem * var(--tw-space-y-reverse));
 }
 
+.self-center {
+  align-self: center;
+}
+
 .justify-self-start {
   justify-self: start;
+}
+
+.justify-self-center {
+  justify-self: center;
 }
 
 .overflow-hidden {
@@ -899,6 +916,10 @@ input {
   border-top-width: 1px;
 }
 
+.border-b {
+  border-bottom-width: 1px;
+}
+
 .border-accent {
   border-color: var(--accent);
 }
@@ -909,6 +930,10 @@ input {
 
 .border-muted {
   border-color: var(--muted);
+}
+
+.border-accent-foreground {
+  border-color: var(--accent-foreground);
 }
 
 .bg-black {
@@ -930,6 +955,10 @@ input {
 
 .bg-primary {
   background-color: var(--primary);
+}
+
+.bg-card-foreground {
+  background-color: var(--card-foreground);
 }
 
 .bg-opacity-70 {
@@ -1044,6 +1073,10 @@ input {
 
 .text-secondary-foreground {
   color: var(--secondary-foreground);
+}
+
+.text-card-foreground {
+  color: var(--card-foreground);
 }
 
 .shadow {

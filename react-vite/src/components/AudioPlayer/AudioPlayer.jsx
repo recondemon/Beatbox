@@ -14,13 +14,16 @@ export default function AudioPlayer({ list }) {
   const [currentSong, setCurrentSong] = useState(list.songs[0]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
+  const [songDurations, setSongDurations] = useState({});
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
   const audioRef = useRef(null);
-  const listType = list.artist ? 'album' : 'playlist';
-
-  console.log(list);
+  const artist = list.artist
+    ? list.artist[0].band_name
+      ? `${list.artist[0].band_name}`
+      : `${list.artist[0].first_name} ${list.artist[0].last_name}`
+    : null;
 
   const togglePlay = () => {
     if (isPlaying) {
@@ -32,7 +35,14 @@ export default function AudioPlayer({ list }) {
   };
 
   const handleLoadedMetadata = () => {
-    setDuration(audioRef.current.duration);
+    const duration = audioRef.current.duration;
+
+    setDuration(duration);
+
+    setSongDurations(prevDurations => ({
+      ...prevDurations,
+      [currentSong.id]: duration,
+    }));
   };
 
   const playSong = song => {
@@ -97,6 +107,7 @@ export default function AudioPlayer({ list }) {
   }, [currentSong]);
 
   return (
+    // Song list
     <div className='flex flex-col h-[calc(100vh-48px)]'>
       <div className='flex-1 mx-44 overflow-y-auto p-8'>
         <h1 className='text-3xl font-bold mb-6'>{list.name}</h1>
@@ -105,26 +116,22 @@ export default function AudioPlayer({ list }) {
           {list.songs.map(song => (
             <li
               key={song.id}
-              className='flex border-b mx-1 border-accent-foreground items-center space-x-4 p-2 rounded cursor-pointer'
+              className='flex border-b mx-4 border-accent-foreground items-center justify-between p-2 rounded cursor-pointer'
               onClick={() => playSong(song)}
             >
-              <div className='flex items-center justify-center gap-2'>
                 <h3 className='font-semibold'>{song.name}</h3>
-                {listType === 'album' ? (
-                  <p className='text-xs'>
-                    {list.artist[0].first_name} {list.artist[0].last_name}
-                  </p>
-                ) : (
-                  ''
-                )}
-              </div>
 
-              <span className='ml-auto text-sm '>{song.duration}</span>
+                <div className='text-sm'>{artist}</div>
+
+                <div className='text-xs'>
+                  {songDurations[song.id] ? formatTime(songDurations[song.id]) : '--:--'}
+                </div>
             </li>
           ))}
         </ul>
       </div>
 
+      {/* Player */}
       <div className='p-4 flex items-center space-x-4 border-t border-accent'>
         <audio
           ref={audioRef}

@@ -628,6 +628,11 @@ input {
   top: 5rem;
 }
 
+.mx-4 {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
 .mx-44 {
   margin-left: 11rem;
   margin-right: 11rem;
@@ -643,14 +648,6 @@ input {
   margin-bottom: 2rem;
 }
 
-<<<<<<< HEAD
-.mx-1 {
-  margin-left: 0.25rem;
-  margin-right: 0.25rem;
-}
-
-=======
->>>>>>> signupForm
 .mb-2 {
   margin-bottom: 0.5rem;
 }
@@ -661,10 +658,6 @@ input {
 
 .mb-6 {
   margin-bottom: 1.5rem;
-}
-
-.ml-auto {
-  margin-left: auto;
 }
 
 .mr-4 {
@@ -703,6 +696,10 @@ input {
   height: 3.5rem;
 }
 
+.h-2\/3 {
+  height: 66.666667%;
+}
+
 .h-32 {
   height: 8rem;
 }
@@ -723,17 +720,6 @@ input {
   height: 100%;
 }
 
-<<<<<<< HEAD
-.h-\[calc\(100vh-164px\)\] {
-  height: calc(100vh - 164px);
-}
-
-.h-2\/3 {
-  height: 66.666667%;
-}
-
-=======
->>>>>>> signupForm
 .min-h-40 {
   min-height: 10rem;
 }
@@ -860,16 +846,8 @@ input {
   margin-bottom: calc(1rem * var(--tw-space-y-reverse));
 }
 
-.self-center {
-  align-self: center;
-}
-
 .justify-self-start {
   justify-self: start;
-}
-
-.justify-self-center {
-  justify-self: center;
 }
 
 .overflow-hidden {
@@ -878,12 +856,6 @@ input {
 
 .overflow-y-auto {
   overflow-y: auto;
-}
-
-.truncate {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .rounded {
@@ -914,6 +886,10 @@ input {
   border-width: 2px;
 }
 
+.border-b {
+  border-bottom-width: 1px;
+}
+
 .border-b-2 {
   border-bottom-width: 2px;
 }
@@ -922,12 +898,12 @@ input {
   border-top-width: 1px;
 }
 
-.border-b {
-  border-bottom-width: 1px;
-}
-
 .border-accent {
   border-color: var(--accent);
+}
+
+.border-accent-foreground {
+  border-color: var(--accent-foreground);
 }
 
 .border-border {
@@ -936,10 +912,6 @@ input {
 
 .border-muted {
   border-color: var(--muted);
-}
-
-.border-accent-foreground {
-  border-color: var(--accent-foreground);
 }
 
 .bg-black {
@@ -963,13 +935,6 @@ input {
   background-color: var(--primary);
 }
 
-<<<<<<< HEAD
-.bg-card-foreground {
-  background-color: var(--card-foreground);
-}
-
-=======
->>>>>>> signupForm
 .bg-opacity-70 {
   --tw-bg-opacity: 0.7;
 }
@@ -1072,6 +1037,10 @@ input {
   font-style: italic;
 }
 
+.text-card-foreground {
+  color: var(--card-foreground);
+}
+
 .text-foreground {
   color: var(--foreground);
 }
@@ -1084,13 +1053,6 @@ input {
   color: var(--secondary-foreground);
 }
 
-<<<<<<< HEAD
-.text-card-foreground {
-  color: var(--card-foreground);
-}
-
-=======
->>>>>>> signupForm
 .shadow {
   --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);

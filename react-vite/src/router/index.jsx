@@ -1,4 +1,4 @@
-import { createBrowserRouter, useParams } from 'react-router-dom';
+import { createBrowserRouter } from 'react-router-dom';
 import LoginFormPage from '../components/LoginFormPage';
 import SignupFormPage from '../components/SignupFormPage';
 import Layout from './Layout';
@@ -15,13 +15,6 @@ export const router = createBrowserRouter([
       {
         path: '/',
         element: <Home />,
-        loader: async () => {
-          const albumsRes = await fetch('/api/albums');
-          const albums = await albumsRes.json();
-          const playlistsRes = await fetch('/api/playlists');
-          const playlists = await playlistsRes.json();
-          return { albums, playlists };
-        },
       },
       {
         path: 'login',
@@ -58,7 +51,7 @@ export const router = createBrowserRouter([
       {
         path: '/userId/songs',
         element: <ManageSongs />,
-      }
+      },
     ],
   },
 ]);

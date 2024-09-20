@@ -1,10 +1,19 @@
-import { useSelector } from 'react-redux';
-import { Link, useLoaderData } from 'react-router-dom';
-import Sidebar from './Sidebar';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { fetchAlbums, selectAlbumsArray } from '../../redux/albums';
+import { useEffect } from 'react';
+import { fetchPlaylists, selectPlaylistsArray } from '../../redux/playlists';
 
 const Home = () => {
+  const dispatch = useDispatch();
   const user = useSelector(state => state.session.user);
-  const { albums, playlists } = useLoaderData();
+  const albums = useSelector(selectAlbumsArray);
+  const playlists = useSelector(selectPlaylistsArray)
+
+  useEffect(() => {
+    dispatch(fetchAlbums());
+    dispatch(fetchPlaylists())
+  }, [dispatch]);
 
   if (!user) {
     return (

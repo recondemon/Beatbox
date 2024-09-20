@@ -281,7 +281,7 @@ def get_models_class(db, structure) -> Models:
                 ),
                 "created_at": db.Column(db.DateTime, default=datetime.utcnow()),
                 "__repr__": JSONable.__repr__,
-                "username": db.Column(db.String(40), nullable=False, unique=True),
+                # "username": db.Column(db.String(40), nullable=False, unique=True),
                 "email": db.Column(db.String(255), nullable=False, unique=True),
                 "hashed_password": db.Column(db.String(255), nullable=False),
                 "__table_args__": __table_args__,

@@ -39,6 +39,12 @@ function ProfileButton() {
     closeMenu();
   };
 
+  const manageSongs = () => {
+    closeMenu();
+    // Navigate to manage songs page
+    
+  }
+
   return (
     <>
       <button onClick={toggleMenu}>
@@ -53,6 +59,9 @@ function ProfileButton() {
             <>
               <li className='hover:cursor-pointer'>{user.username}</li>
               <li className='hover:cursor-pointer'>{user.email}</li>
+              <li className='hover:cursor-pointer'>
+                <button onClick={manageSongs}>Manage Songs</button>
+              </li>
               <li className='hover:cursor-pointer'>
                 <button onClick={logout}>Log Out</button>
               </li>

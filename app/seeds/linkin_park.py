@@ -12,7 +12,7 @@ def seed_linkin_park():
     artist = Artist.query.filter_by(band_name='Linkin Park').first()
     if not artist:
         # Create the Artist
-        linkin_park = Artist(band_name='Linkin Park')
+        linkin_park = Artist(band_name='Linkin Park' , first_name='Chester', last_name='Bennington', bio='Linkin Park is an American rock band formed in Agoura Hills, California, in 1996. The band achieved international fame with the release of their debut album, Hybrid Theory (2000), which was certified Diamond by the RIAA in 2005 and multi-Platinum in several other countries. Their early success was driven by a unique blend of nu-metal, rap-rock, and electronic elements, distinguishing them from other bands of the time.')
         db.session.add(linkin_park)
         db.session.commit()
     else:

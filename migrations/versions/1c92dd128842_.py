@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 6ed7dd8aefd9
+Revision ID: 1c92dd128842
 Revises: 
-Create Date: 2024-09-20 15:17:08.940436
+Create Date: 2024-09-20 18:32:31.794528
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '6ed7dd8aefd9'
+revision = '1c92dd128842'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -22,7 +22,6 @@ def upgrade():
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.Column('username', sa.String(length=40), nullable=False),
     sa.Column('email', sa.String(length=255), nullable=False),
     sa.Column('hashed_password', sa.String(length=255), nullable=False),
     sa.Column('first_name', sa.String(), nullable=False),
@@ -30,8 +29,7 @@ def upgrade():
     sa.Column('band_name', sa.String(), nullable=True),
     sa.Column('bio', sa.String(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email'),
-    sa.UniqueConstraint('username')
+    sa.UniqueConstraint('email')
     )
     op.create_table('genres',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),

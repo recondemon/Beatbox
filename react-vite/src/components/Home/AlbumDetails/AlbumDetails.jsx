@@ -1,8 +1,15 @@
-import React from 'react'
+import { useLoaderData } from "react-router-dom"
 
 const AlbumDetails = () => {
+  const album = useLoaderData()
+  console.log(album)
+
   return (
-    <div>AlbumDetails</div>
+    <>
+      {album && (
+        <p>Hello World</p>
+      )}
+    </>
   )
 }
 

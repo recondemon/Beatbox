@@ -1,9 +1,10 @@
-import React from 'react'
+import { useLoaderData } from 'react-router-dom';
+import AudioCard from '../../AudioCard';
 
 const PlaylistDetails = () => {
-  return (
-    <div>PlaylistDetails</div>
-  )
+  const playlist = useLoaderData()
+
+  return <>{playlist && <AudioCard list={playlist} />}</>;
 }
 
 export default PlaylistDetails

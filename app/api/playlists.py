@@ -28,7 +28,7 @@ def get_playlist(playlist_id):
     if not playlist:
         return {"errors": "Playlist not found"}, 404
 
-    return jsonify(playlist)
+    return jsonify(playlist.to_json())
 
 
 @playlists.route("/<playlist_id>", methods=["PUT"])
@@ -47,7 +47,7 @@ def edit_playlist(playlist_id):
 
         db.session.commit()
 
-        return jsonify(playlist)
+        return jsonify(playlist.to_json())
     return "Bad Form Request", 400
 
 
@@ -69,7 +69,7 @@ def create_playlist():
         db.session.add(playlist)
         db.session.commit()
 
-        return jsonify(playlist)
+        return jsonify(playlist.to_json())
 
     return "Bad Form Request", 400
 
@@ -92,4 +92,4 @@ def add_playlist_songs(playlist_id):
 
     playlist = Playlist.query.get(int(playlist_id))
 
-    return jsonify(playlist)
+    return jsonify(playlist.to_json())

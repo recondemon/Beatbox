@@ -643,6 +643,10 @@ input {
   margin-bottom: 2rem;
 }
 
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
 .mb-4 {
   margin-bottom: 1rem;
 }
@@ -679,6 +683,10 @@ input {
   height: 3.5rem;
 }
 
+.h-32 {
+  height: 8rem;
+}
+
 .h-52 {
   height: 13rem;
 }
@@ -707,6 +715,10 @@ input {
   width: 3.5rem;
 }
 
+.w-32 {
+  width: 8rem;
+}
+
 .w-4\/5 {
   width: 80%;
 }
@@ -733,6 +745,10 @@ input {
 
 .items-center {
   align-items: center;
+}
+
+.justify-end {
+  justify-content: flex-end;
 }
 
 .justify-center {
@@ -824,6 +840,11 @@ input {
   --tw-bg-opacity: 0.7;
 }
 
+.object-cover {
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
 .p-1 {
   padding: 0.25rem;
 }
@@ -855,8 +876,16 @@ input {
   padding-bottom: 1rem;
 }
 
+.pr-4 {
+  padding-right: 1rem;
+}
+
 .text-center {
   text-align: center;
+}
+
+.text-2vw {
+  font-size: 2vw;
 }
 
 .text-2xl {
@@ -884,10 +913,6 @@ input {
   line-height: 1.25rem;
 }
 
-.text-2vw {
-  font-size: 2vw;
-}
-
 .font-bold {
   font-weight: 700;
 }
@@ -902,6 +927,10 @@ input {
 
 .text-foreground {
   color: var(--foreground);
+}
+
+.text-primary {
+  color: var(--primary);
 }
 
 .text-secondary-foreground {
@@ -939,6 +968,10 @@ input {
 
 .hover\:cursor-pointer:hover {
   cursor: pointer;
+}
+
+.hover\:underline:hover {
+  text-decoration-line: underline;
 }
 
 .hover\:shadow-md:hover {

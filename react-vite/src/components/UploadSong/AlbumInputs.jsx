@@ -4,10 +4,42 @@ import { ArrowLeft } from 'lucide-react'
 const AlbumInputs = ({ handleBackToSelect }) => {
     const [newAlbumName, setNewAlbumName] = useState('')
     const [newAlbumDescription, setNewAlbumDescription] = useState('')
-    const [releaseDate, setReleaseDate] = useState('') // New state for release date
+    const [releaseDate, setReleaseDate] = useState('')
+    const [albumCover, setAlbumCover] = useState(null)
 
-    const handleSetAlbum = () => {
-        handleBackToSelect()
+    const handleFileChange = (e) => {
+        const file = e.target.files[0]
+        setAlbumCover(file)
+    }
+
+    const handleCreateAlbum = async () => {
+        const formData = new FormData()
+        formData.append('album_name', newAlbumName)
+        formData.append('description', newAlbumDescription)
+        formData.append('release_date', releaseDate)
+        if (albumCover) {
+            formData.append('album_cover', albumCover) // Adding album cover file
+        }
+
+        try {
+            const response = await fetch('/albums/', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token') // Add your auth token if needed
+                }
+            })
+
+            if (response.ok) {
+                const data = await response.json()
+                console.log('Album created successfully:', data)
+                handleBackToSelect() // Navigate back after album creation
+            } else {
+                console.error('Error creating album:', response.statusText)
+            }
+        } catch (error) {
+            console.error('Error creating album:', error)
+        }
     }
 
     return (
@@ -20,7 +52,7 @@ const AlbumInputs = ({ handleBackToSelect }) => {
                     <ArrowLeft />
                 </button>
                 <button 
-                    onClick={handleSetAlbum}
+                    onClick={handleCreateAlbum}
                     className='bg-primary p-2 rounded-lg'
                 >
                     Create Album
@@ -59,7 +91,28 @@ const AlbumInputs = ({ handleBackToSelect }) => {
                         placeholder='Enter album description'
                         className='bg-input text-secondary-foreground p-2 mt-2 w-full'
                     />
+                </div>                
+            </div>
+            <div className='flex'>
+                <div className='flex flex-col p-4'>
+                    <label htmlFor="album-cover">Album Cover:</label>
+                    <input 
+                        type="file" 
+                        id="album-cover" 
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        className="mt-2"
+                    />
                 </div>
+                {albumCover && (
+                    <div className="flex pr-4 py-2 mb-2 justify-center items-center border">
+                        <img
+                            src={URL.createObjectURL(albumCover)}
+                            alt="Album cover preview"
+                            className="w-32 h-32 object-cover"
+                        />
+                    </div>
+                )}
             </div>
         </div>
     )

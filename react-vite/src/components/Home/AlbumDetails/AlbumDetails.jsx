@@ -1,16 +1,10 @@
-import { useLoaderData } from "react-router-dom"
+import { useLoaderData } from 'react-router-dom';
+import AudioCard from '../../AudioCard';
 
 const AlbumDetails = () => {
-  const album = useLoaderData()
-  console.log(album)
+  const album = useLoaderData();
 
-  return (
-    <>
-      {album && (
-        <p>Hello World</p>
-      )}
-    </>
-  )
-}
+  return <>{album && <AudioCard list={album} />}</>;
+};
 
-export default AlbumDetails
+export default AlbumDetails;

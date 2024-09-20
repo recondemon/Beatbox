@@ -648,10 +648,6 @@ input {
   margin-bottom: 2rem;
 }
 
-.mb-2 {
-  margin-bottom: 0.5rem;
-}
-
 .mb-4 {
   margin-bottom: 1rem;
 }
@@ -670,6 +666,10 @@ input {
 
 .mt-4 {
   margin-top: 1rem;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
 }
 
 .block {
@@ -696,10 +696,6 @@ input {
   height: 3.5rem;
 }
 
-.h-32 {
-  height: 8rem;
-}
-
 .h-52 {
   height: 13rem;
 }
@@ -714,6 +710,10 @@ input {
 
 .h-full {
   height: 100%;
+}
+
+.h-32 {
+  height: 8rem;
 }
 
 .min-h-40 {
@@ -736,10 +736,6 @@ input {
   width: 66.666667%;
 }
 
-.w-32 {
-  width: 8rem;
-}
-
 .w-4\/5 {
   width: 80%;
 }
@@ -750,6 +746,10 @@ input {
 
 .w-full {
   width: 100%;
+}
+
+.w-32 {
+  width: 8rem;
 }
 
 .min-w-\[40vw\] {
@@ -978,16 +978,16 @@ input {
   color: var(--muted-foreground);
 }
 
-.text-primary {
-  color: var(--primary);
-}
-
 .text-primary-foreground {
   color: var(--primary-foreground);
 }
 
 .text-secondary-foreground {
   color: var(--secondary-foreground);
+}
+
+.text-primary {
+  color: var(--primary);
 }
 
 .shadow {

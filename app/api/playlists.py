@@ -11,7 +11,7 @@ playlists = Blueprint("playlists", __name__)
 @playlists.route("/")
 def all_playlists():
     Playlists = Playlist.query.all()
-    return jsonify([genre.to_json() for genre in Playlists])
+    return jsonify([ply.to_json() for ply in Playlists if ply.isPublic])
 
 
 @login_required

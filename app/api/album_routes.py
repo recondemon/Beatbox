@@ -19,7 +19,6 @@ def all_albums():
 @albums.route("/<int:album_id>")
 def album(album_id):
     album = Album.query.get(album_id)
-    print(album)
     if not album:
         return jsonify({"error": "Album not found"}), 404
     return album.to_json()

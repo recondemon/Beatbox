@@ -47,7 +47,7 @@ const Home = () => {
               {playlists.map(playlist => (
                 <Link
                   key={playlist.id}
-                  to={`/album/${playlist.id}`}
+                  to={`/playlist/${playlist.id}`}
                 >
                   <div
                     key={playlist.id}

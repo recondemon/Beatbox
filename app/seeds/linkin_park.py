@@ -1,32 +1,27 @@
 from datetime import datetime
 from flask import Flask
-from models import db, Song, Album, Artist, Genre
+from app.models import db, Models, environment, SCHEMA
+from sqlalchemy.sql import text
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'your_database_uri_here'
-db.init_app(app)
+Song = Models.Song
+Album = Models.Album
+Artist = Models.Artist
+Genre = Models.Genre
+
 
 # Linkin Park Seed
 def seed_linkin_park():
-    # Check if Artist exists
-    artist = Artist.query.filter_by(band_name='Linkin Park').first()
-    if not artist:
-        # Create the Artist
-        linkin_park = Artist(band_name='Linkin Park')
-        db.session.add(linkin_park)
-        db.session.commit()
-    else:
-        linkin_park = artist
-        print("Artist Linkin Park already exists in the database.")
+    linkin_park = Artist(
+        band_name="Linkin Park",
+        email="hello@yahoo.com",
+        password="password",
+        first_name="Chester",
+        last_name="Bennington",
+        bio="Legend"
+    )
+    db.session.add(linkin_park)
 
-    # Check if Genre exists
-    genre_rock = Genre.query.filter_by(name='Rock').first()
-    if not genre_rock:
-        genre_rock = Genre(name='Rock')
-        db.session.add(genre_rock)
-        db.session.commit()
-    else:
-        print("Genre Rock already exists in the database.")
+    genre_rock = Genre.query.filter_by(name="Rock").first()
 
     # Check if Album exists
 

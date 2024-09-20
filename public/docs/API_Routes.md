@@ -39,7 +39,7 @@
 
 - Logged in user can view all their playlists
   - `Get api/playlists/my-playlists`
-- Logged in user can view details of specific playlist
+- User can view details of specific playlist
   - `Get api/playlists/:playlistId`
 - User can view all playlists that are public
   - `Get api/playlists`

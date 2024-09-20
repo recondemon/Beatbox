@@ -39,53 +39,106 @@ function SignupFormModal() {
   };
 
   return (
-    <>
-      <h1>Sign Up</h1>
+    <div className="flex flex-col w-full">
+      <h1 className="text-2vw text-center">Sign Up</h1>
       {errors.server && <p>{errors.server}</p>}
-      <form onSubmit={handleSubmit}>
-        <label>
-          Email
-          <input
+      <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+        <div className="flex gap-2 mt-4">
+          <div className="flex flex-col">
+            <label>
+              First Name:
+            </label>
+            <input
             type="text"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value=''
+            onChange={(e) => setFirstName(e.target.value)}
+            placeholder="Enter first name"
             required
-          />
-        </label>
-        {errors.email && <p>{errors.email}</p>}
-        <label>
-          Username
-          <input
+            />
+          </div>
+          <div className="flex flex-col">
+            <label>
+              Last Name:
+            </label>
+            <input
             type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value=''
+            onChange={(e) => setLastName(e.target.value)}
+            placeholder="Enter last name"
             required
-          />
-        </label>
-        {errors.username && <p>{errors.username}</p>}
-        <label>
-          Password
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+        </div>
+        <div className="flex gap-2 mt-2">
+          <div className="flex flex-col">
+            <label>
+              Email:
+            </label>
+              <input
+                type="text"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter email"
+                required
+              />
+            {errors.email && <p>{errors.email}</p>}
+          </div>
+          <div className="flex flex-col">
+            <label>
+              Username:
+            </label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+              />
+            {errors.username && <p>{errors.username}</p>}
+          </div>
+        </div>
+        <div>
+          <div className="flex flex-col">
+            <label>
+              Bio:
+            </label>
+            <textarea
+            value=''
+            onChange={(e) => setBio(e.target.value)}
+            placeholder='Enter bio'
             required
-          />
-        </label>
-        {errors.password && <p>{errors.password}</p>}
-        <label>
-          Confirm Password
-          <input
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-          />
-        </label>
-        {errors.confirmPassword && <p>{errors.confirmPassword}</p>}
-        <button type="submit">Sign Up</button>
+            className="bg-input text-secondary-foreground p-2 rounded-lg"
+            />
+          </div>
+        </div>
+
+
+        <div className="flex flex-col">
+          <label>
+            Password:
+          </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          {errors.password && <p>{errors.password}</p>}
+        </div>
+        <div className="flex flex-col">
+          <label>
+            Confirm Password
+          </label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+          {errors.confirmPassword && <p>{errors.confirmPassword}</p>}
+        </div>
+        <button type="submit" className="mt-4">Sign Up</button>
       </form>
-    </>
+    </div>
   );
 }
 

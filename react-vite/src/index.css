@@ -943,6 +943,10 @@ input {
   line-height: 1.25rem;
 }
 
+.text-2vw {
+  font-size: 2vw;
+}
+
 .font-bold {
   font-weight: 700;
 }

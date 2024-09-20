@@ -11,7 +11,7 @@ playlists = Blueprint("playlists", __name__)
 @playlists.route("/")
 def all_playlists():
     Playlists = Playlist.query.all()
-    return jsonify([genre.to_json() for genre in Playlists])
+    return jsonify([ply.to_json() for ply in Playlists if ply.isPublic])
 
 
 @login_required
@@ -27,6 +27,9 @@ def get_playlist(playlist_id):
 
     if not playlist:
         return {"errors": "Playlist not found"}, 404
+    
+    if not playlist.isPublic and current_user.id != playlist.owner_id:
+        return {"errors": "User not authorized"}, 403
 
     return jsonify(playlist.to_json())
 

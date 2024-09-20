@@ -19,14 +19,14 @@ def all_songs():
         query = query.filter(Song.genre.name == query_dir["genre"])
 
     if query_dir and "artist" in query_dir:
-        query = query.filter(Song.artist.name.like(f"%{query_dir['artist']}%"))
+        query = query.filter(Song.artist.band_name.like(f"%{query_dir['artist']}%"))
 
     songs = query.all()
     return jsonify([song.to_json() for song in songs])
 
 
-@login_required
 @songs.route("/", methods=["POST"])
+@login_required
 def create_song():
     form = SongForm()
 

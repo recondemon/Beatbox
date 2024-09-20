@@ -7,7 +7,6 @@ const AlbumInputs = ({ handleBackToSelect }) => {
     const [releaseDate, setReleaseDate] = useState('') // New state for release date
 
     const handleSetAlbum = () => {
-        // You can handle the album creation logic here, using newAlbumName, newAlbumDescription, and releaseDate
         handleBackToSelect()
     }
 

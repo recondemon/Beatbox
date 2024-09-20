@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, useParams } from 'react-router-dom';
 import LoginFormPage from '../components/LoginFormPage';
 import SignupFormPage from '../components/SignupFormPage';
 import Layout from './Layout';
@@ -31,23 +31,27 @@ export const router = createBrowserRouter([
         element: <SignupFormPage />,
       },
       {
-        path: '/album/:albumId',
+        path: '/albums/:albumId',
         element: <AlbumDetails />,
-        loader: async id => {
-          const res = await fetch(`/api/album/${id}`);
+        loader: async ({ params }) => {
+          const { albumId } = params;
+          console.log(params);
+          const res = await fetch(`/api/album/${albumId}`);
           const album = await res.json();
           return album;
         },
       },
       {
-        path: '/artist/:artistId',
+        path: '/artists/:artistId',
         element: <ArtistDetails />,
       },
       {
-        path: '/playlist/:playlistId',
+        path: '/playlists/:playlistId',
         element: <PlaylistDetails />,
-        loader: async id => {
-          const res = await fetch(`/api/playlist/${id}`);
+        loader: async ({ params }) => {
+          const { playlistId } = params;
+          console.log(playlistId)
+          const res = await fetch(`/api/playlist/${playlistId}`);
           const playlist = await res.json();
           return playlist;
         },

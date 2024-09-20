@@ -5,7 +5,6 @@ import Sidebar from './Sidebar';
 const Home = () => {
   const user = useSelector(state => state.session.user);
   const { albums, playlists } = useLoaderData();
-  console.log(playlists);
 
   if (!user) {
     return (

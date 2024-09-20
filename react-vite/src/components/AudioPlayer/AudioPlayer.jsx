@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 
 export default function AudioPlayer({ list }) {
-  const [currentSong, setCurrentSong] = useState('');
+  const [currentSong, setCurrentSong] = useState(list.songs[0]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -26,6 +26,10 @@ export default function AudioPlayer({ list }) {
       audioRef.current?.play();
     }
     setIsPlaying(!isPlaying);
+  };
+
+  const handleLoadedMetadata = () => {
+    setDuration(audioRef.current.duration);
   };
 
   const playSong = song => {
@@ -116,18 +120,19 @@ export default function AudioPlayer({ list }) {
         <audio
           ref={audioRef}
           src={currentSong?.url}
+          onLoadedMetadata={handleLoadedMetadata}
           className='hidden'
         />
 
-        {currentSong && (
-          <>
-            <div className='flex-1'>
-              <h3 className='font-semibold'>{currentSong.name}</h3>
+        <div className='flex-shrink-0 w-48'>
+          {currentSong && (
+            <>
+              <h3 className='font-semibold truncate'>{currentSong.name}</h3>
+              <p className='text-sm truncate'>{currentSong.artist}</p>
+            </>
+          )}
+        </div>
 
-              <p className='text-sm '>{currentSong.artist}</p>
-            </div>
-          </>
-        )}
         <div className='flex-1 flex flex-col items-center'>
           <div className='flex items-center space-x-4 mb-2'>
             <button className=' '>
@@ -156,6 +161,7 @@ export default function AudioPlayer({ list }) {
 
           <div className='w-full flex items-center space-x-2'>
             <span className='text-xs  w-10 text-right'>{formatTime(currentTime)}</span>
+
             <input
               type='range'
               min={0}
@@ -169,7 +175,7 @@ export default function AudioPlayer({ list }) {
           </div>
         </div>
 
-        <div className='flex items-center space-x-2'>
+        <div className='w-32 flex items-center flex-shrink-0 space-x-2'>
           <button
             onClick={toggleMute}
             className=' '

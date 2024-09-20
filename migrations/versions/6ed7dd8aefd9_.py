@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: fce7270f2928
+Revision ID: 6ed7dd8aefd9
 Revises: 
-Create Date: 2024-09-20 13:56:31.961016
+Create Date: 2024-09-20 15:17:08.940436
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'fce7270f2928'
+revision = '6ed7dd8aefd9'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -27,6 +27,7 @@ def upgrade():
     sa.Column('hashed_password', sa.String(length=255), nullable=False),
     sa.Column('first_name', sa.String(), nullable=False),
     sa.Column('last_name', sa.String(), nullable=False),
+    sa.Column('band_name', sa.String(), nullable=True),
     sa.Column('bio', sa.String(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
@@ -47,6 +48,7 @@ def upgrade():
     sa.Column('release_date', sa.Date(), nullable=True),
     sa.Column('description', sa.Text(), nullable=True),
     sa.Column('artist_id', sa.Integer(), nullable=True),
+    sa.Column('album_cover', sa.String(), nullable=True),
     sa.ForeignKeyConstraint(['artist_id'], ['artists.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -56,7 +58,7 @@ def upgrade():
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('description', sa.Text(), nullable=True),
-    sa.Column('isPublic', sa.Boolean(), nullable=True),
+    sa.Column('is_public', sa.Boolean(), nullable=True),
     sa.Column('owner_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['owner_id'], ['artists.id'], ),
     sa.PrimaryKeyConstraint('id')

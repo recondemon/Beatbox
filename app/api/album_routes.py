@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from app.models import Models, db
 from flask_login import current_user, login_user, logout_user, login_required
 from app.forms.album_form import AlbumForm
+from app.api.aws_upload import upload_file_to_s3, get_unique_filename, remove_file_from_s3
 
 Album = Models.Album
 
@@ -40,6 +41,7 @@ def create_album():
     if form.validate_on_submit():
         new_album = Album()
         form.populate_obj(new_album)
+        new_album.album_cover = upload_file_to_s3(form.data["file"])
         new_album.artist_id = current_user.id
         db.session.add(new_album)
         db.session.commit()
@@ -61,6 +63,8 @@ def update_album(album_id):
 
     if form.validate_on_submit():
         form.populate_obj(album)
+        remove_file_from_s3(album.album_cover)
+        album.album_cover = upload_file_to_s3(form.data["file"])
         db.session.commit()
         return album.to_json()
 

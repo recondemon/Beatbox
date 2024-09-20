@@ -11,11 +11,11 @@ playlists = Blueprint("playlists", __name__)
 @playlists.route("/")
 def all_playlists():
     Playlists = Playlist.query.all()
-    return jsonify([ply.to_json() for ply in Playlists if ply.isPublic])
+    return jsonify([ply.to_json() for ply in Playlists if ply.is_public])
 
 
-@login_required
 @playlists.route("/my-playlists")
+@login_required
 def my_playlists():
     Playlists = Playlist.query.filter_by(owner_id=current_user.id).all()
     return jsonify([genre.to_json() for genre in Playlists])
@@ -27,8 +27,8 @@ def get_playlist(playlist_id):
 
     if not playlist:
         return {"errors": "Playlist not found"}, 404
-    
-    if not playlist.isPublic and current_user.id != playlist.owner_id:
+
+    if not playlist.is_public and current_user.id != playlist.owner_id:
         return {"errors": "User not authorized"}, 403
 
     return jsonify(playlist.to_json())
@@ -46,7 +46,7 @@ def edit_playlist(playlist_id):
     if form.validate_on_submit():
         playlist.name = getattr(form, "name", playlist.name)
         playlist.description = getattr(form, "description", playlist.description)
-        playlist.isPublic = getattr(form, "is_public", playlist.isPublic)
+        playlist.is_public = getattr(form, "is_public", playlist.is_public)
 
         db.session.commit()
 
@@ -66,7 +66,7 @@ def create_playlist():
             form, "name", "My Playlist " + len(current_artist.playlists)
         )
         playlist.description = getattr(form, "description", playlist.description)
-        playlist.isPublic = getattr(form, "is_public", playlist.isPublic)
+        playlist.is_public = getattr(form, "is_public", playlist.is_public)
         playlist.owner_id = current_user.id
 
         db.session.add(playlist)

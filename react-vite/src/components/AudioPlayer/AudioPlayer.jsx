@@ -18,6 +18,9 @@ export default function AudioPlayer({ list }) {
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
   const audioRef = useRef(null);
+  const listType = list.artist ? 'album' : 'playlist';
+
+  console.log(list);
 
   const togglePlay = () => {
     if (isPlaying) {
@@ -98,18 +101,24 @@ export default function AudioPlayer({ list }) {
       <div className='flex-1 mx-44 overflow-y-auto p-8'>
         <h1 className='text-3xl font-bold mb-6'>{list.name}</h1>
 
-        <ul className='space-y-4'>
+        <ul className='space-y-4 bg-card text-card-foreground w-full border border-border h-2/3 rounded-md'>
           {list.songs.map(song => (
             <li
               key={song.id}
-              className='flex items-center space-x-4 p-2 rounded cursor-pointer'
+              className='flex border-b mx-1 border-accent-foreground items-center space-x-4 p-2 rounded cursor-pointer'
               onClick={() => playSong(song)}
             >
-              <div>
+              <div className='flex items-center justify-center gap-2'>
                 <h3 className='font-semibold'>{song.name}</h3>
-
-                <p className='text-sm '>{song.artist}</p>
+                {listType === 'album' ? (
+                  <p className='text-xs'>
+                    {list.artist[0].first_name} {list.artist[0].last_name}
+                  </p>
+                ) : (
+                  ''
+                )}
               </div>
+
               <span className='ml-auto text-sm '>{song.duration}</span>
             </li>
           ))}
@@ -125,12 +134,8 @@ export default function AudioPlayer({ list }) {
         />
 
         <div className='flex-shrink-0 w-48'>
-          {currentSong && (
-            <>
-              <h3 className='font-semibold truncate'>{currentSong.name}</h3>
-              <p className='text-sm truncate'>{currentSong.artist}</p>
-            </>
-          )}
+          {/* TODO: Add album artwork and song artist*/}
+          {currentSong && <h3 className='font-semibold'>{currentSong.name}</h3>}
         </div>
 
         <div className='flex-1 flex flex-col items-center'>
@@ -171,7 +176,7 @@ export default function AudioPlayer({ list }) {
               className='flex-1 h-1 rounded-lg appearance-none cursor-pointer'
             />
 
-            <span className='text-xs  w-10'>{formatTime(duration)}</span>
+            <span className='text-xs w-10'>{formatTime(duration)}</span>
           </div>
         </div>
 

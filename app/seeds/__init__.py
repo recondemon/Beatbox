@@ -5,6 +5,7 @@ from .albums import seed_albums, undo_albums
 from .songs import seed_songs, undo_songs
 from .genres import seed_genres, undo_genres
 from .likes import seed_likes, undo_likes
+from .linkin_park import seed_linkin_park, undo_linkin_park
 from app.models.db import db, environment, SCHEMA
 
 # Creates a seed group to hold our commands
@@ -26,12 +27,14 @@ def seed():
         undo_playlists()
         undo_songs()
         undo_likes()
+        undo_linkin_park()
     seed_users()
     seed_albums()
     seed_genres()
     seed_playlists()
     seed_songs()
     seed_likes()
+    seed_linkin_park()
     # Add other seed functions here
 
 
@@ -44,4 +47,5 @@ def undo():
     undo_songs()
     undo_genres()
     undo_likes()
+    undo_linkin_park()
     # Add other undo functions here

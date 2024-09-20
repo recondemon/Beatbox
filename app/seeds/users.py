@@ -7,7 +7,6 @@ User = Models.Artist
 # Adds a demo user, you can add other users here if you want
 def seed_users():
     demo = User(
-        username="Demo",
         email="demo@aa.io",
         password="password",
         first_name="Demo",
@@ -15,7 +14,6 @@ def seed_users():
         bio="NICE",
     )
     marnie = User(
-        username="marnie",
         email="marnie@aa.io",
         password="password",
         first_name="Demo",
@@ -23,7 +21,6 @@ def seed_users():
         bio="NICE",
     )
     bobbie = User(
-        username="bobbie",
         email="bobbie@aa.io",
         password="password",
         first_name="Demo",
@@ -45,8 +42,8 @@ def seed_users():
 # it will reset the primary keys for you as well.
 def undo_users():
     if environment == "production":
-        db.session.execute(f"TRUNCATE table {SCHEMA}.users RESTART IDENTITY CASCADE;")
+        db.session.execute(f"TRUNCATE table {SCHEMA}.artists RESTART IDENTITY CASCADE;")
     else:
-        db.session.execute(text("DELETE FROM users"))
+        db.session.execute(text("DELETE FROM artists"))
 
     db.session.commit()

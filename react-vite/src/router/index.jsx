@@ -6,6 +6,7 @@ import Home from '../components/Home/Home';
 import PlaylistDetails from '../components/Home/PlaylistDetails/PlaylistDetails';
 import AlbumDetails from '../components/Home/AlbumDetails/AlbumDetails';
 import ArtistDetails from '../components/Home/ArtistDetails/ArtistDetails';
+import ManageSongs from '../components/ManageSongs/ManageSongs';
 
 export const router = createBrowserRouter([
   {
@@ -54,6 +55,10 @@ export const router = createBrowserRouter([
           return playlist;
         },
       },
+      {
+        path: '/userId/songs',
+        element: <ManageSongs />,
+      }
     ],
   },
 ]);

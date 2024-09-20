@@ -3,7 +3,7 @@ from flask import Flask
 from models import db, Song, Album, Artist, Genre
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'your_database_uri_here'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'DATABASE_URL'
 db.init_app(app)
 
 # Linkin Park Seed

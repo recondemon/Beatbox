@@ -1,14 +1,21 @@
-import React from 'react'
+import {useState, useEffect } from 'react'
 
 const SongDetails = () => {
-
-    const genres = [
-        "rock",
-        "rap",
-        "pop",
-        "country",
-    ]
-
+    const [genres, setGenres] = useState([])
+    const [selectedGenre, setSelectedGenre] = useState('')
+    useEffect(() => {
+        const fetchGenres = async () => {
+            try {
+                const response = await fetch('/genres/')
+                const data = await response.json()
+                setGenres(data)
+            } catch (error) {
+                console.error('Error fetching genres:', error)
+            }
+        }
+        fetchGenres()
+    }, [])
+    
   return (
     <div className='flex flex-col mt-4 p-4'>
         <div className='flex gap-2'>

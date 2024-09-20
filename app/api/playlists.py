@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from app.models import Models, db
 from flask_login import current_user, login_required
-from app.api.playlists import PlaylistForm
+from app.forms.playlist_form import PlaylistForm
 
 Playlist = Models.Playlist
 PlaylistSong = Models.PlaylistSong

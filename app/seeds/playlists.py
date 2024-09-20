@@ -10,21 +10,21 @@ def seed_playlists():
     demo_playlist = Playlist(
         name="Demo's Favorites",
         description="My all-time favorites",
-        isPublic=True,
+        is_public=True,
         owner_id=users[0].id,
     )
 
     marnie_playlist = Playlist(
         name="Marnie's Mix",
         description="A mix of everything",
-        isPublic=False,
+        is_public=False,
         owner_id=users[1].id,
     )
 
     bobbie_playlist = Playlist(
         name="Bobbie's Beats",
         description="Best beats around",
-        isPublic=True,
+        is_public=True,
         owner_id=users[2].id,
     )
 

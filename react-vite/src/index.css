@@ -643,11 +643,14 @@ input {
   margin-bottom: 2rem;
 }
 
+<<<<<<< HEAD
 .mx-1 {
   margin-left: 0.25rem;
   margin-right: 0.25rem;
 }
 
+=======
+>>>>>>> signupForm
 .mb-2 {
   margin-bottom: 0.5rem;
 }
@@ -720,6 +723,7 @@ input {
   height: 100%;
 }
 
+<<<<<<< HEAD
 .h-\[calc\(100vh-164px\)\] {
   height: calc(100vh - 164px);
 }
@@ -728,6 +732,8 @@ input {
   height: 66.666667%;
 }
 
+=======
+>>>>>>> signupForm
 .min-h-40 {
   min-height: 10rem;
 }
@@ -957,10 +963,13 @@ input {
   background-color: var(--primary);
 }
 
+<<<<<<< HEAD
 .bg-card-foreground {
   background-color: var(--card-foreground);
 }
 
+=======
+>>>>>>> signupForm
 .bg-opacity-70 {
   --tw-bg-opacity: 0.7;
 }
@@ -1075,10 +1084,13 @@ input {
   color: var(--secondary-foreground);
 }
 
+<<<<<<< HEAD
 .text-card-foreground {
   color: var(--card-foreground);
 }
 
+=======
+>>>>>>> signupForm
 .shadow {
   --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);

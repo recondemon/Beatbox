@@ -7,9 +7,12 @@ import "./SignupForm.css";
 function SignupFormModal() {
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
+  const [bandName, setBandName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [bio, setBio] = useState("");
   const [errors, setErrors] = useState({});
   const { closeModal } = useModal();
 
@@ -25,8 +28,11 @@ function SignupFormModal() {
 
     const serverResponse = await dispatch(
       thunkSignup({
+        firstName,
+        lastName,
         email,
-        username,
+        bandName,
+        bio,
         password,
       })
     );
@@ -69,7 +75,6 @@ function SignupFormModal() {
             />
           </div>
         </div>
-        <div className="flex gap-2 mt-2">
           <div className="flex flex-col">
             <label>
               Email:
@@ -85,17 +90,16 @@ function SignupFormModal() {
           </div>
           <div className="flex flex-col">
             <label>
-              Username:
+              Band Name(optional):
             </label>
               <input
                 type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
+                value={bandName}
+                onChange={(e) => setBandName(e.target.value)}
+                placeholder="Enter band name"
               />
             {errors.username && <p>{errors.username}</p>}
           </div>
-        </div>
         <div>
           <div className="flex flex-col">
             <label>

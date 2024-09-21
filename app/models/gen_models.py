@@ -376,9 +376,9 @@ def get_models_class(db, structure) -> Models:
                     kwargs = {}
                     for val in col_val:
                         if type(val) is str:
-                            strings.append(val)
+                            strings.append(add_prefix_for_prod(val))
                         else:
-                            kwargs = val
+                            kwargs = add_prefix_for_prod(val)
                     _class_.__table_args__ = (
                         *_class_.__table_args__,
                         db.Index(*strings, **kwargs),
@@ -389,9 +389,9 @@ def get_models_class(db, structure) -> Models:
                         kwargs = {}
                         for val in args:
                             if type(val) is str:
-                                strings.append(val)
+                                strings.append(add_prefix_for_prod(val))
                             else:
-                                kwargs = val
+                                kwargs = add_prefix_for_prod(val)
                         _class_.__table_args__ = (
                             *_class_.__table_args__,
                             db.Index(*strings, **kwargs),

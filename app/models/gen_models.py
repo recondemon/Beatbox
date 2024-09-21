@@ -2,7 +2,7 @@ from collections.abc import Iterable
 from datetime import datetime
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-from .db import db, environment, SCHEMA
+from .db import db, environment, SCHEMA, add_prefix_for_prod
 
 __table_args__ = ()
 if environment == "production":
@@ -407,7 +407,7 @@ def get_models_class(db, structure) -> Models:
                         key,
                         db.Column(
                             db.Integer,
-                            db.ForeignKey(fk),
+                            db.ForeignKey(add_prefix_for_prod(fk))
                         ),
                     )
                 else:

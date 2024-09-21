@@ -331,7 +331,7 @@ def get_models_class(db, structure) -> Models:
             return db.relationship(args[0], back_populates=args[1])
 
         if _length_ == 3:
-            return db.relationship(args[0], back_populates=args[1], secondary=args[2])
+            return db.relationship(args[0], back_populates=args[1], secondary=add_prefix_for_prod(args[2]))
 
         raise ValueError
 
@@ -376,9 +376,9 @@ def get_models_class(db, structure) -> Models:
                     kwargs = {}
                     for val in col_val:
                         if type(val) is str:
-                            strings.append(add_prefix_for_prod(val))
+                            strings.append(val)
                         else:
-                            kwargs = add_prefix_for_prod(val)
+                            kwargs = val
                     _class_.__table_args__ = (
                         *_class_.__table_args__,
                         db.Index(*strings, **kwargs),
@@ -389,9 +389,9 @@ def get_models_class(db, structure) -> Models:
                         kwargs = {}
                         for val in args:
                             if type(val) is str:
-                                strings.append(add_prefix_for_prod(val))
+                                strings.append(val)
                             else:
-                                kwargs = add_prefix_for_prod(val)
+                                kwargs = val
                         _class_.__table_args__ = (
                             *_class_.__table_args__,
                             db.Index(*strings, **kwargs),

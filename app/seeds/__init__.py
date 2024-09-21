@@ -1,11 +1,13 @@
 from flask.cli import AppGroup
 from .users import seed_users, undo_users
-from .playlists import seed_playlists, undo_playlists
-from .albums import seed_albums, undo_albums
-from .songs import seed_songs, undo_songs
-from .genres import seed_genres, undo_genres
-from .likes import seed_likes, undo_likes
 from .linkin_park import seed_linkin_park, undo_linkin_park
+from .seether import seed_seether, undo_seether
+from .rascal_flatts import seed_rascal_flatts, undo_rascal_flatts
+from .katy_perry import seed_katy_perry, undo_katy_perry
+from .limp_bizkit import seed_limp_bizkit, undo_limp_bizkit
+from .beastie_boys import seed_beastie_boys, undo_beastie_boys
+from .taylor_swift import seed_taylor_swift, undo_taylor_swift
+from .toby_keith import seed_toby_keith, undo_toby_keith
 from app.models.db import db, environment, SCHEMA
 
 # Creates a seed group to hold our commands
@@ -22,19 +24,23 @@ def seed():
         # the schema name (see comment in users.py undo_users function).
         # Make sure to add all your other model's undo functions below
         undo_users()
-        undo_albums()
-        undo_genres()
-        undo_playlists()
-        undo_songs()
-        undo_likes()
         undo_linkin_park()
+        undo_seether()
+        undo_rascal_flatts()
+        undo_katy_perry()
+        undo_limp_bizkit()
+        undo_beastie_boys()
+        undo_taylor_swift()
+        undo_toby_keith()
     seed_users()
-    seed_albums()
-    seed_genres()
-    seed_playlists()
-    seed_songs()
-    seed_likes()
     seed_linkin_park()
+    seed_seether()
+    seed_rascal_flatts()
+    seed_katy_perry()
+    seed_limp_bizkit()
+    seed_beastie_boys()
+    seed_taylor_swift()
+    seed_toby_keith()
     # Add other seed functions here
 
 
@@ -42,10 +48,12 @@ def seed():
 @seed_commands.command('undo')
 def undo():
     undo_users()
-    undo_playlists()
-    undo_albums()
-    undo_songs()
-    undo_genres()
-    undo_likes()
+    undo_rascal_flatts()
+    undo_seether()
     undo_linkin_park()
+    undo_katy_perry()
+    undo_limp_bizkit()
+    undo_beastie_boys()
+    undo_taylor_swift()
+    undo_toby_keith()
     # Add other undo functions here

@@ -9,31 +9,40 @@ Artist = Models.Artist
 Genre = Models.Genre
 
 
-# Linkin Park Seed
+
 def seed_linkin_park():
-    linkin_park = Artist(
-        band_name="Linkin Park",
-        email="hello@yahoo.com",
-        password="password",
-        first_name="Chester",
-        last_name="Bennington",
-        bio="Legend"
-    )
-    db.session.add(linkin_park)
+
+    linkin_park = Artist.query.filter_by(band_name="Linkin Park").first()
+
+    if not linkin_park:
+        linkin_park = Artist(
+            band_name="Linkin Park",
+            email="chesterb@google.com",
+            password="password",
+            first_name="Chester",
+            last_name="Bennington",
+            bio="Linkin Park is an American rock band formed in 1996 in Agoura Hills, California. Known for blending rock, nu-metal, and electronic music, they achieved worldwide fame with their debut album Hybrid Theory \(2000\). The band’s lineup included Chester Bennington and Mike Shinoda, whose dynamic mix of vocals defined their sound. Hits like 'In the End' and 'Numb' made them one of the most successful bands of the 2000s. After Bennington’s tragic death in 2017, their influence continues to resonate with fans around the world."
+        )
+        db.session.add(linkin_park)
 
     genre_rock = Genre.query.filter_by(name="Rock").first()
 
-    # Check if Album exists
+    if not genre_rock:
+        genre_rock = Genre(name="Rock")
+        db.session.add(genre_rock)
 
-    album_cover_url = "https://beatbox-album-art.s3.us-east-2.amazonaws.com/Linkin+Park/Hybrid+Theory.jpg"
-    hybrid_theory = Album(
-        name="Hybrid Theory",
-        description="Hybrid Theory is the debut album by the American rock band Linkin Park, released in 2000. The album is a fusion of genres that includes rock, metal, rap, and electronic music.",
-        release_date=datetime(2000, 10, 24),
-        artist=linkin_park,
-        album_cover=album_cover_url,
-    )
-    db.session.add(hybrid_theory)
+    hybrid_theory = Album.query.filter_by(name="Hybrid Theory", artist_id=linkin_park.id).first()
+
+    if not hybrid_theory:
+        album_cover_url = "https://beatbox-album-art.s3.us-east-2.amazonaws.com/Linkin+Park/Hybrid+Theory.jpg"
+        hybrid_theory = Album(
+            name="Hybrid Theory",
+            description="Hybrid Theory is the debut album by the American rock band Linkin Park, released in 2000. The album is a fusion of genres that includes rock, metal, rap, and electronic music.",
+            release_date=datetime(2000, 10, 24),
+            artist=linkin_park,
+            album_cover=album_cover_url,
+        )
+        db.session.add(hybrid_theory)
 
     songs = [
         {
@@ -59,18 +68,18 @@ def seed_linkin_park():
     ]
 
     for song_data in songs:
-        # Check if the song exists
+        existing_song = Song.query.filter_by(name=song_data["name"], album_id=hybrid_theory.id).first()
 
-        new_song = Song(
-            name=song_data["name"],
-            url=song_data["url"],
-            album=hybrid_theory,
-            artist=linkin_park,
-            genre=genre_rock,
-        )
-        db.session.add(new_song)
+        if not existing_song:
+            new_song = Song(
+                name=song_data["name"],
+                url=song_data["url"],
+                album=hybrid_theory,
+                artist=linkin_park,
+                genre=genre_rock,
+            )
+            db.session.add(new_song)
 
-    # Commit
     db.session.commit()
 
 

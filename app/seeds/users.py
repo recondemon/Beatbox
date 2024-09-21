@@ -7,30 +7,21 @@ User = Models.Artist
 # Adds a demo user, you can add other users here if you want
 def seed_users():
     demo = User(
-        email="demo@aa.io",
+        email="demo@google.com",
         password="password",
         first_name="Demo",
         last_name="Lition",
-        bio="NICE",
+        bio="A super fancy demo bio because we are an epic demo writting a demo bio",
     )
-    marnie = User(
-        email="marnie@aa.io",
+    demo2 = User(
+        email="demo2@google.com",
         password="password",
-        first_name="Demo",
-        last_name="Lition",
-        bio="NICE",
+        first_name="Demo-two",
+        last_name="Litioning",
+        bio="Here comes another epic bio for the second demo writting epic demo bio",
     )
-    bobbie = User(
-        email="bobbie@aa.io",
-        password="password",
-        first_name="Demo",
-        last_name="Lition",
-        bio="NICE",
-    )
-
     db.session.add(demo)
-    db.session.add(marnie)
-    db.session.add(bobbie)
+    db.session.add(demo2)
     db.session.commit()
 
 

@@ -34,6 +34,8 @@ export default function AudioPlayer({ list }) {
     setIsPlaying(!isPlaying);
   };
 
+  // FIXME: Currently only shows time after a song is selected
+  // Updates duration and stores it for each song, including current song
   const handleLoadedMetadata = () => {
     const duration = audioRef.current.duration;
 
@@ -60,6 +62,7 @@ export default function AudioPlayer({ list }) {
     }
   };
 
+  // Handles time state change during a song & when scrubbing
   const handleProgressChange = e => {
     const newTime = parseFloat(e.target.value);
     if (audioRef.current) {
@@ -107,11 +110,12 @@ export default function AudioPlayer({ list }) {
   }, [currentSong]);
 
   return (
-    // Song list
     <div className='flex flex-col h-[calc(100vh-48px)]'>
+      {/* TODO: Possibly extract this to a separate component */}
       <div className='flex-1 mx-44 overflow-y-auto p-8'>
         <h1 className='text-3xl font-bold mb-6'>{list.name}</h1>
 
+        {/* Song list */}
         <ul className='space-y-4 bg-card text-card-foreground w-full border border-border h-2/3 rounded-md'>
           {list.songs.map(song => (
             <li
@@ -141,11 +145,12 @@ export default function AudioPlayer({ list }) {
         />
 
         <div className='flex-shrink-0 w-48'>
-          {/* TODO: Add album artwork and song artist*/}
+          {/* TODO: Add album artwork and song artist */}
           {currentSong && <h3 className='font-semibold'>{currentSong.name}</h3>}
         </div>
 
         <div className='flex-1 flex flex-col items-center'>
+          {/* TODO: Add functionality to suffle, repeat, prev, and next */}
           <div className='flex items-center space-x-4 mb-2'>
             <button className=' '>
               <Shuffle size={20} />

@@ -38,14 +38,20 @@ def user_albums(user_id):
 @login_required
 def create_album():
     form = AlbumForm()
+    print("\n\n\n\n")
 
     if form.validate_on_submit():
+        print("LETS GOOOO")
         new_album = Album()
+        print("WE MADE IT")
         form.populate_obj(new_album)
         new_album.album_cover = upload_file_to_s3(form.data["file"])
+        print("WE UPLOADED")
         new_album.artist_id = current_user.id
         db.session.add(new_album)
+        print("WE ADDED")
         db.session.commit()
+        print("\n\n\n\n")
         return new_album.to_json(), 201
 
     return jsonify({"error": "Bad Data"}), 400

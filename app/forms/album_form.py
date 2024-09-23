@@ -6,7 +6,7 @@ from wtforms import IntegerField, StringField, DateField, TextAreaField, SubmitF
 class AlbumForm(FlaskForm):
     file = FileField(
         "File",
-        validators=[FileRequired(), FileAllowed(["mp3", "m4a", "aac", "ogg", "wma"])],
+        validators=[FileRequired(), FileAllowed(["jpg", "png", "svg"])],
     )
     name = StringField("Album Name")
     release_date = DateField("Date")

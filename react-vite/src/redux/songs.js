@@ -41,9 +41,9 @@ export const fetchSong = (songId) => async (dispatch) => {
   return song;
 };
 
-export const selectSongs = (state) => state.playlists;
-export const selectSongsArray = createSelector(selectSongs, (playlists) => {
-  return Object.values(playlists);
+export const selectSongs = (state) => state.songs;
+export const selectSongsArray = createSelector(selectSongs, (songs) => {
+  return Object.values(songs);
 });
 
 export default function songsReducer(state = {}, action) {

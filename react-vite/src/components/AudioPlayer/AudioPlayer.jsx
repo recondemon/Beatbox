@@ -11,20 +11,20 @@ import {
 } from 'lucide-react';
 
 export default function AudioPlayer({ list }) {
-  const [currentSong, setCurrentSong] = useState(list.songs[0]);
+  const [currentSong, setCurrentSong] = useState(list?.songs[0]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [songDurations, setSongDurations] = useState({});
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
   const audioRef = useRef(null);
-  const artist = list.artist
-    ? list.artist[0].band_name
-      ? `${list.artist[0].band_name}`
-      : `${list.artist[0].first_name} ${list.artist[0].last_name}`
+  const artist = list?.artist
+    ? list?.artist[0].band_name
+      ? `${list?.artist[0].band_name}`
+      : `${list?.artist[0].first_name} ${list?.artist[0].last_name}`
     : null;
-  const releaseYear = new Date(list.releaseDate).getFullYear() || null;
-  const songCount = list.songs?.length;
+  const releaseYear = new Date(list?.releaseDate).getFullYear() || null;
+  const songCount = list?.songs?.length;
 
   console.log(list)
 
@@ -122,7 +122,7 @@ export default function AudioPlayer({ list }) {
       <div className='flex-1 mx-44 overflow-y-auto p-8'>
         <div className='mb-6'>
           <span className='flex gap-2 items-center'>
-            <h2 className='text-2xl font-bold'>{list.name}</h2>
+            <h2 className='text-2xl font-bold'>{list?.name}</h2>
 
             {releaseYear && <p className='text-sm'> • {releaseYear}</p>}
 
@@ -132,12 +132,12 @@ export default function AudioPlayer({ list }) {
             </p>
           </span>
 
-          <p className='text-sm mt-1'>{list.description}</p>
+          <p className='text-sm mt-1'>{list?.description}</p>
         </div>
 
         {/* Song list */}
         <ul className='space-y-4 bg-card text-card-foreground w-full border border-border h-2/3 rounded-md py-2'>
-          {list.songs.length ? (
+          {list?.songs.length ? (
             list.songs.map(song => (
               <li
                 key={song.id}

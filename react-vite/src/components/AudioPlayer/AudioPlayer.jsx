@@ -24,6 +24,8 @@ export default function AudioPlayer({ list }) {
       ? `${list.artist[0].band_name}`
       : `${list.artist[0].first_name} ${list.artist[0].last_name}`
     : null;
+  const releaseYear = new Date(list.releaseDate).getFullYear() || null;
+  const songCount = list.songs.length;
 
   const togglePlay = () => {
     if (isPlaying) {
@@ -34,16 +36,13 @@ export default function AudioPlayer({ list }) {
     setIsPlaying(!isPlaying);
   };
 
-  // FIXME: Currently only shows time after a song is selected
   // Updates duration and stores it for each song, including current song
-  const handleLoadedMetadata = () => {
-    const duration = audioRef.current.duration;
-
-    setDuration(duration);
+  const handleLoadedMetadata = (songId, audioElement) => {
+    const duration = audioElement?.duration;
 
     setSongDurations(prevDurations => ({
       ...prevDurations,
-      [currentSong.id]: duration,
+      [songId]: duration,
     }));
   };
 
@@ -74,9 +73,11 @@ export default function AudioPlayer({ list }) {
   const handleVolumeChange = e => {
     const newVolume = parseFloat(e.target.value);
     setVolume(newVolume);
+
     if (audioRef.current) {
       audioRef.current.volume = newVolume;
     }
+
     setIsMuted(newVolume === 0);
   };
 
@@ -99,12 +100,15 @@ export default function AudioPlayer({ list }) {
   };
 
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.addEventListener('timeupdate', handleTimeUpdate);
+    const currRef = audioRef.current;
+
+    if (currRef) {
+      currRef.addEventListener('timeupdate', handleTimeUpdate);
     }
+
     return () => {
-      if (audioRef.current) {
-        audioRef.current.removeEventListener('timeupdate', handleTimeUpdate);
+      if (currRef) {
+        currRef.removeEventListener('timeupdate', handleTimeUpdate);
       }
     };
   }, [currentSong]);
@@ -113,23 +117,48 @@ export default function AudioPlayer({ list }) {
     <div className='flex flex-col h-[calc(100vh-48px)]'>
       {/* TODO: Possibly extract this to a separate component */}
       <div className='flex-1 mx-44 overflow-y-auto p-8'>
-        <h1 className='text-3xl font-bold mb-6'>{list.name}</h1>
+        <div className='mb-6'>
+          <span className='flex gap-2 items-center'>
+            <h2 className='text-2xl font-bold'>{list.name}</h2>
+
+            {releaseYear && <p className='text-sm'> • {releaseYear}</p>}
+
+            <p className='text-sm'>
+              {' '}
+              • {songCount} {`${songCount > 1 ? 'songs' : 'song'}`}
+            </p>
+          </span>
+
+          <p className='text-sm mt-1'>{list.description}</p>
+        </div>
 
         {/* Song list */}
         <ul className='space-y-4 bg-card text-card-foreground w-full border border-border h-2/3 rounded-md'>
           {list.songs.map(song => (
             <li
               key={song.id}
-              className='flex border-b mx-4 border-accent-foreground items-center justify-between p-2 rounded cursor-pointer'
+              className='flex border-b mx-4 border-muted items-center justify-evenly p-2 cursor-pointer'
               onClick={() => playSong(song)}
             >
+              <audio
+                src={song.url}
+                onLoadedMetadata={e => handleLoadedMetadata(song.id, e.target)}
+                className='hidden'
+              />
+
+              <div className='flex-1'>
                 <h3 className='font-semibold'>{song.name}</h3>
+              </div>
 
-                <div className='text-sm'>{artist}</div>
+              <div className='flex-1 text-center'>
+                <p className='text-sm'>{artist}</p>
+              </div>
 
-                <div className='text-xs'>
+              <div className='flex-1 text-right'>
+                <p className='text-xs'>
                   {songDurations[song.id] ? formatTime(songDurations[song.id]) : '--:--'}
-                </div>
+                </p>
+              </div>
             </li>
           ))}
         </ul>
@@ -137,10 +166,10 @@ export default function AudioPlayer({ list }) {
 
       {/* Player */}
       <div className='p-4 flex items-center space-x-4 border-t border-accent'>
+        {/* FIXME: Currently doesn't display default selected song duration until song starts playing */}
         <audio
           ref={audioRef}
-          src={currentSong?.url}
-          onLoadedMetadata={handleLoadedMetadata}
+          src={currentSong.url}
           className='hidden'
         />
 
@@ -182,13 +211,13 @@ export default function AudioPlayer({ list }) {
             <input
               type='range'
               min={0}
-              max={duration || 1}
+              max={songDurations[currentSong.id] || 1}
               value={currentTime}
               onChange={handleProgressChange}
               className='flex-1 h-1 rounded-lg appearance-none cursor-pointer'
             />
 
-            <span className='text-xs w-10'>{formatTime(duration)}</span>
+            <span className='text-xs w-10'>{formatTime(songDurations[currentSong.id])}</span>
           </div>
         </div>
 

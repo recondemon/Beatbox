@@ -14,7 +14,7 @@ export const fetchArtist = id => async dispatch => {
 
   if (res.ok) {
     const data = await res.json();
-    dispatch(loadAll(data));
+    dispatch(loadOne(data));
 
     return data;
   }

@@ -26,6 +26,8 @@ export default function AudioPlayer({ list }) {
   const releaseYear = new Date(list.releaseDate).getFullYear() || null;
   const songCount = list.songs?.length;
 
+  console.log(list)
+
   const togglePlay = () => {
     if (isPlaying) {
       audioRef.current?.pause();
@@ -126,7 +128,7 @@ export default function AudioPlayer({ list }) {
 
             <p className='text-sm'>
               {' '}
-              • {songCount} {`${songCount > 1 ? 'songs' : 'song'}`}
+              • {songCount} {`${songCount === 1 ? 'song' : 'songs'}`}
             </p>
           </span>
 
@@ -135,33 +137,37 @@ export default function AudioPlayer({ list }) {
 
         {/* Song list */}
         <ul className='space-y-4 bg-card text-card-foreground w-full border border-border h-2/3 rounded-md py-2'>
-          {list.songs.map(song => (
-            <li
-              key={song.id}
-              className='flex border-b mx-4 border-muted items-center justify-evenly p-2 cursor-pointer'
-              onClick={() => playSong(song)}
-            >
-              <audio
-                src={song.url}
-                onLoadedMetadata={e => handleLoadedMetadata(song.id, e.target)}
-                className='hidden'
-              />
+          {list.songs.length ? (
+            list.songs.map(song => (
+              <li
+                key={song.id}
+                className='flex border-b mx-4 border-muted items-center justify-evenly p-2 cursor-pointer'
+                onClick={() => playSong(song)}
+              >
+                <audio
+                  src={song.url}
+                  onLoadedMetadata={e => handleLoadedMetadata(song.id, e.target)}
+                  className='hidden'
+                />
 
-              <div className='flex-1'>
-                <h3 className='font-semibold'>{song.name}</h3>
-              </div>
+                <div className='flex-1'>
+                  <h3 className='font-semibold'>{song.name}</h3>
+                </div>
 
-              <div className='flex-1 text-center'>
-                <p className='text-sm'>{artist}</p>
-              </div>
+                <div className='flex-1 text-center'>
+                  <p className='text-sm'>{artist}</p>
+                </div>
 
-              <div className='flex-1 text-right'>
-                <p className='text-xs'>
-                  {songDurations[song.id] ? formatTime(songDurations[song.id]) : '--:--'}
-                </p>
-              </div>
-            </li>
-          ))}
+                <div className='flex-1 text-right'>
+                  <p className='text-xs'>
+                    {songDurations[song.id] ? formatTime(songDurations[song.id]) : '--:--'}
+                  </p>
+                </div>
+              </li>
+            ))
+          ) : (
+            <h2 className='text-center text-2xl mt-2'>No songs yet</h2>
+          )}
         </ul>
       </div>
 
@@ -170,7 +176,7 @@ export default function AudioPlayer({ list }) {
         {/* FIXME: Currently doesn't display default selected song duration until song starts playing */}
         <audio
           ref={audioRef}
-          src={currentSong.url}
+          src={currentSong?.url}
           className='hidden'
         />
 
@@ -212,13 +218,13 @@ export default function AudioPlayer({ list }) {
             <input
               type='range'
               min={0}
-              max={songDurations[currentSong.id] || 1}
+              max={songDurations[currentSong?.id] || 1}
               value={currentTime}
               onChange={handleProgressChange}
               className='flex-1 h-1 rounded-lg appearance-none cursor-pointer'
             />
 
-            <span className='text-xs w-10'>{formatTime(songDurations[currentSong.id])}</span>
+            <span className='text-xs w-10'>{formatTime(songDurations[currentSong?.id])}</span>
           </div>
         </div>
 

@@ -11,6 +11,7 @@ albums = Blueprint("albums", __name__)
 
 # get all albums
 @albums.route("/")
+@login_required
 def all_albums():
     albums = Album.query.all()
     return jsonify([album.to_json() for album in albums])
@@ -18,6 +19,7 @@ def all_albums():
 
 # get an album by album id
 @albums.route("/<int:album_id>")
+@login_required
 def album(album_id):
     album = Album.query.get(album_id)
     if not album:
@@ -27,6 +29,7 @@ def album(album_id):
 
 # get all albums by user id
 @albums.route("/user/<int:user_id>")
+@login_required
 def user_albums(user_id):
     albums = Album.query.filter_by(artist_id=user_id).all()
     return jsonify([album.to_json() for album in albums])
@@ -52,6 +55,7 @@ def create_album():
 
 # edit an album
 @albums.route("/<int:album_id>", methods=["PUT"])
+@login_required
 def update_album(album_id):
     album = Album.query.get(album_id)
     if not album:

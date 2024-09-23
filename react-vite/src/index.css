@@ -638,6 +638,11 @@ input {
   margin-right: 11rem;
 }
 
+.mx-60 {
+  margin-left: 15rem;
+  margin-right: 15rem;
+}
+
 .mx-8 {
   margin-left: 2rem;
   margin-right: 2rem;
@@ -646,26 +651,6 @@ input {
 .my-8 {
   margin-top: 2rem;
   margin-bottom: 2rem;
-}
-
-.mx-64 {
-  margin-left: 16rem;
-  margin-right: 16rem;
-}
-
-.mx-60 {
-  margin-left: 15rem;
-  margin-right: 15rem;
-}
-
-.my-6 {
-  margin-top: 1.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.my-2 {
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
 }
 
 .mb-2 {
@@ -750,6 +735,10 @@ input {
 
 .min-h-\[10rem\] {
   min-height: 10rem;
+}
+
+.min-h-screen {
+  min-height: 100vh;
 }
 
 .w-1\/2 {
@@ -943,16 +932,6 @@ input {
   border-color: var(--muted);
 }
 
-.border-red-500 {
-  --tw-border-opacity: 1;
-  border-color: rgb(239 68 68 / var(--tw-border-opacity));
-}
-
-.border-red-700 {
-  --tw-border-opacity: 1;
-  border-color: rgb(185 28 28 / var(--tw-border-opacity));
-}
-
 .bg-black {
   --tw-bg-opacity: 1;
   background-color: rgb(0 0 0 / var(--tw-bg-opacity));
@@ -972,6 +951,10 @@ input {
 
 .bg-primary {
   background-color: var(--primary);
+}
+
+.bg-background {
+  background-color: var(--background);
 }
 
 .bg-opacity-70 {
@@ -1001,10 +984,6 @@ input {
 
 .p-8 {
   padding: 2rem;
-}
-
-.p-12 {
-  padding: 3rem;
 }
 
 .px-3 {

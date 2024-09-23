@@ -53,14 +53,14 @@ def sign_up():
     """
     form = SignUpForm()
     form["csrf_token"].data = request.cookies["csrf_token"]
+    print(f"\n\n FORM DATA {form.data} \n\n")
     if form.validate_on_submit():
         user = User(
-            username=form.data["username"],
             email=form.data["email"],
             password=form.data["password"],
-            first_name=form.data["username"],
-            last_name=form.data["username"],
-            bio="Bio Here",
+            first_name=form.data["first_name"],
+            last_name=form.data["last_name"],
+            bio=form.data["bio"],
         )
         db.session.add(user)
         db.session.commit()
@@ -72,6 +72,7 @@ def sign_up():
         db.session.add(liked)
         db.session.add(queue)
         db.session.add(library)
+        db.session.commit()
 
         login_user(user)
         print(user.to_dict(), user.to_json())

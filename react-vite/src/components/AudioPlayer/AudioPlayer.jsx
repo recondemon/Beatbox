@@ -126,7 +126,7 @@ export default function AudioPlayer({ list }) {
 
             <p className='text-sm'>
               {' '}
-              • {songCount} {`${songCount > 1 ? 'songs' : 'song'}`}
+              • {songCount} {`${songCount === 1 ? 'song' : 'songs'}`}
             </p>
           </span>
 

@@ -56,6 +56,9 @@
   "PlaylistSong": {
     "song_index": "Integer",
     "playlist_id": "Playlist",
-    "song_id": "Song"
+    "song_id": "Song",
+    "relationships": {
+      "playlist": ["Playlist"]
+    }
   }
 }

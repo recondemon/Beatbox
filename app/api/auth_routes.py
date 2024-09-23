@@ -4,7 +4,8 @@ from app.forms import LoginForm
 from app.forms import SignUpForm
 from flask_login import current_user, login_user, logout_user, login_required
 
-User = Models.Artist
+User = Models.Artist  # pyright: ignore
+Playlist = Models.Playlist  # pyright: ignore
 auth_routes = Blueprint("auth", __name__)
 
 
@@ -58,14 +59,24 @@ def sign_up():
             email=form.data["email"],
             password=form.data["password"],
             first_name=form.data["username"],
-            last_name= form.data["username"],
+            last_name=form.data["username"],
             bio="Bio Here",
         )
         db.session.add(user)
         db.session.commit()
+
+        # Default user playlists
+        liked = Playlist(name="Liked", is_public=False, owner_id=user.id)
+        queue = Playlist(name="Queue", is_public=False, owner_id=user.id)
+        library = Playlist(name="Library", is_public=False, owner_id=user.id)
+        db.session.add(liked)
+        db.session.add(queue)
+        db.session.add(library)
+
         login_user(user)
-        print(user.to_dict(),user.to_json())
+        print(user.to_dict(), user.to_json())
         return user.to_json()
+
     return form.errors, 401
 
 

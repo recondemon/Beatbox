@@ -5,7 +5,8 @@ import { fetchPlaylists, selectPlaylistsArray } from '../../redux/playlists';
 import { useEffect, useState } from 'react';
 import { fetchSongs, selectSongsArray } from '../../redux/songs';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import './Home.css';
+import './home.css';
+
 const Home = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.session.user);

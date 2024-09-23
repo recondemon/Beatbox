@@ -45,24 +45,24 @@ def seed_toby_keith():
 
     songs = [
         {
-            "url": "Courtesy Of The Red, White, And Blue (The Angry American)",
-            "name": "https://beatbox-songs.s3.us-east-2.amazonaws.com/Toby+Keith/Courtesy+Of+The+Red%2C+White%2C+and+Blue.mp3",
+            "url": "https://beatbox-songs.s3.us-east-2.amazonaws.com/Toby+Keith/Courtesy+Of+The+Red%2C+White%2C+and+Blue.mp3",
+            "name": "Courtesty Of The Red, White, and Blue",
         },
         {
             "url": "https://beatbox-songs.s3.us-east-2.amazonaws.com/Toby+Keith/Beer+For+My+Horses.mp3",
-            "name": "SONG_URL_2",
+            "name": "Beer For My Horses",
         },
         {
             "url": "https://beatbox-songs.s3.us-east-2.amazonaws.com/Toby+Keith/It+Works+For+Me.mp3",
-            "name": "SONG_URL_3",
+            "name": "It Works For Me",
         },
         {
             "url": "https://beatbox-songs.s3.us-east-2.amazonaws.com/Toby+Keith/Who's+Your+Daddy.mp3",
-            "name": "SONG_URL_4",
+            "name": "Who's Your Daddy",
         },
         {
             "url": "https://beatbox-songs.s3.us-east-2.amazonaws.com/Toby+Keith/Good+To+Go+To+Mexico.mp3",
-            "name": "SONG_URL_5",
+            "name": "Good To Go To Mexico",
         },
     ]
 

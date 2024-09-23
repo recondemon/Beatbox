@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from app.models import Models, db
-from flask_login import current_user, login_user, logout_user, login_required
+from flask_login import current_user, login_required
 from app.forms.album_form import AlbumForm
 from app.api.aws_upload import upload_file_to_s3, get_unique_filename, remove_file_from_s3
 
@@ -14,7 +14,7 @@ albums = Blueprint("albums", __name__)
 @login_required
 def all_albums():
     albums = Album.query.all()
-    return jsonify([album.to_json() for album in albums])
+    return [album.to_json() for album in albums]
 
 
 # get an album by album id
@@ -32,7 +32,7 @@ def album(album_id):
 @login_required
 def user_albums(user_id):
     albums = Album.query.filter_by(artist_id=user_id).all()
-    return jsonify([album.to_json() for album in albums])
+    return [album.to_json() for album in albums]
 
 
 # create an album, POST method

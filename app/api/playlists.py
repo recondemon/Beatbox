@@ -114,6 +114,8 @@ def get_liked():
         owner_id=current_user.id, is_public=False, name="Liked"
     ).first()
 
+    print(current_user.id)
+
     if not liked:
         return {"errors": "Liked playlist not found"}, 404
 

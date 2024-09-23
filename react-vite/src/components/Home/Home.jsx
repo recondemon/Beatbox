@@ -11,7 +11,7 @@ const Home = () => {
   const user = useSelector(state => state.session.user);
   const albums = useSelector(selectAlbumsArray);
   const playlists = useSelector(selectPlaylistsArray);
-  const songs = useSelector(selectSongsArray);
+  const songs = useSelector(selectSongsArray); 
 
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -46,9 +46,9 @@ const Home = () => {
   }
 
   return (
-    <div className='flex flex-col my-8 w-full px-10 justify-center items-center'>
+    <div className='flex flex-col my-8 w-full justify-center items-center'>
       {/* Search Bar */}
-      <div className="mb-6">
+      <div className="mb-6 w-full max-w-3xl mx-auto">
         <input
           type="text"
           value={searchTerm}
@@ -64,13 +64,13 @@ const Home = () => {
           <h2 className='mb-6 text-2xl font-bold'>Explore</h2>
 
           {/* Songs */}
-          <div className='relative mb-8'>
-            <h3 className="text-xl mb-4">Songs</h3>
-            <div className="flex items-center gap-4">
+          <div className='relative mb-8 w-full'>
+            <h3 className="text-xl mb-4 text-center">Songs</h3>
+            <div className="flex items-center gap-4 justify-center min-w-[70vw] max-w-[70vw] mx-auto">
               <ChevronLeft className='cursor-pointer' onClick={() => handleScroll('left', 'songs-section')} />
               <div
                 id="songs-section"
-                className="flex overflow-x-auto whitespace-nowrap gap-4"
+                className="flex overflow-x-auto whitespace-nowrap gap-4 min-w-[60vw] max-w-[60vw] mx-auto"
               >
                 {filterContent(songs).map(song => (
                   <Link key={song.id} to={`/song/${song.id}`}>
@@ -78,7 +78,7 @@ const Home = () => {
                       <p>Image</p>
                       <p className='text-lg font-semibold'>{song.name}</p>
                       <p className='text-sm'>
-                        by {song.artist[0].first_name} {song.artist[0].last_name}
+                        {song.artist?.[0]?.first_name} {song.artist?.[0]?.last_name}
                       </p>
                     </div>
                   </Link>
@@ -89,13 +89,13 @@ const Home = () => {
           </div>
 
           {/* Albums */}
-          <div className='relative mb-8'>
-            <h3 className="text-xl mb-4">Albums</h3>
-            <div className="flex items-center gap-4">
+          <div className='relative mb-8 w-full'>
+            <h3 className="text-xl mb-4 text-center">Albums</h3>
+            <div className="flex items-center gap-4 justify-center min-w-[70vw] max-w-[70vw] mx-auto">
               <ChevronLeft className='cursor-pointer' onClick={() => handleScroll('left', 'albums-section')} />
               <div
                 id="albums-section"
-                className="flex overflow-x-auto whitespace-nowrap gap-4"
+                className="flex overflow-x-auto whitespace-nowrap gap-4 mx-auto min-w-[60vw] max-w-[60vw]"
               >
                 {filterContent(albums).map(album => (
                   <Link key={album.id} to={`/album/${album.id}`}>
@@ -114,13 +114,13 @@ const Home = () => {
           </div>
 
           {/* Playlists */}
-          <div className='relative mb-8'>
-            <h3 className="text-xl mb-4">Playlists</h3>
-            <div className="flex items-center gap-4">
+          <div className='relative mb-8 w-full'>
+            <h3 className="text-xl mb-4 text-center">Playlists</h3>
+            <div className="flex items-center gap-4 justify-center min-w-[70vw] max-w-[70vw] mx-auto">
               <ChevronLeft className='cursor-pointer' onClick={() => handleScroll('left', 'playlists-section')} />
               <div
                 id="playlists-section"
-                className="flex overflow-x-auto whitespace-nowrap gap-4"
+                className="flex overflow-x-auto whitespace-nowrap gap-4 min-w-[60vw] max-w-[60vw] mx-auto"
               >
                 {filterContent(playlists).map(playlist => (
                   <Link key={playlist.id} to={`/playlist/${playlist.id}`}>

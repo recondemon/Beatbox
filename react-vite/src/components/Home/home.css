@@ -1,34 +1,29 @@
-
 .scrollbar-thin {
-    scrollbar-width: thick;
-  }
-  
-  .scrollbar-thumb-black {
-    scrollbar-color: var(--primary) transparent;
-  }
-  
+  scrollbar-width: thin !important;
+}
 
-  .scrollbar-thin::-webkit-scrollbar {
-    height: 8px;
-  }
-  
-  .scrollbar-thin::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    background-color: var(--primary);
-    border-radius: 10px;
-    border: 2px solid transparent;
-  }
-  
-  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background-color: var(--accent);
-  }
-  
+.scrollbar-thumb-black {
+  scrollbar-color: var(--primary) transparent !important;
+}
 
-  .scrollbar-thin::-webkit-scrollbar-button {
-    display: none;
-  }
+.scrollbar-thin::-webkit-scrollbar {
+  height: 8px !important;
+}
 
-  
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: var(--primary) !important;
+  border-radius: 10px !important;
+  border: 2px solid transparent !important;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background-color: var(--accent) !important;
+}
+
+.scrollbar-thin::-webkit-scrollbar-button {
+  display: none !important;
+}

@@ -24,7 +24,7 @@ export const fetchArtist = id => async dispatch => {
 };
 
 export const createArtist = (artist) => async (dispatch) => {
-  artist = await post("/artists", artist); //This will throw an error if there is an error
+  const artist = await post("/artists", artist); //This will throw an error if there is an error
   dispatch(loadOne(artist));
   return artist;
 };

@@ -31,12 +31,12 @@ export const fetchSongs = () => async (dispatch) => {
 };
 
 export const createSong = (song) => async (dispatch) => {
-  song = await post("/songs", song); //This will throw an error if there is an error
+  const song = await post("/songs", song); //This will throw an error if there is an error
   dispatch(loadOne(song));
   return song;
 };
 export const fetchSong = (songId) => async (dispatch) => {
-  song = await get("/songs/" + songId); //This will throw an error if there is an error
+  const song = await get("/songs/" + songId); //This will throw an error if there is an error
   dispatch(loadOne(song));
   return song;
 };

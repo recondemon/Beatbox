@@ -3,8 +3,9 @@ from app.models import Models, db
 from flask_login import current_user, login_required
 from app.forms.playlist_form import PlaylistForm
 
-Playlist = Models.Playlist  # pyright: ignore
-PlaylistSong = Models.PlaylistSong  # pyright: ignore
+Playlist = Models.Playlist # pyright: ignore
+PlaylistSong = Models.PlaylistSong # pyright: ignore
+Song = Models.Song # pyright: ignore
 playlists = Blueprint("playlists", __name__)
 
 

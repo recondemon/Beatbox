@@ -63,7 +63,7 @@ def seed_playlists():
             )
         )
         song_index = 0
-        for song in artist["songs"]:
+        for song in artist.songs:
             playlists.append(
                 PlaylistSong(
                     playlist_id=playlist.id, song_id=song.id, song_index=song_index

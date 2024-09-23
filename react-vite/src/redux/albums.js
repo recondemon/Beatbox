@@ -45,28 +45,9 @@ export const fetchAlbumById = (id) => async (dispatch) => {
 };
 
 export const createAlbum = (album) => async (dispatch) => {
-  const formData = new FormData();
-
-  formData.append('album_name', album.album_name);
-  formData.append('description', album.description);
-  formData.append('release_date', album.release_date);
-
-  if (album.album_cover_file) {
-    formData.append('album_cover', album.album_cover_file);
-  } else if (album.album_cover_url) {
-    formData.append('album_cover_url', album.album_cover_url);
-  }
-
-  const response = await post("/api/albums", formData);
-
-  if (response.ok) {
-    const data = await response.json();
-    dispatch(loadOne(data));
-    return data;
-  } else {
-    const errorMessages = await response.json();
-    return errorMessages;
-  }
+  const data = await post("/api/albums", album);
+  dispatch(loadOne(data));
+  return data;
 };
 
 export const selectAlbums = (state) => state.albums;

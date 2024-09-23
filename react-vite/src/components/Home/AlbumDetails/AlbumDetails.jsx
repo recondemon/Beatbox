@@ -11,7 +11,7 @@ const AlbumDetails = () => {
 
   useEffect(() => {
     dispatch(fetchAlbumById(albumId));
-  }, [dispatch]);
+  }, [dispatch, albumId]);
 
   return <>{album && <AudioPlayer list={album} />}</>;
 };

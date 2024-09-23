@@ -1,11 +1,12 @@
 from flask import Blueprint, request
 from app.models import Models, db
 from flask_login import current_user, login_required
+import json
 from app.forms.playlist_form import PlaylistForm
 
-Playlist = Models.Playlist # pyright: ignore
-PlaylistSong = Models.PlaylistSong # pyright: ignore
-Song = Models.Song # pyright: ignore
+Playlist = Models.Playlist  # pyright: ignore
+PlaylistSong = Models.PlaylistSong  # pyright: ignore
+Song = Models.Song  # pyright: ignore
 playlists = Blueprint("playlists", __name__)
 
 
@@ -46,7 +47,9 @@ def edit_playlist(playlist_id):
 
     if form.validate_on_submit():
         playlist.name = getattr(form, "name", playlist.name)
-        playlist.description = getattr(form, "description", playlist.description)
+        playlist.description = getattr(
+            form, "description", playlist.description
+        )
         playlist.is_public = getattr(form, "is_public", playlist.is_public)
 
         db.session.commit()
@@ -69,7 +72,9 @@ def create_playlist():
             "name",
             "My Playlist " + len(current_artist.playlists),  # pyright: ignore
         )
-        playlist.description = getattr(form, "description", playlist.description)
+        playlist.description = getattr(
+            form, "description", playlist.description
+        )
         playlist.is_public = getattr(form, "is_public", playlist.is_public)
         playlist.owner_id = current_user.id
 
@@ -83,7 +88,7 @@ def create_playlist():
 
 @playlists.route("/<playlist_id>/songs", methods=["POST"])
 def add_playlist_songs(playlist_id):
-    song_ids = request.args.get("songs")
+    song_ids = request.get_json()["songs"]  # pyright: ignore
 
     playlist_songs = []
 
@@ -91,7 +96,7 @@ def add_playlist_songs(playlist_id):
         playlist_songs.append(
             PlaylistSong(
                 song_index=i,
-                song_id=song_ids[i],
+                song_id=song_ids[i],  # pyright: ignore
                 playlist_id=int(playlist_id),  # pyright: ignore
             )
         )
@@ -116,17 +121,15 @@ def add_playlist_song(playlist_id):
     )
     db.session.commit()
 
-    playlist = Playlist.query.get(int(playlist_id))
-
     return playlist.to_json()
 
 
-@playlists.route("/get_liked")
+@playlists.route("/liked")
 @login_required
 def get_liked():
     liked = Playlist.query.filter_by(
         owner_id=current_user.id, is_public=False, name="Liked"
-    ).first()
+    )
 
     print(current_user.id)
 
@@ -136,12 +139,12 @@ def get_liked():
     return liked.to_json()
 
 
-@playlists.route("/get_queue")
+@playlists.route("/queue")
 @login_required
 def get_queue():
     queue = Playlist.query.filter_by(
         owner_id=current_user.id, is_public=False, name="Queue"
-    ).first()
+    )
 
     if not queue:
         return {"errors": "Could not fetch Queue"}, 404
@@ -149,7 +152,44 @@ def get_queue():
     return queue.to_json()
 
 
-@playlists.route("/get_library")
+@playlists.route("/queue", methods=["POST"])
+@login_required
+def add_to_queue():
+    queue = Playlist.query.filter_by(
+        owner_id=current_user.id, is_public=False, name="Queue"
+    ).first()
+
+    if not queue:
+        return {"errors": "Could not fetch Queue"}, 404
+
+    song_ids = request.get_json()["songs"]  # pyright: ignore
+
+    current_max_index = (
+        db.session.query(db.func.max(PlaylistSong.song_index))
+        .filter_by(playlist_id=queue.id)
+        .scalar() # Returns the specific index value OR None of there isn't a max or index
+    )
+
+    if not current_max_index:
+        current_max_index = 0
+
+    playlist_songs = []
+    for song_id in song_ids:  # pyright: ignore
+        playlist_songs.append(
+            PlaylistSong(
+                song_index=current_max_index + 1,
+                song_id=song_id,
+                playlist_id=queue.id,
+            )
+        )
+
+    db.session.add_all(playlist_songs)
+    db.session.commit()
+
+    return queue.to_json()
+
+
+@playlists.route("/library")
 @login_required
 def get_library():
     library = Playlist.query.filter_by(

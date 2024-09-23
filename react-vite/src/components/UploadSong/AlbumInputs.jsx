@@ -24,11 +24,10 @@ const AlbumInputs = ({ handleBackToSelect }) => {
 
   const handleCreateAlbum = async () => {
     const newAlbum = {
-      album_name: newAlbumName,
+      name: newAlbumName,
       description: newAlbumDescription,
       release_date: releaseDate,
-      album_cover_file: albumCoverFile,
-      album_cover_url: albumCoverUrl,
+      file: albumCoverFile
     };
 
     try {

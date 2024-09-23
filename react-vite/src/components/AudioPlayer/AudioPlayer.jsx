@@ -26,6 +26,8 @@ export default function AudioPlayer({ list }) {
   const releaseYear = new Date(list.releaseDate).getFullYear() || null;
   const songCount = list.songs?.length;
 
+  console.log(list)
+
   const togglePlay = () => {
     if (isPlaying) {
       audioRef.current?.pause();

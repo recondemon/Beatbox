@@ -28,10 +28,10 @@ function SignupFormModal() {
 
     const serverResponse = await dispatch(
       thunkSignup({
-        firstName,
-        lastName,
+        first_name: firstName,
+        last_name: lastName,
         email,
-        bandName,
+        band_name: bandName,
         bio,
         password,
       })
@@ -106,7 +106,7 @@ function SignupFormModal() {
               Bio:
             </label>
             <textarea
-            value=''
+            value={bio}
             onChange={(e) => setBio(e.target.value)}
             placeholder='Enter bio'
             required

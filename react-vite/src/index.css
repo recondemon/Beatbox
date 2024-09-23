@@ -63,12 +63,12 @@
     @apply bg-background text-foreground;
   }
   input {
-    @apply bg-input text-secondary-foreground rounded-lg p-2 border-border;
+    @apply bg-input text-secondaryForeground rounded-lg p-2 border-border;
   }
   select {
-    @apply bg-input text-secondary-foreground rounded-lg p-2 border-border;
+    @apply bg-input text-secondaryForeground rounded-lg p-2 border-border;
   }
   text-area {
-    @apply bg-input text-secondary-foreground rounded-lg p-2 border-border;
+    @apply bg-input text-secondaryForeground rounded-lg p-2 border-border;
   }
 }

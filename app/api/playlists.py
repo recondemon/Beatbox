@@ -45,9 +45,7 @@ def edit_playlist(playlist_id):
 
     if form.validate_on_submit():
         playlist.name = getattr(form, "name", playlist.name)
-        playlist.description = getattr(
-            form, "description", playlist.description
-        )
+        playlist.description = getattr(form, "description", playlist.description)
         playlist.is_public = getattr(form, "is_public", playlist.is_public)
 
         db.session.commit()
@@ -70,9 +68,7 @@ def create_playlist():
             "name",
             "My Playlist " + len(current_artist.playlists),  # pyright: ignore
         )
-        playlist.description = getattr(
-            form, "description", playlist.description
-        )
+        playlist.description = getattr(form, "description", playlist.description)
         playlist.is_public = getattr(form, "is_public", playlist.is_public)
         playlist.owner_id = current_user.id
 
@@ -100,6 +96,23 @@ def add_playlist_songs(playlist_id):
         )
 
     db.session.add(playlist_songs)
+    db.session.commit()
+
+    playlist = Playlist.query.get(int(playlist_id))
+
+    return playlist.to_json()
+
+
+@playlists.route("/<playlist_id>/song", methods=["POST"])
+def add_playlist_song(playlist_id):
+    playlist = Playlist.query.get(playlist_id)
+    db.session.add(
+        PlaylistSong(
+            song_index=len(playlist.songs),
+            song_id=request.args.get("song_id"),
+            playlist_id=int(playlist_id),
+        )
+    )
     db.session.commit()
 
     playlist = Playlist.query.get(int(playlist_id))

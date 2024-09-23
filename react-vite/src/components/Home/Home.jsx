@@ -5,7 +5,7 @@ import { fetchPlaylists, selectPlaylistsArray } from '../../redux/playlists';
 import { useEffect, useState } from 'react';
 import { fetchSongs, selectSongsArray } from '../../redux/songs';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-
+import './Home.css';
 const Home = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.session.user);
@@ -75,16 +75,16 @@ const Home = () => {
           <h2 className='mb-6 text-2xl font-bold'>Explore</h2>
 
           {/* Songs */}
-          <div className='relative mb-8 w-full'>
+          <div className='relative mb-8 w-full py-6 overflow-y-hidden'>
             <h3 className='text-xl mb-4 text-center'>Songs</h3>
-            <div className='flex items-center gap-4 justify-center min-w-[70vw] max-w-[70vw] mx-auto'>
+            <div className='flex items-center gap-4 justify-center min-w-[80vw] max-w-[80vw] mx-auto'>
               <ChevronLeft
                 className='cursor-pointer'
                 onClick={() => handleScroll('left', 'songs-section')}
               />
               <div
                 id='songs-section'
-                className='flex overflow-x-auto whitespace-nowrap gap-4 min-w-[60vw] max-w-[60vw] mx-auto scrollbar-thin scrollbar-thumb-black scrollbar-track-gray-700 scrollbar-thumb-rounded-full'
+                className='flex overflow-x-auto whitespace-nowrap gap-4 min-w-[70vw] max-w-[70vw] mx-auto scrollbar-thin scrollbar-thumb-black scrollbar-track-gray-700 scrollbar-thumb-rounded-full'
               >
                 {shuffledSongs.map((song) => (
                   <Link key={song.id} to={`/song/${song.id}`}>
@@ -118,14 +118,14 @@ const Home = () => {
           {/* Albums */}
           <div className='relative mb-8 w-full'>
             <h3 className='text-xl mb-4 text-center'>Albums</h3>
-            <div className='flex items-center gap-4 justify-center min-w-[70vw] max-w-[70vw] mx-auto'>
+            <div className='flex items-center gap-4 justify-center min-w-[80vw] max-w-[80vw] mx-auto'>
               <ChevronLeft
                 className='cursor-pointer'
                 onClick={() => handleScroll('left', 'albums-section')}
               />
               <div
                 id='albums-section'
-                className='flex overflow-x-auto whitespace-nowrap gap-4 mx-auto min-w-[60vw] max-w-[60vw] scrollbar-thin scrollbar-thumb-black scrollbar-track-gray-700 scrollbar-thumb-rounded-full'
+                className='flex overflow-x-auto whitespace-nowrap gap-4 mx-auto min-w-[70vw] max-w-[70vw] scrollbar-thin scrollbar-thumb-black scrollbar-track-gray-700 scrollbar-thumb-rounded-full scrollbar-backdrop-blur-lg'
               >
                 {filterContent(albums).map((album) => (
                   <Link key={album.id} to={`/album/${album.id}`}>
@@ -159,14 +159,14 @@ const Home = () => {
           {/* Playlists */}
           <div className='relative mb-8 w-full'>
             <h3 className='text-xl mb-4 text-center'>Playlists</h3>
-            <div className='flex items-center gap-4 justify-center min-w-[70vw] max-w-[70vw] mx-auto'>
+            <div className='flex items-center gap-4 justify-center min-w-[80vw] max-w-[80vw] mx-auto'>
               <ChevronLeft
                 className='cursor-pointer'
                 onClick={() => handleScroll('left', 'playlists-section')}
               />
               <div
                 id='playlists-section'
-                className='flex overflow-x-auto whitespace-nowrap gap-4 min-w-[60vw] max-w-[60vw] mx-auto scrollbar-thin scrollbar-thumb-black scrollbar-track-gray-700 scrollbar-thumb-rounded-full'
+                className='flex overflow-x-auto whitespace-nowrap gap-4 min-w-[70vw] max-w-[70vw] mx-auto scrollbar-thin scrollbar-thumb-black scrollbar-track-gray-700 scrollbar-thumb-rounded-full'
               >
                 {filterContent(playlists).map((playlist) => (
                   <Link key={playlist.id} to={`/playlist/${playlist.id}`}>

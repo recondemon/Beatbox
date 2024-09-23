@@ -18,15 +18,6 @@ export default function AudioPlayer({ list }) {
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
   const audioRef = useRef(null);
-  const artist = list?.artist
-    ? list?.artist[0].band_name
-      ? `${list?.artist[0].band_name}`
-      : `${list?.artist[0].first_name} ${list?.artist[0].last_name}`
-    : null;
-  const releaseYear = new Date(list?.releaseDate).getFullYear() || null;
-  const songCount = list?.songs?.length;
-
-  console.log(list)
 
   const togglePlay = () => {
     if (isPlaying) {
@@ -35,27 +26,6 @@ export default function AudioPlayer({ list }) {
       audioRef.current?.play();
     }
     setIsPlaying(!isPlaying);
-  };
-
-  // Updates duration and stores it for each song, including current song
-  const handleLoadedMetadata = (songId, audioElement) => {
-    // FIXME: Optional chaining cuz I was getting a random null error...should probably fix that...
-    const duration = audioElement?.duration;
-
-    setSongDurations(prevDurations => ({
-      ...prevDurations,
-      [songId]: duration,
-    }));
-  };
-
-  const playSong = song => {
-    setCurrentSong(song);
-    setIsPlaying(true);
-
-    // setTimeout because the duration counter would be slightly out of sync otherwise
-    setTimeout(() => {
-      audioRef.current?.play();
-    }, 0);
   };
 
   const handleTimeUpdate = () => {
@@ -118,59 +88,6 @@ export default function AudioPlayer({ list }) {
 
   return (
     <>
-      {/* {/1* TODO: Possibly extract this to a separate component *1/} */}
-      {/* <div className='flex-1 mx-44 overflow-y-auto p-8'> */}
-      {/*   <div className='mb-6'> */}
-      {/*     <span className='flex gap-2 items-center'> */}
-      {/*       <h2 className='text-2xl font-bold'>{list?.name}</h2> */}
-
-      {/*       {releaseYear && <p className='text-sm'> • {releaseYear}</p>} */}
-
-      {/*       <p className='text-sm'> */}
-      {/*         {' '} */}
-      {/*         • {songCount} {`${songCount === 1 ? 'song' : 'songs'}`} */}
-      {/*       </p> */}
-      {/*     </span> */}
-
-      {/*     <p className='text-sm mt-1'>{list?.description}</p> */}
-      {/*   </div> */}
-
-      {/*   {/1* Song list *1/} */}
-      {/*   <ul className='space-y-4 bg-card text-card-foreground w-full border border-border h-2/3 rounded-md py-2'> */}
-      {/*     {list?.songs.length ? ( */}
-      {/*       list.songs.map(song => ( */}
-      {/*         <li */}
-      {/*           key={song.id} */}
-      {/*           className='flex border-b mx-4 border-muted items-center justify-evenly p-2 cursor-pointer' */}
-      {/*           onClick={() => playSong(song)} */}
-      {/*         > */}
-      {/*           <audio */}
-      {/*             src={song.url} */}
-      {/*             onLoadedMetadata={e => handleLoadedMetadata(song.id, e.target)} */}
-      {/*             className='hidden' */}
-      {/*           /> */}
-
-      {/*           <div className='flex-1'> */}
-      {/*             <h3 className='font-semibold'>{song.name}</h3> */}
-      {/*           </div> */}
-
-      {/*           <div className='flex-1 text-center'> */}
-      {/*             <p className='text-sm'>{artist}</p> */}
-      {/*           </div> */}
-
-      {/*           <div className='flex-1 text-right'> */}
-      {/*             <p className='text-xs'> */}
-      {/*               {songDurations[song.id] ? formatTime(songDurations[song.id]) : '--:--'} */}
-      {/*             </p> */}
-      {/*           </div> */}
-      {/*         </li> */}
-      {/*       )) */}
-      {/*     ) : ( */}
-      {/*       <h2 className='text-center text-2xl mt-2'>No songs yet</h2> */}
-      {/*     )} */}
-      {/*   </ul> */}
-      {/* </div> */}
-
       {/* Player */}
       <div className='p-4 flex items-center bg-background fixed bottom-0 left-0 right-0 space-x-4 border-t border-accent'>
         <audio

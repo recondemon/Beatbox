@@ -1,10 +1,19 @@
-import { useLoaderData } from 'react-router-dom';
+import { useLoaderData, useParams } from 'react-router-dom';
 import AudioPlayer from '../../AudioPlayer';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectPlaylistById, fetchPlaylist } from '../../../redux/playlists';
+import { useEffect } from 'react';
 
 const PlaylistDetails = () => {
-  const playlist = useLoaderData()
+  const dispatch = useDispatch();
+  const { playlistId } = useParams();
+  const playlist = useSelector(selectPlaylistById(playlistId));
+
+  useEffect(() => {
+    dispatch(fetchPlaylist(playlistId));
+  }, [dispatch, playlistId]);
 
   return <>{playlist && <AudioPlayer list={playlist} />}</>;
-}
+};
 
-export default PlaylistDetails
+export default PlaylistDetails;

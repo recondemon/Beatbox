@@ -15,7 +15,6 @@ export default function AudioPlayer({ list }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [songDurations, setSongDurations] = useState({});
-  const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
   const audioRef = useRef(null);
@@ -57,7 +56,6 @@ export default function AudioPlayer({ list }) {
   const handleTimeUpdate = () => {
     if (audioRef.current) {
       setCurrentTime(audioRef.current.currentTime);
-      setDuration(audioRef.current.duration);
     }
   };
 

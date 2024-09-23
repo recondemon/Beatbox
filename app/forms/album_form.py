@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired, FileAllowed
-from wtforms import IntegerField, StringField, DateField, TextAreaField, SubmitField
+from wtforms import IntegerField, StringField, DateField
 
 
 class AlbumForm(FlaskForm):
@@ -10,6 +10,5 @@ class AlbumForm(FlaskForm):
     )
     name = StringField("Album Name")
     release_date = DateField("Date")
-    description = TextAreaField("Description")
+    description = StringField("Description")
     artist_id = IntegerField("Artist")
-    submit = SubmitField("Create Album")

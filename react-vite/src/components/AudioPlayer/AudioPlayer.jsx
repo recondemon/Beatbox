@@ -24,7 +24,7 @@ export default function AudioPlayer({ list }) {
       : `${list.artist[0].first_name} ${list.artist[0].last_name}`
     : null;
   const releaseYear = new Date(list.releaseDate).getFullYear() || null;
-  const songCount = list.songs.length;
+  const songCount = list.songs?.length;
 
   const togglePlay = () => {
     if (isPlaying) {
@@ -37,6 +37,7 @@ export default function AudioPlayer({ list }) {
 
   // Updates duration and stores it for each song, including current song
   const handleLoadedMetadata = (songId, audioElement) => {
+    // FIXME: Optional chaining cuz I was getting a random null error...should probably fix that...
     const duration = audioElement?.duration;
 
     setSongDurations(prevDurations => ({
@@ -48,6 +49,8 @@ export default function AudioPlayer({ list }) {
   const playSong = song => {
     setCurrentSong(song);
     setIsPlaying(true);
+
+    // setTimeout because the duration counter would be slightly out of sync otherwise
     setTimeout(() => {
       audioRef.current?.play();
     }, 0);

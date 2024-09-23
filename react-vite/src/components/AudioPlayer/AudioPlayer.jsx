@@ -134,7 +134,7 @@ export default function AudioPlayer({ list }) {
         </div>
 
         {/* Song list */}
-        <ul className='space-y-4 bg-card text-card-foreground w-full border border-border h-2/3 rounded-md'>
+        <ul className='space-y-4 bg-card text-card-foreground w-full border border-border h-2/3 rounded-md py-2'>
           {list.songs.map(song => (
             <li
               key={song.id}

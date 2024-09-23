@@ -9,6 +9,8 @@ const Home = () => {
   const user = useSelector(state => state.session.user);
   const albums = useSelector(selectAlbumsArray);
   const playlists = useSelector(selectPlaylistsArray)
+  console.log(albums)
+  console.log(playlists)
 
   useEffect(() => {
     dispatch(fetchAlbums());
@@ -24,14 +26,15 @@ const Home = () => {
   }
 
   return (
-    <div className='my-8 mx-44'>
-      {albums.length && playlists.length ? (
+    <div className='my-8 max-w-fit mx-60'>
+      {/* TODO: Possibly extract to separate components with their own "Loading..." conditional */}
+      {albums.length || playlists.length ? (
         <>
           <h2 className='mb-6 text-2xl font-bold'>Explore</h2>
 
           {/* Albums */}
-          <div className='flex gap-6 max-w-1/2 min-h-40'>
-            {albums.map(album => (
+          <div className='flex flex-wrap gap-6'>
+            {albums?.map(album => (
               <Link
                 key={album.id}
                 to={`/album/${album.id}`}
@@ -49,7 +52,7 @@ const Home = () => {
 
           {/* Playlist*/}
           <div className='flex gap-6 mt-4 max-w-1/2 min-h-40'>
-            {playlists.map(playlist => (
+            {playlists?.map(playlist => (
               <Link
                 key={playlist.id}
                 to={`/playlist/${playlist.id}`}
@@ -65,7 +68,7 @@ const Home = () => {
           </div>
         </>
       ) : (
-        <p className='text-2xl'>Failed to fetch data...</p>
+        <p className='text-2xl'>Loading...</p>
       )}
     </div>
   );

@@ -41,6 +41,8 @@ export default function playlistsReducer(state = {}, action) {
     case LOAD_ALL: {
       const newState = {};
 
+      console.log('\n\n---LOADING ALL PLAYLISTS---\n\n')
+
       action.playlists.forEach(playlist => {
         newState[playlist.id] = playlist;
       });

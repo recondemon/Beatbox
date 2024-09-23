@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+import { post } from "./csrf";
 
 const LOAD_ONE = 'artists/loadOne';
 
@@ -20,6 +21,12 @@ export const fetchArtist = id => async dispatch => {
   }
 
   return res;
+};
+
+export const createArtist = (artist) => async (dispatch) => {
+  artist = await post("/artists", artist); //This will throw an error if there is an error
+  dispatch(loadOne(artist));
+  return artist;
 };
 
 export const selectArtists = state => state.artists;

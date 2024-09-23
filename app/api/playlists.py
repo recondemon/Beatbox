@@ -167,14 +167,14 @@ def add_to_queue():
     current_max_index = (
         db.session.query(db.func.max(PlaylistSong.song_index))
         .filter_by(playlist_id=queue.id)
-        .scalar() # Returns None of there isn't a max
+        .scalar() # Returns the specific index value OR None of there isn't a max or index
     )
 
     if not current_max_index:
         current_max_index = 0
 
     playlist_songs = []
-    for i, song_id in enumerate(song_ids):  # pyright: ignore
+    for song_id in song_ids:  # pyright: ignore
         playlist_songs.append(
             PlaylistSong(
                 song_index=current_max_index + 1,

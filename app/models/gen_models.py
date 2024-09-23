@@ -164,17 +164,6 @@ class JSONable:
         )
         return f"<{type(self).__name__} {str(self.id)}>\n{attribute_string}"
 
-    @property
-    def password(self):
-        return self.hashed_password
-
-    @password.setter
-    def password(self, password):
-        self.hashed_password = generate_password_hash(password)
-
-    def check_password(self, password):
-        return check_password_hash(self.password, password)
-
 
 def get_models_class(db, structure) -> Models:
     Models.db = db
@@ -286,6 +275,15 @@ def get_models_class(db, structure) -> Models:
                 "hashed_password": db.Column(db.String(255), nullable=False),
                 "__table_args__": __table_args__,
                 "__rels__": [],
+                "password": property(
+                    lambda self: self.hashed_password,  # Getter for password
+                    lambda self, password: setattr(  # Setter
+                        self, "hashed_password", generate_password_hash(password)
+                    ),
+                ),
+                "check_password": lambda self, password: check_password_hash(
+                    self.hashed_password, password
+                ),
             },
         )
 
@@ -331,7 +329,9 @@ def get_models_class(db, structure) -> Models:
             return db.relationship(args[0], back_populates=args[1])
 
         if _length_ == 3:
-            return db.relationship(args[0], back_populates=args[1], secondary=add_prefix_for_prod(args[2]))
+            return db.relationship(
+                args[0], back_populates=args[1], secondary=add_prefix_for_prod(args[2])
+            )
 
         raise ValueError
 
@@ -405,10 +405,7 @@ def get_models_class(db, structure) -> Models:
                     setattr(
                         _class_,
                         key,
-                        db.Column(
-                            db.Integer,
-                            db.ForeignKey(add_prefix_for_prod(fk))
-                        ),
+                        db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod(fk))),
                     )
                 else:
                     setattr(_class_, key, get_col(col_val))

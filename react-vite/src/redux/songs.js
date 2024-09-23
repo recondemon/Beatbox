@@ -1,16 +1,24 @@
 import { createSelector } from "reselect";
+import { post, get } from "./csrf";
 
-const LOAD_ALL = 'songs/loadAll';
+const LOAD_ALL = "songs/loadAll";
+const LOAD_ONE = "songs/loadOne";
 
-export const loadAll = songs => {
+export const loadAll = (songs) => {
   return {
     type: LOAD_ALL,
     songs,
   };
 };
+export const loadOne = (song) => {
+  return {
+    type: LOAD_ONE,
+    song,
+  };
+};
 
-export const fetchSongs = () => async dispatch => {
-  const res = await fetch('/api/songs');
+export const fetchSongs = () => async (dispatch) => {
+  const res = await fetch("/api/songs");
 
   if (res.ok) {
     const data = await res.json();
@@ -22,23 +30,42 @@ export const fetchSongs = () => async dispatch => {
   return res;
 };
 
-export const selectSongs = state => state.playlists;
-export const selectSongsArray = createSelector(selectSongs, playlists => {
-  return Object.values(playlists)
-})
+export const createSong = (song) => async (dispatch) => {
+  song = await post("/songs", song); //This will throw an error if there is an error
+  dispatch(loadOne(song));
+  return song;
+};
+export const fetchSong = (songId) => async (dispatch) => {
+  song = await get("/songs/" + songId); //This will throw an error if there is an error
+  dispatch(loadOne(song));
+  return song;
+};
+
+export const selectSongs = (state) => state.playlists;
+export const selectSongsArray = createSelector(selectSongs, (playlists) => {
+  return Object.values(playlists);
+});
 
 export default function songsReducer(state = {}, action) {
   switch (action.type) {
     case LOAD_ALL: {
       const newState = {};
 
-      action.songs.forEach(song => {
+      action.songs.forEach((song) => {
         newState[song.id] = song;
       });
 
       return {
         ...state,
         ...newState,
+      };
+    }
+    case LOAD_ONE: {
+      return {
+        ...state,
+        [action.song.id]: {
+          ...action.song,
+        },
       };
     }
     default:

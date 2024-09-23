@@ -124,7 +124,7 @@ def get_liked():
 @login_required
 def get_queue():
     queue = Playlist.query.filter_by(
-        owner_id=current_user.id, is_public=False, name="Liked"
+        owner_id=current_user.id, is_public=False, name="Queue"
     ).first()
 
     if not queue:

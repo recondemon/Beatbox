@@ -56,7 +56,7 @@ function SignupFormModal() {
             </label>
             <input
             type="text"
-            value=''
+            value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
             placeholder="Enter first name"
             required
@@ -68,7 +68,7 @@ function SignupFormModal() {
             </label>
             <input
             type="text"
-            value=''
+            value={lastName}
             onChange={(e) => setLastName(e.target.value)}
             placeholder="Enter last name"
             required
@@ -106,7 +106,7 @@ function SignupFormModal() {
               Bio:
             </label>
             <textarea
-            value=''
+            value={bio}
             onChange={(e) => setBio(e.target.value)}
             placeholder='Enter bio'
             required

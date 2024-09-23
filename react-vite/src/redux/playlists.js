@@ -1,7 +1,6 @@
 import { createSelector } from "reselect";
 import { post } from "./csrf";
 
-
 const LOAD_ALL = "playlists/loadAll";
 const LOAD_ONE = "playlists/loadOne";
 
@@ -31,9 +30,21 @@ export const fetchPlaylists = () => async (dispatch) => {
 
   return res;
 };
+export const fetchPlaylist = (playlistId) => async (dispatch) => {
+  const res = await fetch("/api/playlists/" + playlistId);
+
+  if (res.ok) {
+    const data = await res.json();
+    dispatch(loadOne(data));
+
+    return data;
+  }
+
+  return res;
+};
 
 export const createPlaylists = (playlist) => async (dispatch) => {
-  playlist = await post("/playlists", playlist); //This will throw an error if there is an error
+  const playlist = await post("/playlists", playlist); //This will throw an error if there is an error
   dispatch(loadOne(playlist));
   return playlist;
 };
@@ -62,6 +73,14 @@ export default function playlistsReducer(state = {}, action) {
       return {
         ...state,
         ...newState,
+      };
+    }
+    case LOAD_ONE: {
+      return {
+        ...state,
+        [action.playlist.id]: {
+          ...action.playlist,
+        },
       };
     }
     default:

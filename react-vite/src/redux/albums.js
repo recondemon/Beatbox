@@ -45,7 +45,7 @@ export const fetchAlbumById = (id) => async (dispatch) => {
 };
 
 export const createAlbum = (album) => async (dispatch) => {
-  album = await post("/albums", album); //This will throw an error if there is an error
+  const album = await post("/albums", album); //This will throw an error if there is an error
   dispatch(loadOne(album));
   return album;
 };

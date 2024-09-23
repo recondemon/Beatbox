@@ -11,7 +11,6 @@ albums = Blueprint("albums", __name__)
 
 # get all albums
 @albums.route("/")
-@login_required
 def all_albums():
     albums = Album.query.all()
     return [album.to_json() for album in albums]
@@ -19,7 +18,6 @@ def all_albums():
 
 # get an album by album id
 @albums.route("/<int:album_id>")
-@login_required
 def album(album_id):
     album = Album.query.get(album_id)
     if not album:

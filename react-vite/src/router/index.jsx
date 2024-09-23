@@ -49,7 +49,7 @@ export const router = createBrowserRouter([
         },
       },
       {
-        path: '/userId/songs',
+        path: '/manage',
         element: <ManageSongs />,
       },
     ],

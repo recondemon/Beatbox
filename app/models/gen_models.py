@@ -2,11 +2,11 @@ from collections.abc import Iterable
 from datetime import datetime
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-from .db import db, environment, SCHEMA
+from .db import db, environment, SCHEMA, add_prefix_for_prod
+
 __table_args__ = ()
 if environment == "production":
-    __table_args__ = ({"schema": SCHEMA})
-    
+    __table_args__ = {"schema": SCHEMA}
 
 
 class Models:
@@ -71,7 +71,8 @@ class JSONable:
         ][0]
 
     def relationships(self):
-        return [val for val in self.all_attributes() if val not in self.attributes()]
+        # return [val for val in self.all_attributes() if val not in self.attributes()]
+        return self.__rels__
 
     # You can override this decorator to change the way the json_basic is formatted
     def json_basic(get_attributes_func):
@@ -114,7 +115,7 @@ class JSONable:
     @json
     def to_dict(self):
         return self.relationships()
-    
+
     def to_json(self):
         def capitalize(string):
             if len(string) == 0:
@@ -122,18 +123,20 @@ class JSONable:
             if len(string) == 1:
                 return string.upper()
             return string[0].upper() + string[1:]
+
         def to_camel_case(string):
             arr = string.split("_")
             output_arr = [arr[0]]
             for word in arr[1:]:
                 output_arr.append(capitalize(word))
             return "".join(output_arr)
-        
+
         dictionary = self.to_dict()
         json = {}
         for key in dictionary.keys():
             json[to_camel_case(key)] = dictionary[key]
         return json
+
     def to_json_basic(self):
         def to_camel_case(string):
             arr = string.split("_")
@@ -141,7 +144,7 @@ class JSONable:
             for word in arr[1:]:
                 output_arr.append(word.capitalize())
             return "".join(output_arr)
-        
+
         dictionary = self.to_dict_basic()
         json = {}
         for key in dictionary.keys():
@@ -253,6 +256,7 @@ def get_models_class(db, structure) -> Models:
                 "created_at": db.Column(db.DateTime, default=datetime.utcnow()),
                 "__repr__": JSONable.__repr__,
                 "__table_args__": __table_args__,
+                "__rels__": [],
             },
         )
 
@@ -265,7 +269,7 @@ def get_models_class(db, structure) -> Models:
                     output += "_"
                 output += lower
             return output
-        
+
         return type(
             classname,
             (db.Model, UserMixin, JSONable),
@@ -277,10 +281,11 @@ def get_models_class(db, structure) -> Models:
                 ),
                 "created_at": db.Column(db.DateTime, default=datetime.utcnow()),
                 "__repr__": JSONable.__repr__,
-                "username": db.Column(db.String(40), nullable=False, unique=True),
+                # "username": db.Column(db.String(40), nullable=False, unique=True),
                 "email": db.Column(db.String(255), nullable=False, unique=True),
                 "hashed_password": db.Column(db.String(255), nullable=False),
                 "__table_args__": __table_args__,
+                "__rels__": [],
             },
         )
 
@@ -326,7 +331,7 @@ def get_models_class(db, structure) -> Models:
             return db.relationship(args[0], back_populates=args[1])
 
         if _length_ == 3:
-            return db.relationship(args[0], back_populates=args[1], secondary=args[2])
+            return db.relationship(args[0], back_populates=args[1], secondary=add_prefix_for_prod(args[2]))
 
         raise ValueError
 
@@ -342,6 +347,7 @@ def get_models_class(db, structure) -> Models:
                     or key == "rel"
                     or key == "rels"
                 ):
+                    _class_.__rels__ = _class_.__rels__ + list(col_val.keys())
                     for rel_key in col_val.keys():
                         rel_vals = col_val[rel_key]
                         _classname_ = None
@@ -364,6 +370,7 @@ def get_models_class(db, structure) -> Models:
                                 rest[0],
                                 get_relationship(*other_arguments),
                             )
+                            _other_class_.__rels__ = _other_class_.__rels__ + [rest[0]]
                 elif key == "index" or key == "idx":
                     strings = []
                     kwargs = {}
@@ -372,7 +379,10 @@ def get_models_class(db, structure) -> Models:
                             strings.append(val)
                         else:
                             kwargs = val
-                    _class_.__table_args__ = (*_class_.__table_args__,db.Index(*strings, **kwargs))
+                    _class_.__table_args__ = (
+                        *_class_.__table_args__,
+                        db.Index(*strings, **kwargs),
+                    )
                 elif key == "indexes" or key == "idxs":
                     for args in col_val:
                         strings = []
@@ -382,7 +392,10 @@ def get_models_class(db, structure) -> Models:
                                 strings.append(val)
                             else:
                                 kwargs = val
-                        _class_.__table_args__ = (*_class_.__table_args__,db.Index(*strings, **kwargs))
+                        _class_.__table_args__ = (
+                            *_class_.__table_args__,
+                            db.Index(*strings, **kwargs),
+                        )
                 elif "id" in key:
                     fk = None
                     if type(col_val) is str:
@@ -394,7 +407,7 @@ def get_models_class(db, structure) -> Models:
                         key,
                         db.Column(
                             db.Integer,
-                            db.ForeignKey(fk),
+                            db.ForeignKey(add_prefix_for_prod(fk))
                         ),
                     )
                 else:

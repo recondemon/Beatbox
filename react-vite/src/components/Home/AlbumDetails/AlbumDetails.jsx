@@ -1,9 +1,19 @@
-import React from 'react'
+import { useParams } from 'react-router-dom';
+import { fetchAlbumById, selectAlbumById } from '../../../redux/albums';
+import AudioPlayer from '../../AudioPlayer';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
 
 const AlbumDetails = () => {
-  return (
-    <div>AlbumDetails</div>
-  )
-}
+  const dispatch = useDispatch();
+  const { albumId } = useParams();
+  const album = useSelector(selectAlbumById(albumId));
 
-export default AlbumDetails
+  useEffect(() => {
+    dispatch(fetchAlbumById(albumId));
+  }, [dispatch, albumId]);
+
+  return <>{album && <AudioPlayer list={album} />}</>;
+};
+
+export default AlbumDetails;

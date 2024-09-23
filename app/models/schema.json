@@ -3,6 +3,7 @@
   "Artist": {
     "first_name": ["String", { "nullable": false }],
     "last_name": ["String", { "nullable": false }],
+    "band_name": "String",
     "bio": ["String", { "nullable": false }],
     "relationships": {
       "liked_songs": ["Song", "artists_that_liked", "likes"]
@@ -11,7 +12,7 @@
   "Playlist": {
     "name": ["String", { "nullable": false }],
     "description": "Text",
-    "isPublic": "Boolean",
+    "is_public": "Boolean",
     "owner_id": "Artist",
     "relationships": {
       "owner": ["Artist", "playlists"],
@@ -24,6 +25,7 @@
     "release_date": "Date",
     "description": "Text",
     "artist_id": "Artist",
+    "album_cover": "String",
     "relationships": { "artist": ["Artist", "albums"] }
   },
   "Song": {
@@ -32,7 +34,11 @@
     "album_id": "Album",
     "artist_id": "Artist",
     "genre_id": "Genre",
-    "relationships": { "album": ["Album", "songs"], "likes": ["Like", "song"] }
+    "relationships": {
+      "album": ["Album", "songs"],
+      "likes": ["Like", "song"],
+      "artist": ["Artist", "songs"]
+    }
   },
 
   "Genre": {

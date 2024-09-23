@@ -7,6 +7,10 @@ from flask_login import LoginManager
 from .models import db, Models
 from .api.user_routes import user_routes
 from .api.auth_routes import auth_routes
+from .api.songs import songs
+from .api.album_routes import albums
+from .api.genres import genres
+from .api.playlists import playlists
 from .seeds import seed_commands
 from .config import Config
 User = Models.Artist
@@ -28,6 +32,10 @@ app.cli.add_command(seed_commands)
 app.config.from_object(Config)
 app.register_blueprint(user_routes, url_prefix='/api/users')
 app.register_blueprint(auth_routes, url_prefix='/api/auth')
+app.register_blueprint(songs, url_prefix='/api/songs')
+app.register_blueprint(genres,url_prefix='/api/genres')
+app.register_blueprint(albums, url_prefix='/api/albums')
+app.register_blueprint(playlists,url_prefix='/api/playlists')
 db.init_app(app)
 Migrate(app, db)
 

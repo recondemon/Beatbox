@@ -12,6 +12,7 @@
   "dependencies": {
     "css": "^3.0.0",
     "js-cookie": "^3.0.5",
+    "lucide-react": "^0.441.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.0.1",
@@ -19,6 +20,7 @@
     "react-router-dom": "^6.15.0",
     "redux": "^4.2.1",
     "redux-thunk": "^2.4.2",
+    "reselect": "^5.1.1",
     "tailwind": "^4.0.0",
     "tailwindcss-animate": "^1.0.7"
   },
@@ -31,6 +33,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
     "redux-logger": "^3.0.6",
+    "tailwindcss": "^3.4.12",
     "vite": "^4.4.5",
     "vite-plugin-eslint": "^1.8.1"
   }

@@ -1,12 +1,10 @@
-import type { Config } from 'tailwindcss';
-
 const config = {
   darkMode: ['class'],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
+    './pages/**/*.{js,jsx}',
+    './components/**/*.{js,jsx}',
+    './app/**/*.{js,jsx}',
+    './src/**/*.{js,jsx}',
   ],
   prefix: '',
   theme: {
@@ -25,13 +23,19 @@ const config = {
         background: 'var(--background)',
         foreground: 'var(--foreground)',
         shadow: 'var(--shadow)',
-        primary: 'var(--primary-foreground)',
-        secondary: 'var(--secondary-foreground)',
-        destructive: 'var(--destructive-foreground)',
-        muted: 'var(--muted-foreground)',
-        accent: 'var(--accent-foreground)',
-        popover: 'var(--popover-foreground)',
-        card: 'var(--card-foreground)',
+        primary: 'var(--primary)',
+        secondary: 'var(--secondary)',
+        destructive: 'var(--destructive)',
+        muted: 'var(--muted)',
+        accent: 'var(--accent)',
+        popover: 'var(--popover)',
+        card: 'var(--card)',
+        'primary-foreground': 'var(--primary-foreground)',
+        'secondary-foreground': 'var(--secondary-foreground)',
+        'muted-foreground': 'var(--muted-foreground)',
+        'accent-foreground': 'var(--accent-foreground)',
+        'popover-foreground': 'var(--popover-foreground)',
+        'card-foreground': 'var(--card-foreground)',
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -67,6 +71,6 @@ const config = {
       },
     },
   },
-} satisfies Config;
+};
 
 export default config;

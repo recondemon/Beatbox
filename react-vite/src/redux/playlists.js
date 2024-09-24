@@ -92,7 +92,7 @@ export const createPlaylists = (playlistData) => async (dispatch) => {
   dispatch(loadOne(newPlaylist));
   return newPlaylist;
 };
-
+export const selectCurrentSongIndex = (state) => state.playlists.currentSongIndex;
 export const selectPlaylists = (state) => state.playlists;
 export const selectPlaylistById = (playlistId) => (state) =>
   state.playlists[playlistId];
@@ -102,54 +102,47 @@ export const selectPlaylistsArray = createSelector(
   (playlists) => Object.values(playlists)
 );
 
-export default function playlistsReducer(state = { queue: [] }, action) {
+export default function playlistsReducer(state = { queue: [], currentSongIndex: 0 }, action) {
   switch (action.type) {
-    case LOAD_ALL: {
-      const newState = {};
-      action.playlists.forEach((playlist) => {
-        newState[playlist.id] = playlist;
-      });
-      return {
-        ...state,
-        ...newState,
-      };
-    }
-    case LOAD_ONE: {
-      return {
-        ...state,
-        [action.playlist.id]: {
-          ...action.playlist,
-        },
-      };
-    }
     case LOAD_QUEUE: {
+      const persistedQueue = JSON.parse(localStorage.getItem('queue')) || action.queue;
+      const persistedIndex = parseInt(localStorage.getItem('currentSongIndex'), 10) || 0;
       return {
         ...state,
-        queue: Array.isArray(action.queue) ? action.queue : [],
+        queue: persistedQueue,
+        currentSongIndex: persistedIndex,
       };
     }
     case ADD_TO_QUEUE: {
+      const newQueue = [...state.queue, action.song];
+      localStorage.setItem('queue', JSON.stringify(newQueue));
       return {
         ...state,
-        queue: [...state.queue, action.song],
+        queue: newQueue,
       };
     }
     case PLAY_NEXT: {
+      const newQueue = state.queue.slice(1);
+      localStorage.setItem('queue', JSON.stringify(newQueue));
       return {
         ...state,
-        queue: state.queue.slice(1),
+        queue: newQueue,
       };
     }
     case SET_CURRENT_SONG_INDEX: {
+      localStorage.setItem('currentSongIndex', action.index);
       return {
         ...state,
         currentSongIndex: action.index,
       };
     }
     case CLEAR_QUEUE: {
+      localStorage.removeItem('queue');
+      localStorage.removeItem('currentSongIndex');
       return {
         ...state,
         queue: [],
+        currentSongIndex: 0,
       };
     }
     default:

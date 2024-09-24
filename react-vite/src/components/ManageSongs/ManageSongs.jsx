@@ -1,8 +1,8 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAlbumsByUserId, editAlbum, removeAlbum, selectAlbumsArray } from '../../redux/albums';
-import { editSong, removeSong } from '../../redux/songs'; // Assuming you have song actions in songs.js
+import { editSong, removeSong } from '../../redux/songs';
 import { useEffect, useState } from 'react';
-import { ChevronUp, ChevronDown, Edit3, Trash2 } from 'lucide-react';
+import { ChevronUp, ChevronDown, Edit3, Trash2, Save } from 'lucide-react'; // Import Save icon
 
 const ManageSongs = () => {
   const dispatch = useDispatch();
@@ -37,9 +37,15 @@ const ManageSongs = () => {
       ...prevState,
       [albumId]: !prevState[albumId],
     }));
-    if (editingAlbum[albumId]) {
-      dispatch(editAlbum(albumId, { name: albumName[albumId] }));
-    }
+    setAlbumName({ ...albumName, [albumId]: album.name });
+  };
+
+  const handleSaveAlbum = (albumId) => {
+    dispatch(editAlbum(albumId, { name: albumName[albumId] }));
+    setEditingAlbum((prevState) => ({
+      ...prevState,
+      [albumId]: false,
+    }));
   };
 
   const handleEditSong = (songId, song) => {
@@ -47,9 +53,15 @@ const ManageSongs = () => {
       ...prevState,
       [songId]: !prevState[songId],
     }));
-    if (editingSong[songId]) {
-      dispatch(editSong(songId, { name: songName[songId] }));
-    }
+    setSongName({ ...songName, [songId]: song.name });
+  };
+
+  const handleSaveSong = (songId) => {
+    dispatch(editSong(songId, { name: songName[songId] }));
+    setEditingSong((prevState) => ({
+      ...prevState,
+      [songId]: false,
+    }));
   };
 
   const handleDeleteAlbum = (albumId) => {
@@ -61,7 +73,7 @@ const ManageSongs = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center mt-6">
+    <div className="flex flex-col mx-auto mt-6 w-3/5 py-6 items-center border-2 border-border rounded-lg min-h-[70vh] bg-card">
       <h1 className='text-2vw'>Manage Songs</h1>
       {albums.map((album) => (
         <div key={album.id} className="flex flex-col w-full max-w-md p-4 border-b mt-6">
@@ -70,12 +82,18 @@ const ManageSongs = () => {
               <img src={album.albumCover} alt={album.name} className="w-12 h-12 mr-4" />
 
               {editingAlbum[album.id] ? (
-                <input 
-                  type="text" 
-                  defaultValue={album.name} 
-                  className="text-lg font-bold"
-                  onChange={(e) => setAlbumName({ ...albumName, [album.id]: e.target.value })}
-                />
+                <>
+                  <input 
+                    type="text" 
+                    value={albumName[album.id]} 
+                    className="text-lg font-bold"
+                    onChange={(e) => setAlbumName({ ...albumName, [album.id]: e.target.value })}
+                  />
+                  <Save 
+                    className="cursor-pointer mx-2 text-green-500" 
+                    onClick={() => handleSaveAlbum(album.id)}
+                  />
+                </>
               ) : (
                 <h2 
                   className="cursor-pointer text-lg font-bold"
@@ -87,12 +105,14 @@ const ManageSongs = () => {
             </div>
 
             <div className="flex items-center">
-              <Edit3 
-                className="cursor-pointer mx-2" 
-                onClick={() => handleEditAlbum(album.id, album)} 
-              />
+              {!editingAlbum[album.id] && (
+                <Edit3 
+                  className="cursor-pointer mx-2 text-yellow-500" 
+                  onClick={() => handleEditAlbum(album.id, album)} 
+                />
+              )}
               <Trash2 
-                className="cursor-pointer mx-2" 
+                className="cursor-pointer mx-2 text-red-500" 
                 onClick={() => handleDeleteAlbum(album.id)} 
               />
 
@@ -110,25 +130,33 @@ const ManageSongs = () => {
                 <li key={song.id} className="flex justify-between items-center py-1">
                   <div className="flex items-center">
                     {editingSong[song.id] ? (
-                      <input 
-                        type="text" 
-                        defaultValue={song.name} 
-                        className="pl-4"
-                        onChange={(e) => setSongName({ ...songName, [song.id]: e.target.value })}
-                      />
+                      <>
+                        <input 
+                          type="text" 
+                          value={songName[song.id]} 
+                          className="pl-4"
+                          onChange={(e) => setSongName({ ...songName, [song.id]: e.target.value })}
+                        />
+                        <Save 
+                          className="cursor-pointer mx-2 text-green-500" 
+                          onClick={() => handleSaveSong(song.id)}
+                        />
+                      </>
                     ) : (
                       <span className="pl-4">{song.name}</span>
                     )}
                   </div>
 
                   <div className="flex items-center">
-                    <Edit3 
-                      className="cursor-pointer mx-2" 
-                      onClick={() => handleEditSong(song.id, song)} 
-                    />
+                    {!editingSong[song.id] && (
+                      <Edit3 
+                        className="cursor-pointer mx-2 text-yellow-500" 
+                        onClick={() => handleEditSong(song.id, song)} 
+                      />
+                    )}
                     <Trash2 
-                      className="cursor-pointer mx-2" 
-                      onClick={() => handleDeleteSong(song.id)} 
+                      className="cursor-pointer mx-2 text-red-500" 
+                      onClick={() => handleDeleteSong(song.id)}
                     />
                   </div>
                 </li>

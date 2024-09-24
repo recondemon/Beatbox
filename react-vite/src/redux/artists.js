@@ -11,7 +11,7 @@ export const loadOne = artist => {
 };
 
 export const fetchArtist = id => async dispatch => {
-  const res = await fetch(`/api/user/${id}`);
+  const res = await fetch(`/api/artists/${id}`);
 
   if (res.ok) {
     const data = await res.json();
@@ -19,7 +19,6 @@ export const fetchArtist = id => async dispatch => {
 
     return data;
   }
-
   return res;
 };
 

@@ -2,11 +2,7 @@ import AlbumDetails from './AlbumDetails';
 import SongDetails from './SongDetails';
 
 const UploadSongModal = () => {
-  const [albumName, setAlbumName] = React.useState('');
 
-  const handleAlbumNameChange = (e) => {
-    setAlbumName(e.target.value);
-  };
   
   return (
     <div className="p-4 bg-card min-w-[40vw]">

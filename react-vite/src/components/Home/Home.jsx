@@ -9,6 +9,7 @@ import {
   fetchLiked,
   selectLiked,
   addLike,
+  clearQueue,
 } from '../../redux/playlists';
 import { useEffect, useState } from 'react';
 import { fetchSongs, selectSongsArray } from '../../redux/songs';
@@ -63,6 +64,7 @@ const Home = () => {
 
   const handleSongClick = (song, index) => {
     if (index !== undefined && index !== null && songs.length > 0) {
+      dispatch(clearQueue())
       console.log('Adding song to queue:', song);
       dispatch(addToQueue(song));
       dispatch(postToQueue(song));

@@ -13,8 +13,17 @@ def all_artists():
     artists = Artist.query.all()
     return jsonify([artist.to_json() for artist in artists])
 
+
 @artists.route("/<artist_id>")
 def get_artist(artist_id):
-    artist = Artist.query.get(artist_id)
+    print("\n\n\n\n")
+    print(artist_id)
+    artist = Artist.query.get(int(artist_id))
     return artist.to_json()
-
+    print(type(artist))
+    if artist:
+        print(artist.to_json())
+        print("\n\n\n\n")
+        return artist.to_json()
+    print(type(artist))
+    return {}

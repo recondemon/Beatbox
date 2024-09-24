@@ -8,8 +8,8 @@ import {
   postToQueue,
   fetchLiked,
   selectLiked,
-  addToLiked,
   addLike,
+  clearQueue,
 } from '../../redux/playlists';
 import { useEffect, useState } from 'react';
 import { fetchSongs, selectSongsArray } from '../../redux/songs';
@@ -36,7 +36,7 @@ const Home = () => {
   }, [dispatch]);
 
   const handleLike = song => {
-    addLike(likedPlaylist.id, song);
+    dispatch(addLike(likedPlaylist.id, song));
   };
 
   const shuffleArray = array => {
@@ -64,6 +64,7 @@ const Home = () => {
 
   const handleSongClick = (song, index) => {
     if (index !== undefined && index !== null && songs.length > 0) {
+      dispatch(clearQueue())
       console.log('Adding song to queue:', song);
       dispatch(addToQueue(song));
       dispatch(postToQueue(song));
@@ -133,7 +134,7 @@ const Home = () => {
                           <FaHeart className='cursor-pointer text-primary font-xl' />
                         ) : (
                           <FaRegHeart
-                            onClick={() => handleLike(song, index)}
+                            onClick={() => handleLike(song)}
                             className='cursor-pointer text-primary font-xl'
                           />
                         )}

@@ -112,7 +112,9 @@ def add_playlist_songs(playlist_id):
 
 @playlists.route("/<playlist_id>/song", methods=["POST"])
 def add_playlist_song(playlist_id):
+
     playlist = Playlist.query.get(playlist_id)
+
     db.session.add(
         PlaylistSong(
             song_index=len(playlist.songs),
@@ -137,7 +139,6 @@ def get_liked():
     if not liked:
         return {"errors": "Liked playlist not found"}, 404
 
-    print('\n\n\n---LIKED PLAYLIST DATA---\n\n\n', liked)
     return liked.to_json()
 
 

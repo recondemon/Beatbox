@@ -113,7 +113,7 @@ const Home = () => {
                     key={song.id}
                     onClick={() => handleSongClick(song, index)}
                   >
-                    <div className="bg-card rounded-lg w-56 h-52 inline-block text-center shadow text-foreground justify-center border-muted border-2 transition-transform transform hover:scale-105 hover:shadow-md hover:cursor-pointer h-[200px] hover:h-[210px]">
+                    <div className="bg-card rounded-lg w-56 h-52 inline-block whitespace-pre-wrap text-center shadow text-foreground justify-center border-muted border-2 transition-transform transform hover:scale-105 hover:shadow-md hover:cursor-pointer h-[200px] hover:h-[210px]">
                       <div>
                         <img
                           src={song.album?.[0]?.album_cover}

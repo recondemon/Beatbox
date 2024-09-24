@@ -1,14 +1,15 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate  } from 'react-router-dom';
 import { fetchAlbums, selectAlbumsArray } from '../../redux/albums';
-import { fetchPlaylists, selectPlaylistsArray } from '../../redux/playlists';
+import { fetchPlaylists, selectPlaylistsArray, addToQueue, setCurrentSongIndex } from '../../redux/playlists';
 import { useEffect, useState } from 'react';
 import { fetchSongs, selectSongsArray } from '../../redux/songs';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const Home = () => {
   const dispatch = useDispatch();
-  const user = useSelector(state => state.session.user);
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.session.user);
   const albums = useSelector(selectAlbumsArray);
   const playlists = useSelector(selectPlaylistsArray);
   const songs = useSelector(selectSongsArray);
@@ -21,7 +22,7 @@ const Home = () => {
   }, [dispatch]);
 
   // Shuffle the song array using Fisher-Yates shuffle
-  const shuffleArray = array => {
+  const shuffleArray = (array) => {
     const shuffled = [...array];
     for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -40,10 +41,20 @@ const Home = () => {
     });
   };
 
-  const filterContent = items => {
-    return items.filter(item => item.name?.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filterContent = (items) => {
+    return items.filter((item) => item.name?.toLowerCase().includes(searchTerm.toLowerCase()));
   };
 
+  const handleSongClick = (song, index) => {
+    // Add song to queue and set the current song index
+    dispatch(addToQueue(song));
+    dispatch(setCurrentSongIndex(index));
+  
+    // Start playing the song before navigating to the album page
+    setTimeout(() => {
+      navigate(`/album/${song.album.id}`);
+    }, 300);  // Delay navigation for 300ms to ensure the song starts playing
+  };
   if (!user) {
     return (
       <div className='h-[calc(100vh-64px)] flex flex-col items-center justify-center overflow-hidden'>
@@ -61,7 +72,7 @@ const Home = () => {
         <input
           type='text'
           value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
+          onChange={(e) => setSearchTerm(e.target.value)}
           placeholder='Search for songs, albums, playlists...'
           className='w-full p-3 rounded-lg bg-input text-foreground border border-muted'
         />
@@ -84,12 +95,14 @@ const Home = () => {
                 id='songs-section'
                 className='flex overflow-x-auto overflow-y-hidden whitespace-nowrap gap-4 min-w-[70vw] max-w-[70vw] mx-auto scrollbar-thin scrollbar-thumb-primary scrollbar-thumb-rounded-full scrollbar-track-transparent'
               >
-                {shuffledSongs.map(song => (
-                  <Link
-                    key={song.id}
-                    to={`/song/${song.id}`}
+                {shuffledSongs.map((song, index) => (
+                  <div
+                  key={song.id}
+                  onClick={() => handleSongClick(song, index)}   
                   >
-                    <div className='bg-card rounded-lg w-56 h-52 inline-block text-center shadow text-foreground justify-center border-muted border-2 transition-transform transform hover:scale-105 hover:shadow-md hover:cursor-pointer h-[200px] hover:h-[210px]'>
+                    <div
+                      className='bg-card rounded-lg w-56 h-52 inline-block text-center shadow text-foreground justify-center border-muted border-2 transition-transform transform hover:scale-105 hover:shadow-md hover:cursor-pointer h-[200px] hover:h-[210px]'
+                    >
                       <div>
                         <img
                           src={song.album?.[0]?.album_cover}
@@ -104,7 +117,7 @@ const Home = () => {
                           : `${song.album?.[0]?.artist?.[0]?.first_name} ${song.album?.[0]?.artist?.[0]?.last_name}`}
                       </p>
                     </div>
-                  </Link>
+                  </div>
                 ))}
               </div>
               <ChevronRight
@@ -126,11 +139,8 @@ const Home = () => {
                 id='albums-section'
                 className='flex overflow-x-auto overflow-y-hidden whitespace-nowrap gap-4 mx-auto min-w-[70vw] max-w-[70vw] scrollbar-thin scrollbar-thumb-primary scrollbar-thumb-rounded-full scrollbar-track-transparent'
               >
-                {filterContent(albums).map(album => (
-                  <Link
-                    key={album.id}
-                    to={`/album/${album.id}`}
-                  >
+                {filterContent(albums).map((album) => (
+                  <Link key={album.id} to={`/album/${album.id}`}>
                     <div className='bg-card rounded-lg w-56 h-52 inline-block text-center shadow text-foreground justify-center border-muted border-2 transition-transform transform hover:scale-105 hover:shadow-md hover:cursor-pointer h-[200px] hover:h-[210px]'>
                       <div>
                         <img
@@ -139,9 +149,7 @@ const Home = () => {
                           className='w-full h-full object-cover rounded-md'
                         />
                       </div>
-
                       <p className='text-lg font-semibold whitespace-pre-wrap'>{album.name}</p>
-
                       <p className='text-sm'>
                         {album.artist?.[0]?.band_name
                           ? album.artist[0].band_name
@@ -170,11 +178,8 @@ const Home = () => {
                 id='playlists-section'
                 className='flex overflow-x-auto overflow-y-hidden whitespace-nowrap gap-4 min-w-[70vw] max-w-[70vw] mx-auto scrollbar-thin scrollbar-thumb-primary scrollbar-thumb-rounded-full scrollbar-track-transparent'
               >
-                {filterContent(playlists).map(playlist => (
-                  <Link
-                    key={playlist.id}
-                    to={`/playlist/${playlist.id}`}
-                  >
+                {filterContent(playlists).map((playlist) => (
+                  <Link key={playlist.id} to={`/playlist/${playlist.id}`}>
                     <div className='bg-card p-6 w-56 h-52 inline-block text-center rounded-lg shadow text-foreground justify-center border-muted border-2 transition-transform transform hover:scale-105 hover:shadow-md hover:cursor-pointer h-[200px] hover:h-[210px]'>
                       <p>{playlist.name}</p>
                     </div>

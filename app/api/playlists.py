@@ -130,13 +130,14 @@ def add_playlist_song(playlist_id):
 def get_liked():
     liked = Playlist.query.filter_by(
         owner_id=current_user.id, is_public=False, name="Liked"
-    )
+    ).first()
 
     print(current_user.id)
 
     if not liked:
         return {"errors": "Liked playlist not found"}, 404
 
+    print('\n\n\n---LIKED PLAYLIST DATA---\n\n\n', liked)
     return liked.to_json()
 
 
@@ -154,7 +155,7 @@ def get_queue():
 
 
 @playlists.route("/queue", methods=["POST"])
-@login_required
+
 def add_to_queue():
     queue = Playlist.query.filter_by(
         owner_id=current_user.id, is_public=False, name="Queue"
@@ -163,19 +164,23 @@ def add_to_queue():
     if not queue:
         return {"errors": "Could not fetch Queue"}, 404
 
-    song_ids = request.get_json()["songs"]  # pyright: ignore
+    song_ids = request.get_json()["songs"]
 
     current_max_index = (
         db.session.query(db.func.max(PlaylistSong.song_index))
         .filter_by(playlist_id=queue.id)
+<<<<<<< HEAD
         .scalar()  # Returns the specific index value OR None of there isn't a max or index
+=======
+        .scalar()
+>>>>>>> dev
     )
 
     if not current_max_index:
         current_max_index = 0
 
     playlist_songs = []
-    for song_id in song_ids:  # pyright: ignore
+    for song_id in song_ids:
         playlist_songs.append(
             PlaylistSong(
                 song_index=current_max_index + 1,

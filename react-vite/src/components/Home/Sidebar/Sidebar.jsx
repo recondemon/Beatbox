@@ -1,19 +1,13 @@
-import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLoaderData } from 'react-router-dom';
-import { fetchAlbums, selectAlbumsArray } from '../../../redux/albums';
-import { useEffect } from 'react';
 
 const Sidebar = () => {
-  const dispatch = useDispatch();
-  const likedSongs = useLoaderData();
-  const albums = useSelector(selectAlbumsArray);
-  const likedSongAlbums = likedSongs.map(song => {
+  const { likes } = useLoaderData();
+  const { albums } = useLoaderData();
+  const likedSongAlbums = likes?.map(song => {
     return albums.find(album => album.id === song.song[0].album_id);
   });
 
-  useEffect(() => {
-    dispatch(fetchAlbums);
-  }, [dispatch]);
+  console.log('\n\n---albums---\n\n', albums);
 
   return (
     <div className='absolute top-20 left-4'>

@@ -113,6 +113,13 @@ export default function playlistsReducer(state = { queue: [], currentSongIndex: 
         currentSongIndex: persistedIndex,
       };
     }
+    case LOAD_ALL: {
+      const newState = { ...state };
+      action.playlists.forEach((playlist) => {
+        newState[playlist.id] = playlist;
+      });
+      return newState;
+    }
     case ADD_TO_QUEUE: {
       const newQueue = [...state.queue, action.song];
       localStorage.setItem('queue', JSON.stringify(newQueue));

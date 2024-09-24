@@ -1,14 +1,12 @@
 import { createSelector } from "reselect";
 import { post } from "./csrf";
 
-
 const LOAD_ALL = "playlists/loadAll";
 const LOAD_ONE = "playlists/loadOne";
 const LOAD_QUEUE = "playlists/loadQueue";
 const ADD_TO_QUEUE = "playlists/addToQueue";
 const PLAY_NEXT = "playlists/playNext";
 const SET_CURRENT_SONG_INDEX = "playlists/setCurrentSongIndex";
-
 
 export const loadAll = (playlists) => {
   return {
@@ -51,7 +49,6 @@ export const setCurrentSongIndex = (index) => {
   };
 };
 
-
 export const fetchPlaylists = () => async (dispatch) => {
   const res = await fetch("/api/playlists");
 
@@ -84,13 +81,23 @@ export const fetchQueue = () => async (dispatch) => {
   }
   return res;
 };
+export const postToQueue = (song) => async (dispatch) => {
+  const res = await post(`/api/playlists/queue`, { songs: [song.id] });
+  console.log("POSTING TO QUEUE");
+  if (res.ok) {
+    const data = await res.json();
+    dispatch(loadQueue(data));
+    console.log("NEW QUEUE:", data);
+    return data;
+  }
+  return res;
+};
 
 export const createPlaylists = (playlist) => async (dispatch) => {
   const playlist = await post("/playlists", playlist);
   dispatch(loadOne(playlist));
   return playlist;
 };
-
 
 export const selectPlaylists = (state) => state.playlists;
 export const selectPlaylistById = (playlistId) => (state) =>
@@ -100,7 +107,6 @@ export const selectPlaylistsArray = createSelector(
   selectPlaylists,
   (playlists) => Object.values(playlists)
 );
-
 
 export default function playlistsReducer(state = { queue: [] }, action) {
   switch (action.type) {
@@ -124,16 +130,18 @@ export default function playlistsReducer(state = { queue: [] }, action) {
     }
     case LOAD_QUEUE: {
       return {
-          ...state,
-          queue: Array.isArray(action.queue) ? action.queue : [],
+        ...state,
+        queue: Array.isArray(action.queue) ? action.queue : [],
       };
-  }
+    }
     case ADD_TO_QUEUE: {
       return {
         ...state,
-        queue: Array.isArray(state.queue) ? [...state.queue, action.song] : [action.song],
-    };
-}
+        queue: Array.isArray(state.queue)
+          ? [...state.queue, action.song]
+          : [action.song],
+      };
+    }
     case PLAY_NEXT: {
       return {
         ...state,

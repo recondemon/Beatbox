@@ -1,12 +1,11 @@
-import Cookies from "js-cookie";
+import Cookies from 'js-cookie';
 
 export async function csrfFetch(url, options = {}) {
-  options.method = options.method || "GET";
+  options.method = options.method || 'GET';
   options.headers = options.headers || {};
-  if (options.method.toUpperCase() !== "GET") {
-    options.headers["Content-Type"] =
-      options.headers["Content-Type"] || "application/json";
-    options.headers["XSRF-Token"] = Cookies.get("XSRF-TOKEN");
+  if (options.method.toUpperCase() !== 'GET') {
+    options.headers['Content-Type'] = options.headers['Content-Type'] || 'application/json';
+    options.headers['XSRF-Token'] = Cookies.get('XSRF-TOKEN');
   }
   const res = await fetch(url, options);
   if (res.status >= 400) throw res;
@@ -14,42 +13,42 @@ export async function csrfFetch(url, options = {}) {
 }
 
 export function restoreCSRF() {
-  return csrfFetch("/api/csrf/restore");
+  return csrfFetch('/api/csrf/restore');
 }
 
 export async function post(url, reqBody = {}) {
-  const adjustedUrl = url.includes("api") ? url : "/api" + url;
-  const data = await csrfFetch(adjustedUrl, { method: "POST", body: reqBody });
+  const adjustedUrl = url.includes('api') ? url : '/api' + url;
+  const data = await csrfFetch(adjustedUrl, { method: 'POST', body: JSON.stringify(reqBody) });
   const json = await data.json();
   if (data.ok) {
     return json, data;
   }
-  throw json
+  throw json;
 }
 export async function get(url) {
-  const adjustedUrl = url.includes("api") ? url : "/api" + url;
+  const adjustedUrl = url.includes('api') ? url : '/api' + url;
   const data = await csrfFetch(adjustedUrl);
   const json = await data.json();
   if (data.ok) {
     return json, data;
   }
-  throw json
+  throw json;
 }
 export async function put(url, reqBody = {}) {
-  const adjustedUrl = url.includes("api") ? url : "/api" + url;
-  const data = await csrfFetch(adjustedUrl, { method: "PUT", body: reqBody });
+  const adjustedUrl = url.includes('api') ? url : '/api' + url;
+  const data = await csrfFetch(adjustedUrl, { method: 'PUT', body: reqBody });
   const json = await data.json();
   if (data.ok) {
     return json, data;
   }
-  throw json
+  throw json;
 }
 export async function del(url) {
-  const adjustedUrl = url.includes("api") ? url : "/api" + url;
-  const data = await csrfFetch(adjustedUrl, { method: "DELETE" });
+  const adjustedUrl = url.includes('api') ? url : '/api' + url;
+  const data = await csrfFetch(adjustedUrl, { method: 'DELETE' });
   const json = await data.json();
   if (data.ok) {
     return json, data;
   }
-  throw json
+  throw json;
 }

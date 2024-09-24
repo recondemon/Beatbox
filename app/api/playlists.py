@@ -1,7 +1,6 @@
 from flask import Blueprint, request
 from app.models import Models, db
 from flask_login import current_user, login_required
-import json
 from app.forms.playlist_form import PlaylistForm
 
 Playlist = Models.Playlist  # pyright: ignore
@@ -16,7 +15,7 @@ def all_playlists():
     return [ply.to_json() for ply in Playlists if ply.is_public]
 
 
-@playlists.route("/my-playlists")
+@playlists.route("/current")
 @login_required
 def my_playlists():
     Playlists = Playlist.query.filter_by(owner_id=current_user.id).all()

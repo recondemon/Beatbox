@@ -1,18 +1,37 @@
-import { useLoaderData } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useLoaderData } from 'react-router-dom';
+import { fetchAlbums, selectAlbumsArray } from '../../../redux/albums';
+import { useEffect } from 'react';
 
 const Sidebar = () => {
-  const likes = useLoaderData();
-  console.log('\n\n---LOGGING LIKES---\n\n', likes);
+  const dispatch = useDispatch();
+  const likedSongs = useLoaderData();
+  const albums = useSelector(selectAlbumsArray);
+  const likedSongAlbums = likedSongs.map(song => {
+    return albums.find(album => album.id === song.song[0].album_id);
+  });
+
+  useEffect(() => {
+    dispatch(fetchAlbums);
+  }, [dispatch]);
 
   return (
     <div className='absolute top-20 left-4'>
       <div className='flex flex-col h-full bg-popover rounded-md'>
-        <nav className='flex flex-col p-4 gap-4'>
-          {/* TODO: Make these links to liked playlists, albums & artists */}
-          <p className='border-accent border rounded-sm p-1 w-14 h-14'>A</p>
-          <p className='border-accent border rounded-sm p-1 w-14 h-14'>A</p>
-          <p className='border-accent border rounded-sm p-1 w-14 h-14'>A</p>
-        </nav>
+        <div className='flex flex-col p-4 gap-4'>
+          {likedSongAlbums?.map(album => (
+            <Link
+              key={album?.id}
+              to={`/albums/${album?.id}`}
+            >
+              <img
+                className='w-12 h-12'
+                src={album?.albumCover}
+                alt='album artwork'
+              />
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -1,8 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { fetchArtist } from '../../redux/artists';
+import { useDispatch } from 'react-redux';
 
 export default function ListDetails({ list }) {
+  const dispatch = useDispatch();
   const url = window.location.href;
   const [songDurations, setSongDurations] = useState({});
+  const [artists, setArtists] = useState({});
   const artist = list?.artist
     ? list?.artist[0].band_name
       ? `${list?.artist[0].band_name}`
@@ -10,6 +14,30 @@ export default function ListDetails({ list }) {
     : null;
   const releaseYear = new Date(list?.releaseDate).getFullYear() || null;
   const songCount = list?.songs?.length;
+
+  // If the info being displayed is a playlist, we need to handle artist data differently.
+  useEffect(() => {
+    if (url.includes('playlist') && list?.songs) {
+      const fetchArtists = async () => {
+        const artistPromises = list?.songs?.map(async song =>
+          dispatch(fetchArtist(song.artist_id)),
+        );
+
+        const artistData = await Promise.all(artistPromises);
+        const artists = {};
+
+        artistData.forEach(artist => {
+          const artistName = artist.bandName ? artist.bandName : `${artist.firstName} ${artist.lastName}`
+          artists[artist.id] = artistName
+        });
+
+        setArtists(artists);
+      };
+
+      fetchArtists();
+    }
+  }, [dispatch, list?.songs, url]);
+
 
   // Updates duration and stores it for each song, including current song
   const handleLoadedMetadata = (songId, audioElement) => {
@@ -30,7 +58,7 @@ export default function ListDetails({ list }) {
 
   const playSong = song => {
     // TODO: Implement using global queue state
-    console.error('Not Implemented')
+    console.error('Not Implemented');
   };
 
   if (!list) {
@@ -38,24 +66,26 @@ export default function ListDetails({ list }) {
   }
 
   return (
-    <div className='container mt-14 xl:max-w-fit sm:max-w-5xl max-h-[calc(100vh-200px)] overflow-y-auto scrollbar-thin scrollbar-thumb-primary scrollbar-thumb-rounded-full scrollbar-track-transparent'>
+    <div className='container mt-14 xl:max-w-[60vw] sm:max-w-5xl max-h-[calc(100vh-200px)] overflow-y-auto scrollbar-thin scrollbar-thumb-primary scrollbar-thumb-rounded-full scrollbar-track-transparent'>
       <div className='mb-6'>
         <span className='flex gap-2 items-center'>
           <img
-            className='max-w-64 rounded-md border border-accent'
+            className='rounded-md border border-accent'
+            height={256}
+            width={256}
             src={list?.name === 'Liked' ? '../../../../public/liked.jpeg' : list.albumCover}
-            alt='album artwork'
+            alt='cover art'
           />
 
-          <div className='flex flex-col justify-center space-y-1'>
+          <div className='flex-grow flex flex-col justify-center space-y-1'>
             <p className='font-semibold'>{url.includes('playlist') ? 'Playlist' : 'Album'}</p>
 
             <h1 className='text-3xl font-bold'>{list?.name}</h1>
 
             <p className='text-sm'>
               {artist}
-              {url.includes('album') ? releaseYear && <>{` • ${releaseYear} • `}</> : ''}  {songCount}{' '}
-              {`${songCount === 1 ? 'song' : 'songs'}`}
+              {url.includes('album') ? releaseYear && <>{` • ${releaseYear} • `}</> : ''}{' '}
+              {songCount} {`${songCount === 1 ? 'song' : 'songs'}`}
             </p>
           </div>
         </span>
@@ -82,7 +112,7 @@ export default function ListDetails({ list }) {
                 </div>
 
                 <div className='flex-1 text-center'>
-                  <p className='text-sm'>{artist}</p>
+                  <p className='text-sm'>{url.includes('playlist') ? artists[song.artist_id] : artist}</p>
                 </div>
 
                 <div className='flex-1 text-right'>

@@ -3,6 +3,8 @@ import { post, get } from "./csrf";
 
 const LOAD_ALL = "songs/loadAll";
 const LOAD_ONE = "songs/loadOne";
+const UPDATE_SONG = 'songs/update';
+const DELETE_SONG = 'songs/delete';
 
 export const loadAll = (songs) => {
   return {
@@ -15,6 +17,49 @@ export const loadOne = (song) => {
     type: LOAD_ONE,
     song,
   };
+};
+
+export const updateSong = (updatedSong) => {
+  return {
+    type: UPDATE_SONG,
+    updatedSong,
+  };
+};
+
+export const deleteSong = (songId) => {
+  return {
+    type: DELETE_SONG,
+    songId,
+  };
+};
+
+export const editSong = (songId, songData) => async (dispatch) => {
+  const res = await fetch(`/api/songs/${songId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(songData),
+  });
+
+  if (res.ok) {
+    const data = await res.json();
+    dispatch(updateSong(data));
+    return data;
+  }
+  return res;
+};
+
+export const removeSong = (songId) => async (dispatch) => {
+  const res = await fetch(`/api/songs/${songId}`, {
+    method: 'DELETE',
+  });
+
+  if (res.ok) {
+    dispatch(deleteSong(songId));
+    return true;
+  }
+  return false;
 };
 
 export const fetchSongs = () => async (dispatch) => {
@@ -67,6 +112,19 @@ export default function songsReducer(state = {}, action) {
           ...action.song,
         },
       };
+    }
+    case UPDATE_SONG: {
+      return {
+        ...state,
+        [action.updatedSong.id]: {
+          ...action.updatedSong,
+        },
+      };
+    }
+    case DELETE_SONG: {
+      const newState = { ...state };
+      delete newState[action.songId];
+      return newState;
     }
     default:
       return state;

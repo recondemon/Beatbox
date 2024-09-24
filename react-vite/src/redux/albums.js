@@ -5,6 +5,8 @@ import { csrfFetch, post } from './csrf';
 const LOAD_ALL = 'albums/loadAll';
 const LOAD_ONE = 'albums/loadOne';
 const CREATE = 'albums/create';
+const UPDATE = 'albums/update';
+const DELETE = 'albums/delete';
 
 export const loadAll = albums => {
   return {
@@ -25,6 +27,49 @@ export const create = newAlbum => {
     type: CREATE,
     newAlbum,
   };
+};
+
+export const updateAlbum = (updatedAlbum) => {
+  return {
+    type: UPDATE,
+    updatedAlbum,
+  };
+};
+
+export const deleteAlbum = (albumId) => {
+  return {
+    type: DELETE,
+    albumId,
+  };
+};
+
+export const editAlbum = (albumId, albumData) => async (dispatch) => {
+  const res = await fetch(`/api/albums/${albumId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(albumData),
+  });
+
+  if (res.ok) {
+    const data = await res.json();
+    dispatch(updateAlbum(data));
+    return data;
+  }
+  return res;
+};
+
+export const removeAlbum = (albumId) => async (dispatch) => {
+  const res = await fetch(`/api/albums/${albumId}`, {
+    method: 'DELETE',
+  });
+
+  if (res.ok) {
+    dispatch(deleteAlbum(albumId));
+    return true;
+  }
+  return false;
 };
 
 export const fetchAlbums = () => async dispatch => {
@@ -109,6 +154,17 @@ export default function albumsReducer(state = {}, action) {
           ...action.newAlbum,
         },
       };
+    case UPDATE:
+      return {
+        ...state,
+        [action.updatedAlbum.id]: {
+          ...action.updatedAlbum,
+        },
+      };
+    case DELETE:
+      const newState = { ...state };
+      delete newState[action.albumId];
+      return newState;
     default:
       return state;
   }

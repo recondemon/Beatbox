@@ -5,7 +5,7 @@ export async function csrfFetch(url, options = {}) {
   options.headers = options.headers || {};
   if (options.method.toUpperCase() !== 'GET') {
     options.headers['Content-Type'] = options.headers['Content-Type'] || 'application/json';
-    options.headers['XSRF-Token'] = Cookies.get('XSRF-TOKEN');
+    options.headers['XSRF-Token'] = Cookies.get('csrf_token');
   }
   const res = await fetch(url, options);
   if (res.status >= 400) throw res;
@@ -25,6 +25,7 @@ export async function post(url, reqBody = {}) {
   }
   throw json;
 }
+
 export async function get(url) {
   const adjustedUrl = url.includes('api') ? url : '/api' + url;
   const data = await csrfFetch(adjustedUrl);
@@ -34,6 +35,7 @@ export async function get(url) {
   }
   throw json;
 }
+
 export async function put(url, reqBody = {}) {
   const adjustedUrl = url.includes('api') ? url : '/api' + url;
   const data = await csrfFetch(adjustedUrl, { method: 'PUT', body: reqBody });
@@ -43,6 +45,7 @@ export async function put(url, reqBody = {}) {
   }
   throw json;
 }
+
 export async function del(url) {
   const adjustedUrl = url.includes('api') ? url : '/api' + url;
   const data = await csrfFetch(adjustedUrl, { method: 'DELETE' });

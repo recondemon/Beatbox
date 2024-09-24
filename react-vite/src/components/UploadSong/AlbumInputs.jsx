@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ArrowLeft } from 'lucide-react';
 import { createAlbum } from '../../redux/albums';
+import Cookies from 'js-cookie';
 
 const AlbumInputs = ({ handleBackToSelect }) => {
   const dispatch = useDispatch();
@@ -10,7 +11,7 @@ const AlbumInputs = ({ handleBackToSelect }) => {
   const [releaseDate, setReleaseDate] = useState('');
   const [albumCoverFile, setAlbumCoverFile] = useState(null);
   const [albumCoverUrl, setAlbumCoverUrl] = useState('');
-  const currUserId = useSelector(state => state.session.user.id)
+  const currUserId = useSelector(state => state.session.user.id);
 
   const handleFileChange = e => {
     const file = e.target.files[0];
@@ -21,6 +22,12 @@ const AlbumInputs = ({ handleBackToSelect }) => {
   const handleUrlChange = e => {
     setAlbumCoverUrl(e.target.value);
     setAlbumCoverFile(null);
+  };
+
+  const getCookie = name => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
   };
 
   const handleCreateAlbum = async e => {

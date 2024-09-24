@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+import Cookies from 'js-cookie';
 import { csrfFetch, post } from './csrf';
 
 const LOAD_ALL = 'albums/loadAll';

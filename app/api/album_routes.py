@@ -1,3 +1,5 @@
+import os
+from flask_wtf.csrf import generate_csrf
 from flask import Blueprint, request, jsonify
 from app.models import Models, db
 from flask_login import current_user, login_required
@@ -12,6 +14,20 @@ from datetime import datetime
 Album = Models.Album
 
 albums = Blueprint("albums", __name__)
+
+
+@albums.after_request
+def inject_csrf_token(response):
+    response.set_cookie(
+        "csrf_token",
+        generate_csrf(),
+        secure=True if os.environ.get("FLASK_ENV") == "production" else False,
+        samesite="Strict"
+        if os.environ.get("FLASK_ENV") == "production"
+        else None,
+        httponly=True,
+    )
+    return response
 
 
 # get all albums
@@ -41,14 +57,17 @@ def user_albums(user_id):
 # create an album, POST method
 @albums.route("/", methods=["POST"])
 def create_album():
-    print(request.files["file"])
     form = AlbumForm()
+
 
     # We have to manually populate form data because god hates us...
     form.name.data = request.form.get("name")
     form.description.data = request.form.get("description")
-    form.release_date.data = datetime.strptime(request.form.get('release_date'), '%Y-%m-%d').date()
+    form.release_date.data = datetime.strptime(
+        request.form.get("release_date"), "%Y-%m-%d"
+    ).date()
     form.artist_id.data = request.form.get("artist_id")
+    form.csrf_token.data = generate_csrf()
 
     if form.validate():
         new_album = Album()
@@ -56,15 +75,16 @@ def create_album():
         new_album.description = form.data["description"]
         new_album.release_date = form.data["release_date"]
         new_album.artist_id = int(form.data["artist_id"])
+        # TODO: Use get_unique_filename here
         new_album.album_cover = upload_file_to_s3(form.file.data)["url"]
         db.session.add(new_album)
         db.session.commit()
         return jsonify(new_album.to_dict()), 201
 
-    if (form.errors):
-        print("\n\n---FORM VALIDATION ERRORS---\n\n", form.errors)
-
+    print("\n\n---FORM VALIDATION ERRORS---\n\n", form.errors)
+    print()
     return jsonify({"errors": form.errors}), 400
+
 
 # edit an album
 @albums.route("/<int:album_id>", methods=["PUT"])

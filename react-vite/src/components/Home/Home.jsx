@@ -21,7 +21,7 @@ const Home = () => {
     dispatch(fetchSongs());
   }, [dispatch]);
 
-  // Shuffle the song array using Fisher-Yates shuffle
+
   const shuffleArray = (array) => {
     const shuffled = [...array];
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -46,15 +46,18 @@ const Home = () => {
   };
 
   const handleSongClick = (song, index) => {
-    // Add song to queue and set the current song index
-    dispatch(addToQueue(song));
-    dispatch(setCurrentSongIndex(index));
+    if (index !== undefined && index !== null && songs.length > 0) {
+      dispatch(addToQueue(song));
+      dispatch(setCurrentSongIndex(index));
   
-    // Start playing the song before navigating to the album page
-    setTimeout(() => {
-      navigate(`/album/${song.album.id}`);
-    }, 300);  // Delay navigation for 300ms to ensure the song starts playing
+      setTimeout(() => {
+        navigate(`/album/${song.album.id}`);
+      }, 300);
+    } else {
+      console.error('Invalid song index or songs array is empty:', index, songs);
+    }
   };
+
   if (!user) {
     return (
       <div className='h-[calc(100vh-64px)] flex flex-col items-center justify-center overflow-hidden'>

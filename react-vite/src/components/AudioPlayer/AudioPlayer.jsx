@@ -12,7 +12,7 @@ import {
 
 export default function AudioPlayer({ list, currentSongIndex, setCurrentSongIndex }) {
   const songs = list?.songs || [];
-  const [currentSong, setCurrentSong] = useState(songs[currentSongIndex] || null);
+  const [currentSong, setCurrentSong] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [volume, setVolume] = useState(1);
@@ -23,7 +23,7 @@ export default function AudioPlayer({ list, currentSongIndex, setCurrentSongInde
 
   const togglePlay = () => {
     if (!audioRef.current) return;
-    
+
     if (isPlaying) {
       audioRef.current.pause();
     } else {
@@ -98,6 +98,29 @@ export default function AudioPlayer({ list, currentSongIndex, setCurrentSongInde
   };
 
   useEffect(() => {
+    if (songs.length > 0 && currentSongIndex !== undefined && currentSongIndex !== null) {
+      const selectedSong = songs[currentSongIndex];
+      setCurrentSong(selectedSong);
+      setCurrentTime(0);
+  
+      if (audioRef.current && selectedSong?.url) {
+        console.log("Setting audio source to:", selectedSong.url);
+        audioRef.current.src = selectedSong.url;
+        audioRef.current.load();
+        audioRef.current.play().then(() => {
+          setIsPlaying(true);
+          console.log("Audio started playing successfully");
+        }).catch((error) => {
+          console.error("Auto play failed:", error);
+        });
+      }
+    } else {
+      console.log("No valid song found at the current index.");
+    }
+  }, [currentSongIndex, songs]);
+  
+
+  useEffect(() => {
     const currRef = audioRef.current;
 
     if (currRef) {
@@ -110,42 +133,32 @@ export default function AudioPlayer({ list, currentSongIndex, setCurrentSongInde
           skipForward();
         }
       });
-
-      currRef.addEventListener('canplaythrough', () => {
-        if (isPlaying) {
-          currRef.play().catch((error) => {
-            console.error("Auto play failed:", error);
-          });
-        }
-      });
     }
-
+    console.log('current song:', currentSong);
     return () => {
       if (currRef) {
         currRef.removeEventListener('timeupdate', handleTimeUpdate);
         currRef.removeEventListener('ended', skipForward);
-        currRef.removeEventListener('canplaythrough', togglePlay);
       }
     };
   }, [currentSong, isRepeating]);
 
-  useEffect(() => {
-    setCurrentSong(songs[currentSongIndex] || null);
-    setCurrentTime(0);
-    if (audioRef.current) {
-      audioRef.current.load();
-      setIsPlaying(false);
-    }
-  }, [currentSongIndex, songs]);
-
   return (
     <div className='p-4 flex items-center bg-background fixed bottom-0 left-0 right-0 space-x-4 border-t border-accent'>
-      <audio ref={audioRef} src={currentSong?.url} className='hidden' />
+      <audio ref={audioRef} className='hidden' />
 
       <div className='flex-shrink-0 w-48'>
-        <img src={currentSong?.albumCover} alt={currentSong?.name} className="w-full h-full object-cover" />
-        <h3 className='font-semibold'>{currentSong?.name}</h3>
-        <p>{currentSong?.artistName}</p>
+        {currentSong ? (
+          <div className='h-12 w-12 flex'>
+            <img src={currentSong?.album[0].album_cover} alt={currentSong?.name} className="w-full h-full object-cover" />
+            <div className='flex flex-col'>
+              <h3 className='font-semibold'>{currentSong?.name}</h3>
+              <p>{currentSong?.artist[0].band_name}</p>
+            </div>
+          </div>
+        ) : (
+          <div className="text-gray-500">No song selected</div>
+        )}
       </div>
 
       <div className='flex-1 flex flex-col items-center'>
@@ -161,6 +174,7 @@ export default function AudioPlayer({ list, currentSongIndex, setCurrentSongInde
           <button
             onClick={togglePlay}
             className='p-2 rounded-full scale-105 transition'
+            disabled={!currentSong}  // Disable if no song is selected
           >
             {isPlaying ? <Pause size={24} /> : <Play size={24} />}
           </button>
@@ -184,6 +198,7 @@ export default function AudioPlayer({ list, currentSongIndex, setCurrentSongInde
             value={currentTime}
             onChange={handleProgressChange}
             className='flex-1 h-1 rounded-lg appearance-none cursor-pointer'
+            disabled={!currentSong}  // Disable if no song is selected
           />
 
           <span className='text-xs w-10'>{formatTime(audioRef.current?.duration || 0)}</span>

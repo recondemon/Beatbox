@@ -1,12 +1,33 @@
+import os
+from flask_wtf.csrf import generate_csrf
 from flask import Blueprint, request, jsonify
 from app.models import Models, db
 from flask_login import current_user, login_required
 from app.forms.album_form import AlbumForm
-from app.api.aws_upload import upload_file_to_s3, get_unique_filename, remove_file_from_s3
+from app.api.aws_upload import (
+    upload_file_to_s3,
+    get_unique_filename,
+    remove_file_from_s3,
+)
+from datetime import datetime
 
 Album = Models.Album
 
 albums = Blueprint("albums", __name__)
+
+
+@albums.after_request
+def inject_csrf_token(response):
+    response.set_cookie(
+        "csrf_token",
+        generate_csrf(),
+        secure=True if os.environ.get("FLASK_ENV") == "production" else False,
+        samesite="Strict"
+        if os.environ.get("FLASK_ENV") == "production"
+        else None,
+        httponly=True,
+    )
+    return response
 
 
 # get all albums
@@ -35,26 +56,34 @@ def user_albums(user_id):
 
 # create an album, POST method
 @albums.route("/", methods=["POST"])
-@login_required
 def create_album():
     form = AlbumForm()
-    print("\n\n\n\n")
 
-    if form.validate_on_submit():
-        print("LETS GOOOO")
+
+    # We have to manually populate form data because god hates us...
+    form.name.data = request.form.get("name")
+    form.description.data = request.form.get("description")
+    form.release_date.data = datetime.strptime(
+        request.form.get("release_date"), "%Y-%m-%d"
+    ).date()
+    form.artist_id.data = request.form.get("artist_id")
+    form.csrf_token.data = generate_csrf()
+
+    if form.validate():
         new_album = Album()
-        print("WE MADE IT")
-        form.populate_obj(new_album)
-        new_album.album_cover = upload_file_to_s3(form.data["file"])
-        print("WE UPLOADED")
-        new_album.artist_id = current_user.id
+        new_album.name = form.data["name"]
+        new_album.description = form.data["description"]
+        new_album.release_date = form.data["release_date"]
+        new_album.artist_id = int(form.data["artist_id"])
+        # TODO: Use get_unique_filename here
+        new_album.album_cover = upload_file_to_s3(form.file.data)["url"]
         db.session.add(new_album)
-        print("WE ADDED")
         db.session.commit()
-        print("\n\n\n\n")
-        return new_album.to_json(), 201
+        return jsonify(new_album.to_dict()), 201
 
-    return jsonify({"error": "Bad Data"}), 400
+    print("\n\n---FORM VALIDATION ERRORS---\n\n", form.errors)
+    print()
+    return jsonify({"errors": form.errors}), 400
 
 
 # edit an album

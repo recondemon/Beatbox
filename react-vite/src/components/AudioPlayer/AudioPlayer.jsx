@@ -22,7 +22,9 @@ export default function AudioPlayer() {
   const [isMuted, setIsMuted] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
   const [isRepeating, setIsRepeating] = useState(false);
+  const [lastSong, setLastSong] = useState(false);
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
+  const [playTime, setPlayTime] = useState(0);
   const audioRef = useRef(null);
 
   useEffect(() => {
@@ -30,8 +32,6 @@ export default function AudioPlayer() {
     dispatch(fetchQueue());
   }, [dispatch]);
 
-  console.log("LIST")
-  console.log(list)
 
   const togglePlay = () => {
     if (!audioRef.current) return;
@@ -90,16 +90,43 @@ export default function AudioPlayer() {
   };
 
   const skipBack = () => {
-    setCurrentSongIndex((prevIndex) =>
-      prevIndex === 0 ? list?.length - 1 : prevIndex - 1
-    );
+    if (currentTime >= 5) {
+      audioRef.current.currentTime = 0;
+    } else {
+      if (list.length > 1) {
+        setCurrentSongIndex((prevIndex) => {
+          if (prevIndex === 0) {
+            return list.length - 1;
+          }
+          return prevIndex - 1;
+        });
+      } else {
+        audioRef.current.currentTime = 0;
+      }
+    }
   };
 
   const skipForward = () => {
+
+    if (!list || list.length === 0) return;
+  
+
+    if (list.length === 1) {
+      setLastSong(true);
+      return;
+    }
+  
+    if (currentSongIndex === list.length - 1 && !isRepeating) {
+      setLastSong(true);
+      return;
+    }
+  
+    setLastSong(false);
+  
     if (isShuffling) {
-      setCurrentSongIndex(Math.floor(Math.random() * list?.length));
+      setCurrentSongIndex(Math.floor(Math.random() * list.length));
     } else {
-      setCurrentSongIndex((prevIndex) => (prevIndex + 1) % list?.list?.length);
+      setCurrentSongIndex((prevIndex) => (prevIndex + 1) % list.length);
     }
   };
 
@@ -154,7 +181,6 @@ export default function AudioPlayer() {
         }
       });
     }
-    console.log("current song:", currentSong);
     return () => {
       if (currRef) {
         currRef.removeEventListener("timeupdate", handleTimeUpdate);
@@ -206,7 +232,7 @@ export default function AudioPlayer() {
             {isPlaying ? <Pause size={24} /> : <Play size={24} />}
           </button>
 
-          <button onClick={skipForward}>
+          <button onClick={skipForward} disabled={lastSong}>
             <SkipForward size={24} />
           </button>
 

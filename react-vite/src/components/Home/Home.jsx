@@ -50,13 +50,14 @@ const Home = () => {
       item.name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
   };
-
+  
   const handleSongClick = (song, index) => {
+    console.log('song:', song);
     if (index !== undefined && index !== null && songs.length > 0) {
       dispatch(addToQueue(song));
       dispatch(postToQueue(song));
       setTimeout(() => {
-        navigate(`/album/${song.album.id}`);
+        navigate(`/album/${song.albumId}`);
       }, 300);
     } else {
       console.error(

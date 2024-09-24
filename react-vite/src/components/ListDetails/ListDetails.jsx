@@ -1,6 +1,10 @@
 import { useState } from 'react';
+import { Play } from 'lucide-react';
+import { addToQueue, clearQueue, postToQueue } from '../../redux/playlists';
+import { useDispatch } from 'react-redux';
 
 export default function ListDetails({ list }) {
+  const dispatch = useDispatch();
   const [songDurations, setSongDurations] = useState({});
   const artist = list?.artist
     ? list?.artist[0].band_name
@@ -27,10 +31,62 @@ export default function ListDetails({ list }) {
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
-  const playSong = song => {
-    // TODO: Implement using global queue state
-    console.error('Not Implemented')
+  const handlePlayAllSongs = () => {
+    if (list?.songs && list.songs.length > 0) {
+      console.log("the list", list);
+      console.log('Adding all songs to queue:', list.songs);
+  
+
+      dispatch(clearQueue());
+  
+      const restructureSongs = list.songs.map(song => ({
+        album: [{ 
+          id: song.album_id, 
+          album_cover: list.albumCover,
+        }],
+        albumId: song.album_id,
+        artist: [{
+          band_name: list.artist[0].band_name,
+          first_name: list.artist[0].first_name,
+          last_name: list.artist[0].last_name,
+        }],
+        artistId: song.artist_id,
+        id: song.id,
+        name: song.name,
+        url: song.url,
+      }));
+  
+
+      restructureSongs.forEach(song => {
+        dispatch(addToQueue(song));
+      });
+    } else {
+      console.error('No songs to add to the queue');
+    }
   };
+
+const playSong = song => {
+  dispatch(clearQueue());
+
+  const structuredSong = {
+    album: [{ 
+      id: song.album_id, 
+      album_cover: list.albumCover,
+    }],
+    albumId: song.album_id,
+    artist: [{
+      band_name: list.artist[0]?.band_name || '',
+      first_name: list.artist[0]?.first_name || '',
+      last_name: list.artist[0]?.last_name || '',
+    }],
+    artistId: song.artist_id,
+    id: song.id,
+    name: song.name,
+    url: song.url,
+  };
+
+  dispatch(addToQueue(structuredSong));
+};
 
   if (!list) {
     return <h2>Loading...</h2>;
@@ -38,7 +94,7 @@ export default function ListDetails({ list }) {
 
   return (
     <div className='container mt-14 xl:max-w-fit sm:max-w-5xl max-h-[calc(100vh-200px)] overflow-y-auto scrollbar-thin scrollbar-thumb-primary scrollbar-thumb-rounded-full scrollbar-track-transparent'>
-      <div className='mb-6'>
+      <div className='mb-6 w-[80vw]'>
         <span className='flex gap-2 items-center'>
           <img
             src={list.albumCover}
@@ -55,10 +111,19 @@ export default function ListDetails({ list }) {
               {releaseYear && <>{` • ${releaseYear}`}</>} • {songCount}{' '}
               {`${songCount === 1 ? 'song' : 'songs'}`}
             </p>
+            <p className='text-sm py-2 text-wrap w-4/5'>{list?.description}</p>
+            <div className='flex'>
+              <button 
+              className='p-3 bg-green-500 w-fit rounded-full'
+              onClick={handlePlayAllSongs}
+              >
+                <Play />
+              </button>
+            </div>
           </div>
         </span>
 
-        <p className='text-sm mt-1'>{list?.description}</p>
+        
       </div>
 
       <ul className='space-y-4 bg-card text-card-foreground w-full border border-border h-2/3 rounded-md py-4'>

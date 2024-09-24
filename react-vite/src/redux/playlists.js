@@ -7,47 +7,40 @@ const LOAD_QUEUE = "playlists/loadQueue";
 const ADD_TO_QUEUE = "playlists/addToQueue";
 const PLAY_NEXT = "playlists/playNext";
 const SET_CURRENT_SONG_INDEX = "playlists/setCurrentSongIndex";
+const CLEAR_QUEUE = "playlists/clearQueue";
 
-export const loadAll = (playlists) => {
-  return {
-    type: LOAD_ALL,
-    playlists,
-  };
-};
+export const clearQueue = () => ({
+  type: CLEAR_QUEUE,
+});
 
-export const loadOne = (playlist) => {
-  return {
-    type: LOAD_ONE,
-    playlist,
-  };
-};
+export const loadAll = (playlists) => ({
+  type: LOAD_ALL,
+  playlists,
+});
 
-export const loadQueue = (queue) => {
-  return {
-    type: LOAD_QUEUE,
-    queue,
-  };
-};
+export const loadOne = (playlist) => ({
+  type: LOAD_ONE,
+  playlist,
+});
 
-export const addToQueue = (song) => {
-  return {
-    type: ADD_TO_QUEUE,
-    song,
-  };
-};
+export const loadQueue = (queue) => ({
+  type: LOAD_QUEUE,
+  queue,
+});
 
-export const playNext = () => {
-  return {
-    type: PLAY_NEXT,
-  };
-};
+export const addToQueue = (song) => ({
+  type: ADD_TO_QUEUE,
+  song,
+});
 
-export const setCurrentSongIndex = (index) => {
-  return {
-    type: SET_CURRENT_SONG_INDEX,
-    index,
-  };
-};
+export const playNext = () => ({
+  type: PLAY_NEXT,
+});
+
+export const setCurrentSongIndex = (index) => ({
+  type: SET_CURRENT_SONG_INDEX,
+  index,
+});
 
 export const fetchPlaylists = () => async (dispatch) => {
   const res = await fetch("/api/playlists");
@@ -81,6 +74,7 @@ export const fetchQueue = () => async (dispatch) => {
   }
   return res;
 };
+
 export const postToQueue = (song) => async (dispatch) => {
   const res = await post(`/api/playlists/queue`, { songs: [song.id] });
   console.log("POSTING TO QUEUE");
@@ -93,10 +87,10 @@ export const postToQueue = (song) => async (dispatch) => {
   return res;
 };
 
-export const createPlaylists = (playlist) => async (dispatch) => {
-  const playlist = await post("/playlists", playlist);
-  dispatch(loadOne(playlist));
-  return playlist;
+export const createPlaylists = (playlistData) => async (dispatch) => {
+  const newPlaylist = await post("/playlists", playlistData);
+  dispatch(loadOne(newPlaylist));
+  return newPlaylist;
 };
 
 export const selectPlaylists = (state) => state.playlists;
@@ -137,9 +131,7 @@ export default function playlistsReducer(state = { queue: [] }, action) {
     case ADD_TO_QUEUE: {
       return {
         ...state,
-        queue: Array.isArray(state.queue)
-          ? [...state.queue, action.song]
-          : [action.song],
+        queue: [...state.queue, action.song],
       };
     }
     case PLAY_NEXT: {
@@ -152,6 +144,12 @@ export default function playlistsReducer(state = { queue: [] }, action) {
       return {
         ...state,
         currentSongIndex: action.index,
+      };
+    }
+    case CLEAR_QUEUE: {
+      return {
+        ...state,
+        queue: [],
       };
     }
     default:

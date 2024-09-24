@@ -52,8 +52,8 @@ const Home = () => {
   };
   
   const handleSongClick = (song, index) => {
-    console.log('song:', song);
     if (index !== undefined && index !== null && songs.length > 0) {
+      console.log("Adding song to queue:", song);
       dispatch(addToQueue(song));
       dispatch(postToQueue(song));
       setTimeout(() => {

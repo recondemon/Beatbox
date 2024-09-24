@@ -20,6 +20,11 @@ export const router = createBrowserRouter([
       {
         path: '/',
         element: <Home />,
+        loader: async () => {
+          const res = await fetch('/api/playlists/liked');
+          const likes = await res.json();
+          return likes;
+        },
       },
       {
         path: 'login',

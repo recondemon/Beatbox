@@ -141,14 +141,18 @@ def get_liked():
 @playlists.route("/queue")
 @login_required
 def get_queue():
-    queue = Playlist.query.filter_by(
-        owner_id=current_user.id, is_public=False, name="Queue"
-    )
+    try:
+        queue = Playlist.query.filter_by(
+            owner_id=current_user.id, is_public=False, name="Queue"
+        ).first()
 
-    if not queue:
-        return {"errors": "Could not fetch Queue"}, 404
+        if not queue:
+            return {"errors": "Could not fetch Queue"}, 404
 
-    return queue.to_json()
+        return queue.to_json()
+    except Exception as e:
+        db.session.rollback()
+        return {"errors": f"Server Error: {str(e)}"}, 500
 
 
 @playlists.route("/queue", methods=["POST"])

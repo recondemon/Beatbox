@@ -6,6 +6,7 @@ import configureStore from "./redux/store";
 import { router } from "./router";
 import * as sessionActions from "./redux/session";
 import "./index.css";
+import AudioPlayer from "./components/AudioPlayer/AudioPlayer";
 
 const store = configureStore();
 
@@ -18,6 +19,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <ReduxProvider store={store}>
       <RouterProvider router={router} />
+      <AudioPlayer /> 
     </ReduxProvider>
   </React.StrictMode>
 );

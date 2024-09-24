@@ -6,18 +6,30 @@ import OpenModalMenuItem from './OpenModalMenuItem';
 import LoginFormModal from '../LoginFormModal';
 import SignupFormModal from '../SignupFormModal';
 import { useNavigate } from 'react-router-dom';
+import UploadSongModal from '../UploadSong/UploadSongModal';
+import { fetchArtist, selectArtistById } from '../../redux/artists.js';
 
 function ProfileButton() {
   const dispatch = useDispatch();
   const [showMenu, setShowMenu] = useState(false);
   const user = useSelector(store => store.session.user);
   const ulRef = useRef();
-  const navigate = useNavigate(); 
-
+  const navigate = useNavigate();
+  const artist = useSelector(state => {
+    return user ? selectArtistById(user.id)(state) : null;
+  });
   const toggleMenu = e => {
-    e.stopPropagation(); // Keep from bubbling up to document and triggering closeMenu
+    e.stopPropagation(); 
     setShowMenu(!showMenu);
   };
+  console.log('artist:', artist);
+  useEffect(() => {
+    if (user) {
+      console.log('Fetching artist for user ID:', user.id);
+      dispatch(fetchArtist(user.id));
+    }
+    console.log('artist:', artist);
+  }, [user, dispatch]);
 
   useEffect(() => {
     if (!showMenu) return;
@@ -53,16 +65,24 @@ function ProfileButton() {
       </button>
       {showMenu && (
         <ul
-          className='absolute right-0 mr-4 shadow-shadow text-base border px-3 py-2'
+          className='absolute bg-card flex flex-col right-0 mr-4 gap-4 shadow-shadow text-base border px-3 py-2 rounded-lg'
           ref={ulRef}
         >
           {user ? (
             <>
-              <li className='hover:cursor-pointer'>{user.username}</li>
-              <li className='hover:cursor-pointer'>{user.email}</li>
+              <li className='hover:cursor-pointer'>
+              <div className='flex flex-col gap-2 border-b-2 border-border pb-2'>
+                <span>{artist?.first_name || 'No first name'} {artist?.last_name || 'No last name'}</span>
+                <span>{user.email}</span>
+              </div>
+              </li>
               <li className='hover:cursor-pointer'>
                 <button onClick={manageSongs}>Manage Songs</button>
               </li>
+              <OpenModalMenuItem
+                modalComponent={<UploadSongModal />}
+                itemText="Upload Song"
+              />
               <li className='hover:cursor-pointer'>
                 <button onClick={logout}>Log Out</button>
               </li>

@@ -41,7 +41,7 @@ const Home = () => {
   };
 
   const filterContent = items => {
-    return items.filter(item => item.name.toLowerCase().includes(searchTerm.toLowerCase()));
+    return items.filter(item => item.name?.toLowerCase().includes(searchTerm.toLowerCase()));
   };
 
   if (!user) {

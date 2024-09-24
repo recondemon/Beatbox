@@ -10,7 +10,7 @@ const AlbumInputs = ({ handleBackToSelect }) => {
   const [releaseDate, setReleaseDate] = useState('');
   const [albumCoverFile, setAlbumCoverFile] = useState(null);
   const [albumCoverUrl, setAlbumCoverUrl] = useState('');
-  const currUserId = useSelector(state => state.session.user.id)
+  const currUserId = useSelector(state => state.session.user.id);
 
   const handleFileChange = e => {
     const file = e.target.files[0];

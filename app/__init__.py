@@ -2,7 +2,7 @@ import os
 from flask import Flask, render_template, request, session, redirect
 from flask_cors import CORS
 from flask_migrate import Migrate
-from flask_wtf.csrf import CSRFProtect, generate_csrf
+from flask_wtf.csrf import generate_csrf
 from flask_login import LoginManager
 from .models import db, Models
 from .api.user_routes import user_routes
@@ -35,7 +35,7 @@ app.register_blueprint(auth_routes, url_prefix='/api/auth')
 app.register_blueprint(songs, url_prefix='/api/songs')
 app.register_blueprint(genres,url_prefix='/api/genres')
 app.register_blueprint(albums, url_prefix='/api/albums')
-app.register_blueprint(playlists,url_prefix='/api/playlists')
+app.register_blueprint(playlists, url_prefix='/api/playlists')
 db.init_app(app)
 Migrate(app, db)
 

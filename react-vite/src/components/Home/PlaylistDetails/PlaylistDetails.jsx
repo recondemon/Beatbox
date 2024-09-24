@@ -1,4 +1,4 @@
-import { useLoaderData, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { selectPlaylistById, fetchPlaylist } from "../../../redux/playlists";
 import { useEffect } from "react";

@@ -1,6 +1,5 @@
 import { createSelector } from 'reselect';
-import Cookies from 'js-cookie';
-import { csrfFetch, post } from './csrf';
+import { post } from './csrf';
 
 const LOAD_ALL = 'albums/loadAll';
 const LOAD_ONE = 'albums/loadOne';

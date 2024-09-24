@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
 export default function ListDetails({ list }) {
-  const [currentSong, setCurrentSong] = useState(list?.songs[0]);
   const [songDurations, setSongDurations] = useState({});
   const artist = list?.artist
     ? list?.artist[0].band_name
@@ -29,13 +28,8 @@ export default function ListDetails({ list }) {
   };
 
   const playSong = song => {
-    setCurrentSong(song);
-    setIsPlaying(true);
-
-    // setTimeout because the duration counter would be slightly out of sync otherwise
-    setTimeout(() => {
-      audioRef.current?.play();
-    }, 0);
+    // TODO: Implement using global queue state
+    console.error('Not Implemented')
   };
 
   if (!list) {
@@ -43,17 +37,25 @@ export default function ListDetails({ list }) {
   }
 
   return (
-    <div className='container mt-14 max-h-[calc(100vh-200px)] overflow-y-auto'>
+    <div className='container mt-14 xl:max-w-fit sm:max-w-5xl max-h-[calc(100vh-200px)] overflow-y-auto scrollbar-thin scrollbar-thumb-primary scrollbar-thumb-rounded-full scrollbar-track-transparent'>
       <div className='mb-6'>
         <span className='flex gap-2 items-center'>
-          <h2 className='text-2xl font-bold'>{list?.name}</h2>
+          <img
+            src={list.albumCover}
+            alt='album artwork'
+          />
 
-          {releaseYear && <p className='text-sm'> • {releaseYear}</p>}
+          <div className='flex flex-col justify-center space-y-1'>
+            <p className='font-semibold'>Album</p>
 
-          <p className='text-sm'>
-            {' '}
-            • {songCount} {`${songCount === 1 ? 'song' : 'songs'}`}
-          </p>
+            <h1 className='text-3xl font-bold'>{list?.name}</h1>
+
+            <p className='text-sm'>
+              {artist}
+              {releaseYear && <>{` • ${releaseYear}`}</>} • {songCount}{' '}
+              {`${songCount === 1 ? 'song' : 'songs'}`}
+            </p>
+          </div>
         </span>
 
         <p className='text-sm mt-1'>{list?.description}</p>
@@ -88,7 +90,7 @@ export default function ListDetails({ list }) {
                 </div>
               </div>
 
-              {list.songs[list.songs.length - 1] === song ? (
+              {list?.songs[songCount - 1] === song ? (
                 ''
               ) : (
                 <hr className='border-muted w-[99%] self-center mt-4' />

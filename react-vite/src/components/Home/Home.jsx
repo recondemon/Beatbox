@@ -81,7 +81,7 @@ const Home = () => {
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
           placeholder='Search for songs, albums, playlists...'
-          className='w-full p-3 rounded-lg bg-input text-foreground border border-muted'
+          className='w-full p-3 rounded-lg bg-input text-foreground border border-border'
         />
       </div>
 
@@ -93,6 +93,7 @@ const Home = () => {
           {/* Songs */}
           <div className='relative mb-8 w-full py-6 overflow-y-hidden'>
             <h3 className='text-xl mb-4 text-center'>Songs</h3>
+
             <div className='flex items-center gap-4 justify-center min-w-[80vw] max-w-[80vw] mx-auto'>
               <ChevronLeft
                 className='cursor-pointer'
@@ -107,14 +108,12 @@ const Home = () => {
                     key={song.id}
                     onClick={() => handleSongClick(song, index)}
                   >
-                    <div className='bg-card rounded-lg w-56 h-52 inline-block whitespace-pre-wrap text-center shadow text-foreground justify-center border-muted border-2 transition-transform transform hover:scale-105 hover:shadow-md hover:cursor-pointer h-[200px] hover:h-[210px]'>
-                      <div>
-                        <img
-                          src={song.album?.[0]?.album_cover}
-                          alt='album cover'
-                          className='w-full h-full object-cover rounded-md'
-                        />
-                      </div>
+                    <div className='bg-card rounded-lg w-56 h-52 inline-block whitespace-pre-wrap text-center shadow text-foreground justify-center border-border border-2 transition duration-300 hover:border-accent cursor-pointer'>
+                      <img
+                        src={song.album?.[0]?.album_cover}
+                        alt='album cover'
+                        className='w-full h-full object-cover rounded-md'
+                      />
                       <p className='text-lg font-semibold'>{song.name}</p>
                       <p className='text-sm'>
                         {song.artist[0].band_name ||
@@ -148,14 +147,12 @@ const Home = () => {
                     key={album.id}
                     to={`/album/${album.id}`}
                   >
-                    <div className='bg-card rounded-lg w-56 h-52 inline-block text-center shadow text-foreground justify-center border-muted border-2 transition-transform transform hover:scale-105 hover:shadow-md hover:cursor-pointer h-[200px] hover:h-[210px]'>
-                      <div>
-                        <img
-                          src={album.albumCover}
-                          alt='album cover'
-                          className='w-full h-full object-cover rounded-md'
-                        />
-                      </div>
+                    <div className='bg-card rounded-lg w-56 h-52 inline-block text-center shadow text-foreground justify-center border-muted border-2 transition duration-300 hover:border-accent cursor-pointer'>
+                      <img
+                        src={album.albumCover}
+                        alt='album cover'
+                        className='w-full h-full object-cover rounded-md'
+                      />
                       <p className='text-lg font-semibold whitespace-pre-wrap'>{album.name}</p>
                       <p className='text-sm'>
                         {album.artist?.[0]?.band_name
@@ -176,6 +173,7 @@ const Home = () => {
           {/* Playlists */}
           <div className='relative mb-8 w-full'>
             <h3 className='text-xl mb-4 text-center'>Playlists</h3>
+
             <div className='flex items-center gap-4 justify-center min-w-[80vw] max-w-[80vw] mx-auto'>
               <ChevronLeft
                 className='cursor-pointer'
@@ -190,7 +188,7 @@ const Home = () => {
                     key={playlist.id}
                     to={`/playlist/${playlist.id}`}
                   >
-                    <div className='bg-card p-6 w-56 h-52 inline-block text-center rounded-lg shadow text-foreground justify-center border-muted border-2 transition-transform transform hover:scale-105 hover:shadow-md hover:cursor-pointer h-[200px] hover:h-[210px]'>
+                    <div className='bg-card p-6 w-56 h-52 inline-block text-center rounded-lg shadow text-foreground justify-center border-border border-2 transition duration-300 hover:border-accent cursor-pointer'>
                       <p>{playlist.name}</p>
                     </div>
                   </Link>

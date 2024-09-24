@@ -7,6 +7,7 @@ const LOAD_ONE = 'albums/loadOne';
 const CREATE = 'albums/create';
 const UPDATE = 'albums/update';
 const DELETE = 'albums/delete';
+const RESET_ALBUMS = 'albums/reset';
 
 export const loadAll = albums => {
   return {
@@ -42,6 +43,14 @@ export const deleteAlbum = (albumId) => {
     albumId,
   };
 };
+
+
+export const resetAlbums = () => {
+  return {
+    type: RESET_ALBUMS,
+  };
+};
+
 
 export const editAlbum = (albumId, albumData) => async (dispatch) => {
   const res = await fetch(`/api/albums/${albumId}`, {
@@ -99,11 +108,14 @@ export const fetchAlbumById = id => async dispatch => {
 };
 
 export const fetchAlbumsByUserId = (userId) => async (dispatch) => {
+  
+  dispatch(resetAlbums());
+
   const res = await fetch(`/api/albums/user/${userId}`);
 
   if (res.ok) {
     const data = await res.json();
-    dispatch(loadAll(data));  // Load all albums for the user
+    dispatch(loadAll(data));
     return data;
   }
 
@@ -128,13 +140,13 @@ export const selectAlbumsArray = createSelector(selectAlbums, albums => {
 
 export default function albumsReducer(state = {}, action) {
   switch (action.type) {
+    case RESET_ALBUMS:
+      return {};
     case LOAD_ALL: {
       const newState = {};
-
       action.albums.forEach(album => {
         newState[album.id] = album;
       });
-
       return {
         ...state,
         ...newState,
@@ -161,10 +173,11 @@ export default function albumsReducer(state = {}, action) {
           ...action.updatedAlbum,
         },
       };
-    case DELETE:
+    case DELETE: {
       const newState = { ...state };
       delete newState[action.albumId];
       return newState;
+    }
     default:
       return state;
   }

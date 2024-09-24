@@ -128,13 +128,14 @@ def add_playlist_song(playlist_id):
 def get_liked():
     liked = Playlist.query.filter_by(
         owner_id=current_user.id, is_public=False, name="Liked"
-    )
+    ).first()
 
     print(current_user.id)
 
     if not liked:
         return {"errors": "Liked playlist not found"}, 404
 
+    print('\n\n\n---LIKED PLAYLIST DATA---\n\n\n', liked)
     return liked.to_json()
 
 

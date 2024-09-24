@@ -53,10 +53,10 @@ def create_song():
         return jsonify(song.to_json())
 
 
-@songs.route("/likes")
-def get_likes():
-    likes = Like.query.filter_by(user_id=current_user.id).all()
-    return [like.to_json() for like in likes]
+# @songs.route("/likes")
+# def get_likes():
+#     likes = Like.query.filter_by(user_id=current_user.id).all()
+#     return [like.to_json() for like in likes]
 
 
 # @login_required

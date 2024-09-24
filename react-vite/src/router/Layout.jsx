@@ -5,7 +5,6 @@ import { ModalProvider, Modal } from "../context/Modal";
 import { thunkAuthenticate } from "../redux/session";
 import Navigation from "../components/Navigation/Navigation";
 import Sidebar from "../components/Home/Sidebar";
-import AudioPlayer from "../components/AudioPlayer";
 
 export default function Layout() {
   const dispatch = useDispatch();
@@ -21,7 +20,6 @@ export default function Layout() {
         <Navigation />
         <Sidebar />
         {isLoaded && <Outlet />}
-        <AudioPlayer/>
         <Modal />
       </ModalProvider>
     </>

@@ -13,11 +13,9 @@ export const router = createBrowserRouter([
   {
     element: <Layout />,
     loader: async () => {
-      const likesRes = await fetch("/api/songs/likes");
-      const albumsRes = await fetch("/api/albums");
-      const likes = await likesRes.json();
-      const albums = await albumsRes.json();
-      return { likes, albums };
+      const res = await fetch('/api/playlists/liked');
+      const likes = await res.json();
+      return likes;
     },
     children: [
       {

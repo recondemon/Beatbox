@@ -12,6 +12,3 @@ class AlbumForm(FlaskForm):
     release_date = DateField("Date")
     description = StringField("Description")
     artist_id = IntegerField("Artist")
-
-    class Meta:
-        csrf = False

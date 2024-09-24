@@ -47,7 +47,7 @@ def create_album():
     # We have to manually populate form data because god hates us...
     form.name.data = request.form.get("name")
     form.description.data = request.form.get("description")
-    form.release_date.data = datetime.strptime(request.form.get('release_date'), '%Y-%m-%d').date() #pyright: ignore
+    form.release_date.data = datetime.strptime(request.form.get('release_date'), '%Y-%m-%d').date()
     form.artist_id.data = request.form.get("artist_id")
 
     if form.validate():
@@ -61,8 +61,10 @@ def create_album():
         db.session.commit()
         return jsonify(new_album.to_dict()), 201
 
-    return jsonify({"error": "Bad Data"}), 400
+    if (form.errors):
+        print("\n\n---FORM VALIDATION ERRORS---\n\n", form.errors)
 
+    return jsonify({"errors": form.errors}), 400
 
 # edit an album
 @albums.route("/<int:album_id>", methods=["PUT"])

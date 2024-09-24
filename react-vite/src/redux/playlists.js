@@ -1,5 +1,5 @@
 import { createSelector } from "reselect";
-import { post } from "./csrf";
+import { post, put } from "./csrf";
 
 const LOAD_ALL = "playlists/loadAll";
 const LOAD_ONE = "playlists/loadOne";
@@ -69,6 +69,15 @@ export const fetchPlaylist = (playlistId) => async (dispatch) => {
     return data;
   }
   return res;
+};
+export const putPlaylist = (playlist) => async (dispatch) => {
+  console.log("PUTTING", playlist);
+  const res = await put(`/api/playlists/${playlist.id}`, playlist);
+  if (res.ok) {
+    const data = await res.json();
+    dispatch(loadOne(data));
+    return data;
+  }
 };
 
 export const fetchQueue = () => async (dispatch) => {

@@ -2,6 +2,7 @@ from flask import Blueprint, request
 from app.models import Models, db
 from flask_login import current_user, login_required
 from app.forms.playlist_form import PlaylistForm
+from flask_wtf.csrf import generate_csrf
 
 Playlist = Models.Playlist  # pyright: ignore
 PlaylistSong = Models.PlaylistSong  # pyright: ignore
@@ -42,25 +43,28 @@ def edit_playlist(playlist_id):
     if not playlist:
         return {"errors": "Playlist not found"}, 404
 
-    form = PlaylistForm()
+    data = request.get_json()
+    bad_data = ({"errors": "Bad Data"}, 400)
 
-    if form.validate_on_submit():
-        playlist.name = getattr(form, "name", playlist.name)
-        playlist.description = getattr(
-            form, "description", playlist.description
-        )
-        playlist.is_public = getattr(form, "is_public", playlist.is_public)
+    if (
+        type(data["is_public"]) is not bool
+        or type(data["name"]) is not str
+        or type(data["description"]) is not str
+    ):
+        return bad_data
 
-        db.session.commit()
+    playlist.is_public = data["is_public"]
+    playlist.name = data["name"]
+    playlist.description = data["description"]
+    db.session.commit()
 
-        return playlist.to_json()
-
-    return "Bad Form Request", 400
+    return playlist.to_json()
 
 
 @playlists.route("/", methods=["POST"])
 def create_playlist():
     form = PlaylistForm()
+    form.csrf_token.data = generate_csrf()
 
     current_artist = Models.Artist.query.get(current_user.id)  # pyright: ignore
 
@@ -71,9 +75,7 @@ def create_playlist():
             "name",
             "My Playlist " + len(current_artist.playlists),  # pyright: ignore
         )
-        playlist.description = getattr(
-            form, "description", playlist.description
-        )
+        playlist.description = getattr(form, "description", playlist.description)
         playlist.is_public = getattr(form, "is_public", playlist.is_public)
         playlist.owner_id = current_user.id
 
@@ -141,18 +143,14 @@ def get_liked():
 @playlists.route("/queue")
 @login_required
 def get_queue():
-    try:
-        queue = Playlist.query.filter_by(
-            owner_id=current_user.id, is_public=False, name="Queue"
-        ).first()
+    queue = Playlist.query.filter_by(
+        owner_id=current_user.id, is_public=False, name="Queue"
+    ).first()
 
-        if not queue:
-            return {"errors": "Could not fetch Queue"}, 404
+    if not queue:
+        return {"errors": "Could not fetch Queue"}, 404
 
-        return queue.to_json()
-    except Exception as e:
-        db.session.rollback()
-        return {"errors": f"Server Error: {str(e)}"}, 500
+    return queue.to_json()
 
 
 @playlists.route("/queue", methods=["POST"])
@@ -170,7 +168,7 @@ def add_to_queue():
     current_max_index = (
         db.session.query(db.func.max(PlaylistSong.song_index))
         .filter_by(playlist_id=queue.id)
-        .scalar() # Returns the specific index value OR None of there isn't index
+        .scalar()  # Returns the specific index value OR None of there isn't a max or index
     )
 
     if not current_max_index:

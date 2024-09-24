@@ -1,7 +1,10 @@
 import { useState } from 'react';
+import { Play } from 'lucide-react';
+import { addToQueue, clearQueue, postToQueue } from '../../redux/playlists';
+import { useDispatch } from 'react-redux';
 
 export default function ListDetails({ list }) {
-  const [currentSong, setCurrentSong] = useState(list?.songs[0]);
+  const dispatch = useDispatch();
   const [songDurations, setSongDurations] = useState({});
   const artist = list?.artist
     ? list?.artist[0].band_name
@@ -28,14 +31,64 @@ export default function ListDetails({ list }) {
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
-  const playSong = song => {
-    setCurrentSong(song);
-    setIsPlaying(true);
+  const handlePlayAllSongs = () => {
+    if (list?.songs && list.songs.length > 0) {
+      dispatch(clearQueue());
 
-    // setTimeout because the duration counter would be slightly out of sync otherwise
-    setTimeout(() => {
-      audioRef.current?.play();
-    }, 0);
+      const restructureSongs = list.songs.map(song => ({
+        album: [
+          {
+            id: song.album_id,
+            album_cover: list.albumCover,
+          },
+        ],
+        albumId: song.album_id,
+        artist: [
+          {
+            band_name: list.artist[0].band_name,
+            first_name: list.artist[0].first_name,
+            last_name: list.artist[0].last_name,
+          },
+        ],
+        artistId: song.artist_id,
+        id: song.id,
+        name: song.name,
+        url: song.url,
+      }));
+
+      restructureSongs.forEach(song => {
+        dispatch(addToQueue(song));
+      });
+    } else {
+      console.error('No songs to add to the queue');
+    }
+  };
+
+  const playSong = song => {
+    dispatch(clearQueue());
+
+    const structuredSong = {
+      album: [
+        {
+          id: song.album_id,
+          album_cover: list.albumCover,
+        },
+      ],
+      albumId: song.album_id,
+      artist: [
+        {
+          band_name: list.artist[0]?.band_name || '',
+          first_name: list.artist[0]?.first_name || '',
+          last_name: list.artist[0]?.last_name || '',
+        },
+      ],
+      artistId: song.artist_id,
+      id: song.id,
+      name: song.name,
+      url: song.url,
+    };
+
+    dispatch(addToQueue(structuredSong));
   };
 
   if (!list) {
@@ -43,20 +96,35 @@ export default function ListDetails({ list }) {
   }
 
   return (
-    <div className='container mt-14 max-h-[calc(100vh-200px)] overflow-y-auto'>
-      <div className='mb-6'>
+    <div className='container mt-14 xl:max-w-fit sm:max-w-5xl max-h-[calc(100vh-200px)] overflow-y-auto scrollbar-thin scrollbar-thumb-primary scrollbar-thumb-rounded-full scrollbar-track-transparent'>
+      <div className='mb-6 w-[80vw]'>
         <span className='flex gap-2 items-center'>
-          <h2 className='text-2xl font-bold'>{list?.name}</h2>
+          <img
+            src={list.albumCover}
+            alt='album artwork'
+          />
 
-          {releaseYear && <p className='text-sm'> • {releaseYear}</p>}
+          <div className='flex flex-col justify-center space-y-1'>
+            <p className='font-semibold'>Album</p>
 
-          <p className='text-sm'>
-            {' '}
-            • {songCount} {`${songCount === 1 ? 'song' : 'songs'}`}
-          </p>
+            <h1 className='text-3xl font-bold'>{list?.name}</h1>
+
+            <p className='text-sm'>
+              {artist}
+              {releaseYear && <>{` • ${releaseYear}`}</>} • {songCount}{' '}
+              {`${songCount === 1 ? 'song' : 'songs'}`}
+            </p>
+            <p className='text-sm py-2 text-wrap w-4/5'>{list?.description}</p>
+            <div className='flex'>
+              <button
+                className='p-3 bg-green-500 w-fit rounded-full'
+                onClick={handlePlayAllSongs}
+              >
+                <Play />
+              </button>
+            </div>
+          </div>
         </span>
-
-        <p className='text-sm mt-1'>{list?.description}</p>
       </div>
 
       <ul className='space-y-4 bg-card text-card-foreground w-full border border-border h-2/3 rounded-md py-4'>
@@ -88,7 +156,7 @@ export default function ListDetails({ list }) {
                 </div>
               </div>
 
-              {list.songs[list.songs.length - 1] === song ? (
+              {list?.songs[songCount - 1] === song ? (
                 ''
               ) : (
                 <hr className='border-muted w-[99%] self-center mt-4' />

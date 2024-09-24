@@ -11,6 +11,7 @@ from .api.songs import songs
 from .api.album_routes import albums
 from .api.genres import genres
 from .api.playlists import playlists
+from .api.artists import artists
 from .seeds import seed_commands
 from .config import Config
 User = Models.Artist
@@ -35,6 +36,7 @@ app.register_blueprint(auth_routes, url_prefix='/api/auth')
 app.register_blueprint(songs, url_prefix='/api/songs')
 app.register_blueprint(genres,url_prefix='/api/genres')
 app.register_blueprint(albums, url_prefix='/api/albums')
+app.register_blueprint(artists, url_prefix='/api/artists')
 app.register_blueprint(playlists, url_prefix='/api/playlists')
 db.init_app(app)
 Migrate(app, db)

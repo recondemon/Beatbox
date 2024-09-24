@@ -1,13 +1,20 @@
+import { Link, useLoaderData } from 'react-router-dom';
+
 const Sidebar = () => {
+  const likes = useLoaderData();
+
   return (
     <div className='absolute top-20 left-4'>
       <div className='flex flex-col h-full bg-popover rounded-md'>
-        <nav className='flex flex-col p-4 gap-4'>
-          {/* TODO: Make these links to liked playlists, albums & artists */}
-          <p className='border-accent border rounded-sm p-1 w-14 h-14'>A</p>
-          <p className='border-accent border rounded-sm p-1 w-14 h-14'>A</p>
-          <p className='border-accent border rounded-sm p-1 w-14 h-14'>A</p>
-        </nav>
+        <div className='flex flex-col p-4 gap-4'>
+          <Link to={`/playlist/${likes?.id}`}>
+            <img
+              className='w-12 h-12 rounded-md border border-accent'
+              src='../../../../public/liked.jpeg'
+              alt='heart logo for favorites playlist'
+            />
+          </Link>
+        </div>
       </div>
     </div>
   );

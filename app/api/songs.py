@@ -6,6 +6,7 @@ from app.forms.song_form import SongForm
 
 Song = Models.Song
 Genre = Models.Genre
+Like = Models.Like
 songs = Blueprint("songs", __name__)
 
 
@@ -29,8 +30,6 @@ def all_songs():
 
 @songs.route("/", methods=["POST"])
 def create_song():
-    print("\n\n---REQUEST COOKIES---\n\n", request.cookies)
-
     form = SongForm()
 
     if form.validate_on_submit():
@@ -52,6 +51,12 @@ def create_song():
         )
 
         return jsonify(song.to_json())
+
+
+# @songs.route("/likes")
+# def get_likes():
+#     likes = Like.query.filter_by(user_id=current_user.id).all()
+#     return [like.to_json() for like in likes]
 
 
 # @login_required

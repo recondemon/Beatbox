@@ -9,6 +9,7 @@ from .beastie_boys import seed_beastie_boys, undo_beastie_boys
 from .taylor_swift import seed_taylor_swift, undo_taylor_swift
 from .toby_keith import seed_toby_keith, undo_toby_keith
 from .playlists import seed_playlists, undo_playlists
+from .likes import seed_likes, undo_likes
 from app.models.db import db, environment, SCHEMA
 
 # Creates a seed group to hold our commands
@@ -34,6 +35,7 @@ def seed():
         undo_taylor_swift()
         undo_toby_keith()
         undo_playlists()
+        undo_likes()
     seed_users()
     seed_linkin_park()
     seed_seether()
@@ -44,6 +46,7 @@ def seed():
     seed_taylor_swift()
     seed_toby_keith()
     seed_playlists()
+    seed_likes()
     # Add other seed functions here
 
 
@@ -60,4 +63,5 @@ def undo():
     undo_taylor_swift()
     undo_toby_keith()
     undo_playlists()
+    undo_likes()
     # Add other undo functions here

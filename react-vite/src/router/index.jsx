@@ -11,6 +11,11 @@ import ManageSongs from '../components/ManageSongs/ManageSongs';
 export const router = createBrowserRouter([
   {
     element: <Layout />,
+    loader: async () => {
+      const res = await fetch('/api/songs/likes');
+      const likes = await res.json();
+      return likes;
+    },
     children: [
       {
         path: '/',

@@ -1,4 +1,9 @@
+import { useLoaderData } from 'react-router-dom';
+
 const Sidebar = () => {
+  const likes = useLoaderData();
+  console.log('\n\n---LOGGING LIKES---\n\n', likes);
+
   return (
     <div className='absolute top-20 left-4'>
       <div className='flex flex-col h-full bg-popover rounded-md'>

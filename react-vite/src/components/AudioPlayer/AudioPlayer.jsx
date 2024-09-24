@@ -24,7 +24,6 @@ export default function AudioPlayer() {
   const [isRepeating, setIsRepeating] = useState(false);
   const [lastSong, setLastSong] = useState(false);
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
-  const [playTime, setPlayTime] = useState(0);
   const audioRef = useRef(null);
 
   useEffect(() => {
@@ -193,14 +192,16 @@ export default function AudioPlayer() {
     <div className="p-4 flex items-center bg-background fixed bottom-0 left-0 right-0 space-x-4 border-t border-accent">
       <audio ref={audioRef} className="hidden" />
 
-      <div className="flex-shrink-0 w-48">
+      <div className="flex w-60">
         {currentSong ? (
-          <div className="h-12 w-12 flex">
-            <img
-              src={currentSong?.album[0].album_cover}
-              alt={currentSong?.name}
-              className="w-full h-full object-cover"
-            />
+          <div className="flex gap-2">
+            <div className="w-12 h-12">
+              <img
+                src={currentSong?.album[0].album_cover}
+                alt={currentSong?.name}
+                className="w-full h-full object-cover"
+              />
+            </div>
             <div className="flex flex-col">
               <h3 className="font-semibold">{currentSong?.name}</h3>
               <p>{currentSong?.artist[0].band_name}</p>

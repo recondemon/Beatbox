@@ -1,4 +1,3 @@
-import React from 'react';
 import AlbumDetails from './AlbumDetails';
 import SongDetails from './SongDetails';
 

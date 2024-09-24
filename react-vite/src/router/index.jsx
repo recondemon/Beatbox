@@ -12,9 +12,11 @@ export const router = createBrowserRouter([
   {
     element: <Layout />,
     loader: async () => {
-      const res = await fetch('/api/songs/likes');
-      const likes = await res.json();
-      return likes;
+      const likesRes = await fetch('/api/songs/likes');
+      const albumsRes = await fetch('/api/albums');
+      const likes = await likesRes.json();
+      const albums = await albumsRes.json();
+      return { likes, albums };
     },
     children: [
       {

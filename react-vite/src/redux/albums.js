@@ -44,6 +44,19 @@ export const fetchAlbumById = (id) => async (dispatch) => {
   return res;
 };
 
+export const fetchAlbumsByUserId = (userId) => async (dispatch) => {
+  const res = await fetch(`/api/albums/user/${userId}`);
+
+  if (res.ok) {
+    const data = await res.json();
+    dispatch(loadAll(data));  // Load all albums for the user
+    return data;
+  }
+
+  return res;
+};
+
+
 export const createAlbum = (album) => async (dispatch) => {
   const data = await post("/api/albums", album);
   dispatch(loadOne(data));

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 export default function ListDetails({ list }) {
+  const url = window.location.href;
   const [songDurations, setSongDurations] = useState({});
   const artist = list?.artist
     ? list?.artist[0].band_name
@@ -41,18 +42,19 @@ export default function ListDetails({ list }) {
       <div className='mb-6'>
         <span className='flex gap-2 items-center'>
           <img
-            src={list.albumCover}
+            className='max-w-64 rounded-md border border-accent'
+            src={list?.name === 'Liked' ? '../../../../public/liked.jpeg' : list.albumCover}
             alt='album artwork'
           />
 
           <div className='flex flex-col justify-center space-y-1'>
-            <p className='font-semibold'>Album</p>
+            <p className='font-semibold'>{url.includes('playlist') ? 'Playlist' : 'Album'}</p>
 
             <h1 className='text-3xl font-bold'>{list?.name}</h1>
 
             <p className='text-sm'>
               {artist}
-              {releaseYear && <>{` • ${releaseYear}`}</>} • {songCount}{' '}
+              {url.includes('album') ? releaseYear && <>{` • ${releaseYear} • `}</> : ''}  {songCount}{' '}
               {`${songCount === 1 ? 'song' : 'songs'}`}
             </p>
           </div>

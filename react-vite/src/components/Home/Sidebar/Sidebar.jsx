@@ -9,7 +9,7 @@ const Sidebar = () => {
         <div className='flex flex-col p-4 gap-4'>
           <Link to={`/playlist/${likes?.id}`}>
             <img
-              className='w-12 h-12'
+              className='w-12 h-12 rounded-md border border-accent'
               src='../../../../public/liked.jpeg'
               alt='heart logo for favorites playlist'
             />

@@ -158,6 +158,13 @@ export const selectPlaylistsArray = createSelector(selectPlaylists, playlists =>
 
 export default function playlistsReducer(state = { queue: [], currentSongIndex: 0 }, action) {
   switch (action.type) {
+    case LOAD_ALL: {
+      const newState = { ...state };
+      action.playlists.forEach(playlist => {
+        newState[playlist.id] = playlist;
+      });
+      return newState;
+    }
     case LOAD_QUEUE: {
       const persistedQueue = JSON.parse(localStorage.getItem('queue')) || action.queue;
       const persistedIndex = parseInt(localStorage.getItem('currentSongIndex'), 10) || 0;

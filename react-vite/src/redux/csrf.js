@@ -1,7 +1,7 @@
 export async function post(url, reqBody = {}) {
   const adjustedUrl = url.includes("api") ? url : "/api" + url;
-  formData = new FormData();
-  for (key of reqBody) {
+  const formData = new FormData();
+  for (const key in reqBody) {
     formData.append(key, reqBody[key]);
   }
   const data = await fetch(adjustedUrl, {
@@ -27,10 +27,11 @@ export async function get(url) {
 
 export async function put(url, reqBody = {}) {
   const adjustedUrl = url.includes("api") ? url : "/api" + url;
-  formData = new FormData();
-  for (key of reqBody) {
+  const formData = new FormData();
+  for (const key in reqBody) {
     formData.append(key, reqBody[key]);
   }
+
   const data = await fetch(adjustedUrl, {
     method: "POST",
     body: formData,

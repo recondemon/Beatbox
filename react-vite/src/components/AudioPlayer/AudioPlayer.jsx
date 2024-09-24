@@ -10,45 +10,99 @@ import {
   Shuffle,
 } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
-import { selectQueue, fetchQueue } from "../../redux/playlists";
+import { selectQueue, setCurrentSongIndex, selectCurrentSongIndex, fetchQueue } from "../../redux/playlists";
 
 export default function AudioPlayer() {
   const dispatch = useDispatch();
   const list = useSelector(selectQueue);
   const [currentSong, setCurrentSong] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(
+    JSON.parse(localStorage.getItem('isPlaying')) || false
+  );
   const [currentTime, setCurrentTime] = useState(0);
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
   const [isRepeating, setIsRepeating] = useState(false);
   const [lastSong, setLastSong] = useState(false);
-  const [currentSongIndex, setCurrentSongIndex] = useState(0);
+  const currentSongIndex = useSelector(selectCurrentSongIndex);
   const audioRef = useRef(null);
+  const manualPlayTriggered = useRef(false); 
+
+const handleTimeUpdate = () => {
+  if (audioRef.current) {
+    setCurrentTime(audioRef.current.currentTime);
+  }
+};
+
+  useEffect(() => {
+    const currRef = audioRef.current;
+  
+    if (currRef) {
+      currRef.addEventListener("timeupdate", handleTimeUpdate);
+      currRef.addEventListener("ended", () => {
+        if (isRepeating) {
+          audioRef.current.currentTime = 0;
+          audioRef.current.play();
+        } else {
+          skipForward();
+        }
+      });
+    }
+    return () => {
+      if (currRef) {
+        currRef.removeEventListener("timeupdate", handleTimeUpdate);
+        currRef.removeEventListener("ended", skipForward);
+      }
+    };
+  }, [currentSong, isRepeating]);
+  
+  useEffect(() => {
+    const persistedIsPlaying = JSON.parse(localStorage.getItem('isPlaying'));
+    if (persistedIsPlaying !== null) {
+      setIsPlaying(persistedIsPlaying);
+    }
+  }, []);
 
   useEffect(() => {
     console.log("FETCHING QUEUE")
     dispatch(fetchQueue());
   }, [dispatch]);
 
+  useEffect(() => {
+    if (list.length > 0 && currentSongIndex !== undefined && currentSongIndex !== null) {
+      const song = list[currentSongIndex];
+      setCurrentSong(song);
+      if (audioRef.current && song?.url) {
+        audioRef.current.src = song.url;
+        audioRef.current.load();
+  
+        if (manualPlayTriggered.current) {
+          audioRef.current.play().then(() => {
+            setIsPlaying(true);
+          }).catch((error) => {
+            console.error("Auto play failed:", error);
+          });
+          manualPlayTriggered.current = false;
+        }
+      }
+    }
+  }, [list, currentSongIndex]);
 
   const togglePlay = () => {
     if (!audioRef.current) return;
-
+  
     if (isPlaying) {
       audioRef.current.pause();
+      localStorage.setItem('isPlaying', JSON.stringify(false));
     } else {
+      manualPlayTriggered.current = true; 
       audioRef.current.play().catch((error) => {
         console.error("Failed to play audio:", error);
       });
+      localStorage.setItem('isPlaying', JSON.stringify(true));
     }
     setIsPlaying(!isPlaying);
-  };
-
-  const handleTimeUpdate = () => {
-    if (audioRef.current) {
-      setCurrentTime(audioRef.current.currentTime);
-    }
   };
 
   const handleProgressChange = (e) => {
@@ -93,12 +147,15 @@ export default function AudioPlayer() {
       audioRef.current.currentTime = 0;
     } else {
       if (list.length > 1) {
-        setCurrentSongIndex((prevIndex) => {
-          if (prevIndex === 0) {
-            return list.length - 1;
-          }
-          return prevIndex - 1;
-        });
+        let newIndex;
+        
+        if (currentSongIndex === 0) {
+          newIndex = list.length - 1;
+        } else {
+          newIndex = currentSongIndex - 1;
+        }
+        
+        dispatch(setCurrentSongIndex(newIndex));
       } else {
         audioRef.current.currentTime = 0;
       }
@@ -106,10 +163,8 @@ export default function AudioPlayer() {
   };
 
   const skipForward = () => {
-
     if (!list || list.length === 0) return;
   
-
     if (list.length === 1) {
       setLastSong(true);
       return;
@@ -123,9 +178,11 @@ export default function AudioPlayer() {
     setLastSong(false);
   
     if (isShuffling) {
-      setCurrentSongIndex(Math.floor(Math.random() * list.length));
+      const randomIndex = Math.floor(Math.random() * list.length);
+      dispatch(setCurrentSongIndex(randomIndex));
     } else {
-      setCurrentSongIndex((prevIndex) => (prevIndex + 1) % list.length);
+      const nextIndex = (currentSongIndex + 1) % list.length;
+      dispatch(setCurrentSongIndex(nextIndex));
     }
   };
 
@@ -194,7 +251,7 @@ export default function AudioPlayer() {
 
       <div className="flex w-60">
         {currentSong ? (
-          <div className="flex gap-2">
+          <div className="flex">
             <div className="w-12 h-12">
               <img
                 src={currentSong?.album[0].album_cover}

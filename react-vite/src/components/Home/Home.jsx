@@ -1,30 +1,43 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLoaderData, useNavigate } from 'react-router-dom';
 import { fetchAlbums, selectAlbumsArray } from '../../redux/albums';
 import {
   fetchPlaylists,
   selectPlaylistsArray,
   addToQueue,
   postToQueue,
+  fetchLiked,
+  selectLiked,
+  addToLiked,
+  addLike,
 } from '../../redux/playlists';
 import { useEffect, useState } from 'react';
 import { fetchSongs, selectSongsArray } from '../../redux/songs';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { FaRegHeart, FaHeart } from 'react-icons/fa';
 
 const Home = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState('');
   const user = useSelector(state => state.session.user);
   const albums = useSelector(selectAlbumsArray);
   const playlists = useSelector(selectPlaylistsArray);
   const songs = useSelector(selectSongsArray);
-  const [searchTerm, setSearchTerm] = useState('');
+  const likedPlaylist = useLoaderData();
+  const liked = useSelector(selectLiked);
+  const likeIds = liked?.map(song => song.id) || [];
 
   useEffect(() => {
     dispatch(fetchAlbums());
     dispatch(fetchPlaylists());
     dispatch(fetchSongs());
+    dispatch(fetchLiked());
   }, [dispatch]);
+
+  const handleLike = song => {
+    addLike(likedPlaylist.id, song);
+  };
 
   const shuffleArray = array => {
     const shuffled = [...array];
@@ -51,7 +64,7 @@ const Home = () => {
 
   const handleSongClick = (song, index) => {
     if (index !== undefined && index !== null && songs.length > 0) {
-      console.log("Adding song to queue:", song);
+      console.log('Adding song to queue:', song);
       dispatch(addToQueue(song));
       dispatch(postToQueue(song));
       setTimeout(() => {
@@ -104,17 +117,28 @@ const Home = () => {
                 className='flex overflow-x-auto overflow-y-hidden whitespace-nowrap gap-4 min-w-[70vw] max-w-[70vw] mx-auto scrollbar-thin scrollbar-thumb-primary scrollbar-thumb-rounded-full scrollbar-track-transparent'
               >
                 {shuffledSongs.map((song, index) => (
-                  <div
-                    key={song.id}
-                    onClick={() => handleSongClick(song, index)}
-                  >
-                    <div className='bg-card rounded-lg w-56 h-52 inline-block whitespace-pre-wrap text-center shadow text-foreground justify-center border-border border-2 transition duration-300 hover:border-accent cursor-pointer'>
+                  <div key={song.id}>
+                    <div className='bg-card rounded-lg w-56 h-52 inline-block whitespace-pre-wrap text-center shadow text-foreground justify-center'>
                       <img
-                        src={song.album?.[0]?.album_cover}
+                        src={song.album[0].album_cover}
                         alt='album cover'
-                        className='w-full h-full object-cover rounded-md'
+                        className='cursor-pointer transition border-2 border-border duration-200 hover:border-accent w-full h-full object-cover rounded-md'
+                        onClick={() => handleSongClick(song, index)}
                       />
-                      <p className='text-lg font-semibold'>{song.name}</p>
+
+                      <div className='flex justify-center items-center gap-2'>
+                        <p className='text-lg font-semibold'>{song.name}</p>
+
+                        {song.id in likeIds ? (
+                          <FaHeart className='cursor-pointer text-primary font-xl' />
+                        ) : (
+                          <FaRegHeart
+                            onClick={() => handleLike(song, index)}
+                            className='cursor-pointer text-primary font-xl'
+                          />
+                        )}
+                      </div>
+
                       <p className='text-sm'>
                         {song.artist[0].band_name ||
                           `${song.artist[0].first_name} ${song.artist[0].last_name}`}
@@ -147,11 +171,11 @@ const Home = () => {
                     key={album.id}
                     to={`/album/${album.id}`}
                   >
-                    <div className='bg-card rounded-lg w-56 h-52 inline-block text-center shadow text-foreground justify-center border-muted border-2 transition duration-300 hover:border-accent cursor-pointer'>
+                    <div className='bg-card rounded-lg w-56 h-52 inline-block text-center shadow text-foreground justify-center'>
                       <img
                         src={album.albumCover}
                         alt='album cover'
-                        className='w-full h-full object-cover rounded-md'
+                        className='border-muted border-2 transition duration-300 hover:border-accent cursor-pointer w-full h-full object-cover rounded-md'
                       />
                       <p className='text-lg font-semibold whitespace-pre-wrap'>{album.name}</p>
                       <p className='text-sm'>

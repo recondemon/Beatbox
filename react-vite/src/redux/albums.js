@@ -72,6 +72,9 @@ export const createAlbum = (album) => async (dispatch) => {
   return data;
 };
 
+export const selectAlbumByUserId = userId => state => {
+  return Object.values(state.albums).filter(album => album.userId === userId);
+}
 export const selectAlbums = state => state.albums;
 export const selectAlbumById = albumId => state => state.albums[albumId];
 export const selectAlbumsArray = createSelector(selectAlbums, albums => {

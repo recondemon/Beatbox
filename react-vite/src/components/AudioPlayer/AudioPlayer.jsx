@@ -174,7 +174,7 @@ export default function AudioPlayer({ list, currentSongIndex, setCurrentSongInde
           <button
             onClick={togglePlay}
             className='p-2 rounded-full scale-105 transition'
-            disabled={!currentSong}  // Disable if no song is selected
+            disabled={!currentSong}
           >
             {isPlaying ? <Pause size={24} /> : <Play size={24} />}
           </button>
@@ -198,7 +198,7 @@ export default function AudioPlayer({ list, currentSongIndex, setCurrentSongInde
             value={currentTime}
             onChange={handleProgressChange}
             className='flex-1 h-1 rounded-lg appearance-none cursor-pointer'
-            disabled={!currentSong}  // Disable if no song is selected
+            disabled={!currentSong}
           />
 
           <span className='text-xs w-10'>{formatTime(audioRef.current?.duration || 0)}</span>

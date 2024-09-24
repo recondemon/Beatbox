@@ -29,20 +29,19 @@ export const create = newAlbum => {
   };
 };
 
-export const updateAlbum = (updatedAlbum) => {
+export const updateAlbum = updatedAlbum => {
   return {
     type: UPDATE,
     updatedAlbum,
   };
 };
 
-export const deleteAlbum = (albumId) => {
+export const deleteAlbum = albumId => {
   return {
     type: DELETE,
     albumId,
   };
 };
-
 
 export const resetAlbums = () => {
   return {
@@ -50,8 +49,7 @@ export const resetAlbums = () => {
   };
 };
 
-
-export const editAlbum = (albumId, albumData) => async (dispatch) => {
+export const editAlbum = (albumId, albumData) => async dispatch => {
   const res = await fetch(`/api/albums/${albumId}`, {
     method: 'PUT',
     headers: {
@@ -68,7 +66,7 @@ export const editAlbum = (albumId, albumData) => async (dispatch) => {
   return res;
 };
 
-export const removeAlbum = (albumId) => async (dispatch) => {
+export const removeAlbum = albumId => async dispatch => {
   const res = await fetch(`/api/albums/${albumId}`, {
     method: 'DELETE',
   });
@@ -106,8 +104,7 @@ export const fetchAlbumById = id => async dispatch => {
   return res;
 };
 
-export const fetchAlbumsByUserId = (userId) => async (dispatch) => {
-  
+export const fetchAlbumsByUserId = userId => async dispatch => {
   dispatch(resetAlbums());
 
   const res = await fetch(`/api/albums/user/${userId}`);
@@ -121,16 +118,19 @@ export const fetchAlbumsByUserId = (userId) => async (dispatch) => {
   return res;
 };
 
-
-export const createAlbum = (album) => async (dispatch) => {
-  const data = await post("/api/albums", album);
-  dispatch(loadOne(data));
+export const createAlbum = album => async dispatch => {
+  const data = await fetch('/api/albums', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: album,
+  });
+  dispatch(create(data));
   return data;
 };
 
 export const selectAlbumByUserId = userId => state => {
   return Object.values(state.albums).filter(album => album.userId === userId);
-}
+};
 export const selectAlbums = state => state.albums;
 export const selectAlbumById = albumId => state => state.albums[albumId];
 export const selectAlbumsArray = createSelector(selectAlbums, albums => {

@@ -16,20 +16,6 @@ Album = Models.Album
 albums = Blueprint("albums", __name__)
 
 
-@albums.after_request
-def inject_csrf_token(response):
-    response.set_cookie(
-        "csrf_token",
-        generate_csrf(),
-        secure=True if os.environ.get("FLASK_ENV") == "production" else False,
-        samesite="Strict"
-        if os.environ.get("FLASK_ENV") == "production"
-        else None,
-        httponly=True,
-    )
-    return response
-
-
 # get all albums
 @albums.route("/")
 def all_albums():
@@ -59,7 +45,6 @@ def user_albums(user_id):
 def create_album():
     form = AlbumForm()
 
-
     # We have to manually populate form data because god hates us...
     form.name.data = request.form.get("name")
     form.description.data = request.form.get("description")
@@ -69,7 +54,7 @@ def create_album():
     form.artist_id.data = request.form.get("artist_id")
     form.csrf_token.data = generate_csrf()
 
-    if form.validate():
+    if form.validate_on_submit():
         new_album = Album()
         new_album.name = form.data["name"]
         new_album.description = form.data["description"]

@@ -169,11 +169,7 @@ def add_to_queue():
     current_max_index = (
         db.session.query(db.func.max(PlaylistSong.song_index))
         .filter_by(playlist_id=queue.id)
-<<<<<<< HEAD
-        .scalar()  # Returns the specific index value OR None of there isn't a max or index
-=======
-        .scalar()
->>>>>>> dev
+        .scalar()  # Returns the specific index value OR None of there isn't a max
     )
 
     if not current_max_index:

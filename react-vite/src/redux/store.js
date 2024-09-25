@@ -11,6 +11,7 @@ import albumsReducer from "./albums";
 import playlistsReducer from "./playlists";
 import artistsReducer from "./artists";
 import genresReducer from "./genres";
+import queueReducer from "./queue";
 
 const rootReducer = combineReducers({
   session: sessionReducer,
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
   playlists: playlistsReducer,
   artists: artistsReducer,
   genres: genresReducer,
+  queue: queueReducer,
 });
 
 let enhancer;

@@ -54,7 +54,7 @@ export const setCurrentSongIndex = index => ({
   index,
 });
 
-export const selectCurrentSong = (state) => {
+export const selectCurrentSong = state => {
   const queue = state.playlists.queue;
   const currentSongIndex = state.playlists.currentSongIndex;
   return queue?.[currentSongIndex];
@@ -161,7 +161,9 @@ export const selectPlaylistsArray = createSelector(selectPlaylists, playlists =>
   Object.values(playlists),
 );
 
-{/* if a re-render happens this will restore the qeue */}
+{
+  /* if a re-render happens this will restore the qeue */
+}
 const initialState = {
   queue: JSON.parse(localStorage.getItem('queue')) || [],
   currentSongIndex: parseInt(localStorage.getItem('currentSongIndex'), 10) || 0,
@@ -176,29 +178,29 @@ export default function playlistsReducer(state = initialState, action) {
       });
       return newState;
     }
-    case LOAD_QUEUE: {
-      const persistedQueue = JSON.parse(localStorage.getItem('queue')) || action.queue;
-      const persistedIndex = parseInt(localStorage.getItem('currentSongIndex'), 10) || 0;
-      return {
-        ...state,
-        queue: persistedQueue,
-        currentSongIndex: persistedIndex,
-      };
-    }
+    // case LOAD_QUEUE: {
+    //   const persistedQueue = JSON.parse(localStorage.getItem('queue')) || action.queue;
+    //   const persistedIndex = parseInt(localStorage.getItem('currentSongIndex'), 10) || 0;
+    //   return {
+    //     ...state,
+    //     queue: persistedQueue,
+    //     currentSongIndex: persistedIndex,
+    //   };
+    // }
     case LOAD_ONE: {
       return {
         ...state,
         [action.playlist.id]: action.playlist,
       };
     }
-    case ADD_TO_QUEUE: {
-      const newQueue = [...state.queue, action.song];
-      localStorage.setItem('queue', JSON.stringify(newQueue));
-      return {
-        ...state,
-        queue: newQueue,
-      };
-    }
+    // case ADD_TO_QUEUE: {
+    //   const newQueue = [...state.queue, action.song];
+    //   localStorage.setItem('queue', JSON.stringify(newQueue));
+    //   return {
+    //     ...state,
+    //     queue: newQueue,
+    //   };
+    // }
     case LOAD_LIKED:
       return {
         ...state,
@@ -216,22 +218,22 @@ export default function playlistsReducer(state = initialState, action) {
         ...state,
         queue: newQueue,
       };
-      case SET_CURRENT_SONG_INDEX: {
-        localStorage.setItem('currentSongIndex', action.index);
-        return {
-          ...state,
-          currentSongIndex: action.index,
-        };
-      }
-      case CLEAR_QUEUE: {
-        localStorage.removeItem('queue');
-        localStorage.removeItem('currentSongIndex');
-        return {
-          ...state,
-          queue: [],
-          currentSongIndex: 0,
-        };
-      }
+    case SET_CURRENT_SONG_INDEX: {
+      localStorage.setItem('currentSongIndex', action.index);
+      return {
+        ...state,
+        currentSongIndex: action.index,
+      };
+    }
+    // case CLEAR_QUEUE: {
+    //   localStorage.removeItem('queue');
+    //   localStorage.removeItem('currentSongIndex');
+    //   return {
+    //     ...state,
+    //     queue: [],
+    //     currentSongIndex: 0,
+    //   };
+    // }
     default:
       return state;
   }

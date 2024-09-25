@@ -4,17 +4,15 @@ import { fetchAlbums, selectAlbumsArray } from '../../redux/albums';
 import {
   fetchPlaylists,
   selectPlaylistsArray,
-  addToQueue,
-  postToQueue,
   fetchLiked,
-  selectLiked,
-  addLike,
-  clearQueue,
+  // selectLiked,
+  // addLike,
 } from '../../redux/playlists';
 import { useEffect, useState } from 'react';
 import { fetchSongs, selectSongsArray } from '../../redux/songs';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { FaRegHeart, FaHeart } from 'react-icons/fa';
+import { clearQueue, fetchQueue, addToQueue } from '../../redux/queue';
+// import { FaRegHeart, FaHeart } from 'react-icons/fa';
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -25,28 +23,29 @@ const Home = () => {
   const playlists = useSelector(selectPlaylistsArray);
   const songs = useSelector(selectSongsArray);
   // const likedPlaylist = useLoaderData();
-  const likedSongs = useSelector(selectLiked);
-  const likeIds = likedSongs?.map(song => song.id) || [];
+  // const likedSongs = useSelector(selectLiked);
+  // const likeIds = likedSongs?.map(song => song.id) || [];
 
   useEffect(() => {
     dispatch(fetchAlbums());
     dispatch(fetchPlaylists());
     dispatch(fetchSongs());
     dispatch(fetchLiked());
+    dispatch(fetchQueue())
   }, [dispatch]);
 
   // const handleLike = song => {
   //   dispatch(addLike(likedPlaylist.id, song));
   // };
 
-  const shuffleArray = array => {
-    const shuffled = [...array];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
-  };
+  // const shuffleArray = array => {
+  //   const shuffled = [...array];
+  //   for (let i = shuffled.length - 1; i > 0; i--) {
+  //     const j = Math.floor(Math.random() * (i + 1));
+  //     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  //   }
+  //   return shuffled;
+  // };
 
   const handleScroll = (direction, section) => {
     const container = document.getElementById(section);
@@ -61,12 +60,12 @@ const Home = () => {
   const filterContent = items => {
     return items.filter(item => item.name?.toLowerCase().includes(searchTerm.toLowerCase()));
   };
+
   const handleSongClick = (song, index) => {
     if (index !== undefined && index !== null && songs.length > 0) {
-      dispatch(clearQueue());
+      // dispatch(clearQueue());
       dispatch(addToQueue(song));
-  
- 
+
       setTimeout(() => {
         navigate(`/album/${song.albumId}`);
       }, 300);
@@ -83,7 +82,7 @@ const Home = () => {
     );
   }
 
-  const shuffledSongs = shuffleArray(filterContent(songs));
+  // const shuffledSongs = shuffleArray(filterContent(songs));
 
   return (
     <div className='flex flex-col my-8 w-full justify-center items-center'>
@@ -116,28 +115,26 @@ const Home = () => {
                 id='songs-section'
                 className='flex overflow-x-auto overflow-y-hidden whitespace-nowrap gap-4 min-w-[70vw] max-w-[70vw] mx-auto scrollbar-thin scrollbar-thumb-primary scrollbar-thumb-rounded-full scrollbar-track-transparent'
               >
-                {shuffledSongs.map((song, index) => (
+                {songs.map((song, index) => (
                   <div key={song.id}>
-                    <div className='bg-card rounded-lg w-56 h-52 inline-block whitespace-pre-wrap text-center shadow text-foreground justify-center'>
+                    <div className='h-fit rounded-lg w-56 h-52 inline-block whitespace-pre-wrap text-center text-foreground justify-center'>
                       <img
                         src={song.album[0].album_cover}
                         alt='album cover'
-                        className='cursor-pointer transition border-2 border-border duration-200 hover:border-accent w-full h-full object-cover rounded-md'
+                        className='cursor-pointer transition border-2 border-muted duration-200 hover:border-accent w-full h-full object-cover rounded-md'
                         onClick={() => handleSongClick(song, index)}
                       />
 
-                      <div className='flex justify-center items-center gap-2'>
-                        <p className='text-lg font-semibold'>{song.name}</p>
+                      <p className='text-lg font-semibold'>{song.name}</p>
 
-{/*                         {song.id in likeIds ? ( */}
-{/*                           <FaHeart className='cursor-pointer text-primary font-xl' /> */}
-{/*                         ) : ( */}
-{/*                           <FaRegHeart */}
-{/*                             onClick={() => handleLike(song)} */}
-{/*                             className='cursor-pointer text-primary font-xl' */}
-{/*                           /> */}
-{/*                         )} */}
-                      </div>
+                      {/*                         {song.id in likeIds ? ( */}
+                      {/*                           <FaHeart className='cursor-pointer text-primary font-xl' /> */}
+                      {/*                         ) : ( */}
+                      {/*                           <FaRegHeart */}
+                      {/*                             onClick={() => handleLike(song)} */}
+                      {/*                             className='cursor-pointer text-primary font-xl' */}
+                      {/*                           /> */}
+                      {/*                         )} */}
 
                       <p className='text-sm'>
                         {song.artist[0].band_name ||
@@ -171,7 +168,7 @@ const Home = () => {
                     key={album.id}
                     to={`/album/${album.id}`}
                   >
-                    <div className='bg-card rounded-lg w-56 h-52 inline-block text-center shadow text-foreground justify-center'>
+                    <div className='h-fit rounded-lg w-56 inline-block text-center shadow text-foreground justify-center'>
                       <img
                         src={album.albumCover}
                         alt='album cover'
@@ -212,7 +209,7 @@ const Home = () => {
                     key={playlist.id}
                     to={`/playlist/${playlist.id}`}
                   >
-                    <div className='bg-card p-6 w-56 h-52 inline-block text-center rounded-lg shadow text-foreground justify-center border-border border-2 transition duration-300 hover:border-accent cursor-pointer'>
+                    <div className='h-52 mb-2 p-6 w-56 inline-block text-center rounded-lg shadow text-foreground justify-center border-muted border-2 transition duration-300 hover:border-accent cursor-pointer'>
                       <p>{playlist.name}</p>
                     </div>
                   </Link>

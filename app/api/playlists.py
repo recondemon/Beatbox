@@ -164,7 +164,7 @@ def add_to_queue():
     if not queue:
         return {"errors": "Could not fetch Queue"}, 404
 
-    song_ids = request.get_json()["songs"]
+    song_id = request.get_json()["song"]  # pyright: ignore
 
     current_max_index = (
         db.session.query(db.func.max(PlaylistSong.song_index))
@@ -175,17 +175,13 @@ def add_to_queue():
     if not current_max_index:
         current_max_index = 0
 
-    playlist_songs = []
-    for song_id in song_ids:
-        playlist_songs.append(
-            PlaylistSong(
-                song_index=current_max_index + 1,
-                song_id=song_id,
-                playlist_id=queue.id,
-            )
-        )
+    new_queue_song = PlaylistSong(
+        song_index=current_max_index + 1,
+        song_id=song_id,
+        playlist_id=queue.id,
+    )
 
-    db.session.add_all(playlist_songs)
+    db.session.add(new_queue_song)
     db.session.commit()
 
     return queue.to_json()

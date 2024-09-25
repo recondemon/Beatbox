@@ -121,21 +121,19 @@ export const postToQueue = song => async dispatch => {
   return res;
 };
 
-export const addLike = (playlistId, songId) => async dispatch => {
+export const addLike = (playlistId, song) => async dispatch => {
   const res = await fetch(`/api/playlists/${playlistId}/song`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      song_id: songId,
+      song_id: song.id,
       playlist_id: playlistId,
     }),
   });
 
-  console.log('\n\n---RES IS:---\n\n', res)
-
   if (res.ok) {
     const data = await res.json();
-    dispatch(addToLiked(data));
+    dispatch(addToLiked(song));
     return data;
   }
 
@@ -186,13 +184,6 @@ export default function playlistsReducer(state = initialState, action) {
         ...state,
         [action.playlist.id]: action.playlist,
       };
-    }
-    case LOAD_ALL: {
-      const newState = { ...state };
-      action.playlists.forEach((playlist) => {
-        newState[playlist.id] = playlist;
-      });
-      return newState;
     }
     case ADD_TO_QUEUE: {
       const newQueue = [...state.queue, action.song];

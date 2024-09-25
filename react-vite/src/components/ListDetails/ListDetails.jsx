@@ -142,8 +142,7 @@ export default function ListDetails({ list }) {
   };
 
   const handleLike = song => {
-    console.log('\n\n---SONG IS: ---\n\n', song)
-    dispatch(addLike(list.id, song.id));
+    dispatch(addLike(list.id, song));
   };
 
   if (!list) {

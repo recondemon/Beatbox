@@ -85,17 +85,17 @@ export const putPlaylist = playlist => async dispatch => {
   }
 };
 
-export const fetchQueue = () => async dispatch => {
-  const res = await fetch(`/api/playlists/queue`);
+// export const fetchQueue = () => async dispatch => {
+//   const res = await fetch(`/api/playlists/queue`);
 
-  if (res.ok) {
-    const data = await res.json();
-    dispatch(loadQueue(data));
-    return data;
-  }
+//   if (res.ok) {
+//     const data = await res.json();
+//     dispatch(loadQueue(data));
+//     return data;
+//   }
 
-  return res;
-};
+//   return res;
+// };
 
 export const fetchLiked = () => async dispatch => {
   const res = await fetch('/api/playlists/liked');
@@ -109,15 +109,15 @@ export const fetchLiked = () => async dispatch => {
   return res;
 };
 
-export const postToQueue = song => async dispatch => {
-  const res = await post(`/api/playlists/queue`, { songs: [song.id] });
-  if (res.ok) {
-    const data = await res.json();
-    dispatch(loadQueue(data));
-    return data;
-  }
-  return res;
-};
+// export const postToQueue = song => async dispatch => {
+//   const res = await post(`/api/playlists/queue`, { songs: [song.id] });
+//   if (res.ok) {
+//     const data = await res.json();
+//     dispatch(loadQueue(data));
+//     return data;
+//   }
+//   return res;
+// };
 
 export const addLike = (playlistId, song) => async dispatch => {
   const res = await fetch(`/api/playlists/${playlistId}/song`, {
@@ -147,7 +147,7 @@ export const createPlaylists = playlistData => async dispatch => {
 // export const selectCurrentSongIndex = state => state.playlists.currentSongIndex;
 export const selectPlaylists = state => state.playlists;
 export const selectPlaylistById = playlistId => state => state.playlists[playlistId];
-export const selectQueue = state => state.playlists.queue;
+// export const selectQueue = state => state.playlists.queue;
 export const selectLiked = state => state.playlists.liked;
 export const selectPlaylistsArray = createSelector(selectPlaylists, playlists =>
   Object.values(playlists),

@@ -1,11 +1,10 @@
-import OpenModalMenuItem from './OpenModalMenuItem';
-import ProfileButton from './ProfileButton';
-
+import ProfileButton from "./ProfileButton";
+import { NavLink } from "react-router-dom";
 const Navigation = () => {
   return (
     <ul className="flex justify-between mx-8 mt-2 text-lg">
       <li>
-        <a href="/">Home</a>
+        <NavLink to="/">Home</NavLink>
       </li>
       <li>
         <ProfileButton />

@@ -63,7 +63,7 @@ const Home = () => {
 
   const handleSongClick = (song, index) => {
     if (index !== undefined && index !== null && songs.length > 0) {
-      // dispatch(clearQueue());
+      dispatch(clearQueue());
       dispatch(addToQueue(song));
 
       setTimeout(() => {

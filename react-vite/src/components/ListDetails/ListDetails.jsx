@@ -107,7 +107,7 @@ export default function ListDetails({ list }) {
   };
 
   const playSong = song => {
-    // dispatch(clearQueue());
+    dispatch(clearQueue());
 
     // const structuredSong = {
     //   album: [

@@ -26,7 +26,10 @@ export default function ListDetails({ list }) {
   const songCount = list?.songs?.length;
   const liked = useSelector(selectLiked);
   const likeIds = liked?.map(song => song.id) || [];
-  const [allSongsLiked, setAllSongsLiked] = useState(false);
+
+  useEffect(() => {
+    dispatch(fetchLiked())
+  }, [dispatch])
 
   // If the info being displayed is a playlist, we need to handle artist data differently.
   useEffect(() => {
@@ -165,34 +168,14 @@ export default function ListDetails({ list }) {
               {releaseYear && <>{` • ${releaseYear}`}</>} • {songCount}{' '}
               {`${songCount === 1 ? 'song' : 'songs'}`}
             </p>
-            <p className='text-sm py-2 text-wrap w-4/5'>{list?.description}</p>
+            <p className='text-sm py-2 text-wrap w-fit'>{list?.description}</p>
+
             <div className='flex gap-4'>
               <button
                 className='p-3 bg-green-500 w-fit rounded-full'
                 onClick={handlePlayAllSongs}
               >
                 <Play />
-              </button>
-              <button className=''>
-                {/* TODO: check to see if all songs in the album are in liked, then render the appropriate heart. if all songs are not liked, then click the empty heart likes all songs in list */}
-                {allSongsLiked ? (
-                  <FaHeart
-                    className='cursor-pointer text-primary font-xl'
-                    size={48}
-                  />
-                ) : (
-                  <FaRegHeart
-                    onClick={() => handleLike(list)}
-                    className='cursor-pointer text-primary font-xl'
-                    size={48}
-                  />
-                )}
-              </button>
-              <button className=''>
-                <CirclePlus
-                  className='cursor-pointer font-xl'
-                  size={48}
-                />
               </button>
             </div>
           </div>

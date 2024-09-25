@@ -165,6 +165,14 @@ export default function playlistsReducer(state = { queue: [], currentSongIndex: 
       });
       return newState;
     }
+    case LOAD_ONE: {
+      return {
+        ...state,
+        [action.playlist.id]: {
+          ...action.playlist,
+        },
+      };
+    }
     case LOAD_QUEUE: {
       const persistedQueue = JSON.parse(localStorage.getItem('queue')) || action.queue;
       const persistedIndex = parseInt(localStorage.getItem('currentSongIndex'), 10) || 0;

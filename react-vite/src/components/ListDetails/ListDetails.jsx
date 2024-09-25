@@ -28,7 +28,7 @@ export default function ListDetails({ list }) {
   const songCount = list?.songs?.length;
   const liked = useSelector(selectLiked);
   const likeIds = liked?.map(song => song.id) || [];
-  const [allSongsLiked, setAllSongsLiked] = useState(false);
+  // const [allSongsLiked, setAllSongsLiked] = useState(false);
   const currentSong = useSelector(selectCurrentSong); 
 
   useEffect(() => {
@@ -52,6 +52,7 @@ export default function ListDetails({ list }) {
       };
 
       fetchArtists();
+      dispatch(fetchLiked())
     }
   }, [dispatch, list?.songs, url]);
 

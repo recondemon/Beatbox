@@ -5,7 +5,7 @@ import {
   fetchPlaylists,
   selectPlaylistsArray,
   fetchLiked,
-  // selectLiked,
+  selectLiked,
   // addLike,
 } from '../../redux/playlists';
 import { useEffect, useState } from 'react';
@@ -23,7 +23,7 @@ const Home = () => {
   const playlists = useSelector(selectPlaylistsArray);
   const songs = useSelector(selectSongsArray);
   // const likedPlaylist = useLoaderData();
-  // const likedSongs = useSelector(selectLiked);
+  const likedSongs = useSelector(selectLiked);
   // const likeIds = likedSongs?.map(song => song.id) || [];
 
   useEffect(() => {

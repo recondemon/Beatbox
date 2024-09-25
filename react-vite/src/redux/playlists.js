@@ -75,6 +75,7 @@ export const fetchPlaylist = playlistId => async dispatch => {
   }
   return res;
 };
+
 export const putPlaylist = playlist => async dispatch => {
   const res = await put(`/api/playlists/${playlist.id}`, playlist);
   if (res.ok) {
@@ -211,13 +212,13 @@ export default function playlistsReducer(state = {}, action) {
         ...state,
         queue: newQueue,
       };
-    case SET_CURRENT_SONG_INDEX: {
-      localStorage.setItem('currentSongIndex', action.index);
-      return {
-        ...state,
-        currentSongIndex: action.index,
-      };
-    }
+    // case SET_CURRENT_SONG_INDEX: {
+    //   localStorage.setItem('currentSongIndex', action.index);
+    //   return {
+    //     ...state,
+    //     currentSongIndex: action.index,
+    //   };
+    // }
     // case CLEAR_QUEUE: {
     //   localStorage.removeItem('queue');
     //   localStorage.removeItem('currentSongIndex');

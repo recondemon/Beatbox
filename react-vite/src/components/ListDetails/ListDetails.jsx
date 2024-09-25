@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { CirclePlus, Play } from 'lucide-react';
-import { fetchLiked, selectLiked, addLike } from '../../redux/playlists';
+import { fetchLiked, selectLiked, addLike, fetchPlaylists } from '../../redux/playlists';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchArtist } from '../../redux/artists';
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
-import { selectCurrentSong, addToQueue, clearQueue } from '../../redux/queue';
+import { selectCurrentSong, addToQueue, clearQueue, setCurrentSongIndex } from '../../redux/queue';
 
 export default function ListDetails({ list }) {
   const dispatch = useDispatch();
@@ -44,9 +44,13 @@ export default function ListDetails({ list }) {
       };
 
       fetchArtists();
-      dispatch(fetchLiked());
     }
   }, [dispatch, list?.songs, url]);
+
+  useEffect(() => {
+    dispatch(fetchLiked());
+    dispatch(fetchPlaylists());
+  }, [dispatch]);
 
   // Updates duration and stores it for each song, including current song
   const handleLoadedMetadata = (songId, audioElement) => {
@@ -130,6 +134,7 @@ export default function ListDetails({ list }) {
     //   url: song.url,
     // };
 
+    dispatch(setCurrentSongIndex());
     dispatch(addToQueue(song));
   };
 
@@ -201,6 +206,7 @@ export default function ListDetails({ list }) {
                     <CirclePlus />
                   </button>
                 </div>
+
                 <div
                   className='flex w-full mx-4 items-center justify-evenly cursor-pointer'
                   onClick={() => playSong(song)}

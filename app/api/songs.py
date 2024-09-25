@@ -31,8 +31,10 @@ def all_songs():
 
 
 @songs.route("/", methods=["POST"])
-@login_required
+# @login_required
 def create_song():
+    print("WE MADE IT")
+
     form_data = dict(request.form)
 
     file = request.files["file"]

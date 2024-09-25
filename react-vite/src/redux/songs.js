@@ -75,13 +75,24 @@ export const fetchSongs = () => async (dispatch) => {
   return res;
 };
 
-export const createSong = (song) => async (dispatch) => {
-  const song = await post("/songs", song); //This will throw an error if there is an error
-  dispatch(loadOne(song));
-  return song;
+export const createSong = (songData) => async (dispatch) => {
+  try {
+    const song = await post("/songs", songData); 
+
+    if (song.ok) {
+      const newSong = await song.json();
+      dispatch(loadOne(newSong));
+      return newSong;
+    } else {
+      console.error('Failed to upload the song');
+    }
+  } catch (error) {
+    console.error('Error uploading song:', error);
+  }
 };
+
 export const fetchSong = (songId) => async (dispatch) => {
-  const song = await get("/songs/" + songId); //This will throw an error if there is an error
+  const song = await get("/songs/" + songId);
   dispatch(loadOne(song));
   return song;
 };

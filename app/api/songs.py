@@ -60,6 +60,9 @@ def create_song():
         album_id=form_data["album_id"],
     )
 
+    db.session.add(song)
+    db.session.commit()
+
     return song.to_json()
 
     # form = SongForm()
@@ -115,15 +118,13 @@ def edit_song(song_id):
 
     name = file.filename
     if "name" in form_data.keys():
-        name = form_data["name"]
+        song.name = form_data["name"]
+    else:
+        song.name = name
 
-    song = Song(
-        name=name,
-        url=url["url"],
-        genre_id=genre.id,
-        artist_id=current_user.id,
-        album_id=form_data["album_id"],
-    )
+    song.genre_id = genre.id
+
+    db.session.commit()
 
     return song.to_json()
 

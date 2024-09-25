@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Play } from 'lucide-react';
 import { addToQueue, clearQueue, postToQueue } from '../../redux/playlists';
 import { useDispatch } from 'react-redux';
+import { fetchArtist } from '../../redux/artists';
 
 export default function ListDetails({ list }) {
   const dispatch = useDispatch();
+  const url = window.location.href;
+  const [artists, setArtists] = useState({});
   const [songDurations, setSongDurations] = useState({});
   const artist = list?.artist
     ? list?.artist[0].band_name
@@ -13,6 +16,30 @@ export default function ListDetails({ list }) {
     : null;
   const releaseYear = new Date(list?.releaseDate).getFullYear() || null;
   const songCount = list?.songs?.length;
+
+  useEffect(() => {
+    if (url.includes('playlist') && list?.songs) {
+      const fetchArtists = async () => {
+        const artistPromises = list?.songs?.map(async song =>
+          dispatch(fetchArtist(song.artist_id)),
+        );
+
+        const artistData = await Promise.all(artistPromises);
+        const artists = {};
+
+        artistData.forEach(artist => {
+          const artistName = artist.bandName
+            ? artist.bandName
+            : `${artist.firstName} ${artist.lastName}`;
+          artists[artist.id] = artistName;
+        });
+
+        setArtists(artists);
+      };
+
+      fetchArtists();
+    }
+  }, [dispatch, list?.songs, url]);
 
   // Updates duration and stores it for each song, including current song
   const handleLoadedMetadata = (songId, audioElement) => {

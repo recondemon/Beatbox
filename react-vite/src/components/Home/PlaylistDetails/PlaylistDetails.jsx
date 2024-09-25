@@ -13,10 +13,6 @@ const PlaylistDetails = () => {
     dispatch(fetchPlaylist(playlistId));
   }, [dispatch, playlistId]);
 
-  if (!playlist) {
-    return <h2 className="text-2xl font-bold">Loading...</h2>
-  }
-
   return <ListDetails list={playlist} />;
 };
 

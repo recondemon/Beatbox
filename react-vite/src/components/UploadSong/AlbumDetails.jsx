@@ -9,7 +9,9 @@ const AlbumDetails = ({setAlbumId}) => {
   const dispatch = useDispatch();
   const userAlbums = useSelector(selectAlbumsArray);
   const user = useSelector((state) => state.session.user);
-
+  const [albumName, setAlbumName] = useState('');
+  const [albumCover, setAlbumCover] = useState('');
+  const [albumArtist, setAlbumArtist] = useState('');
 
   useEffect(() => {
     if (user) {
@@ -24,14 +26,28 @@ const AlbumDetails = ({setAlbumId}) => {
   };
 
   const handleAlbumChange = (e) => {
+    console.log('user albums:', userAlbums);
+    console.log(e.target.value);
+    
     const selectedValue = e.target.value;
+    const selectedValueInt = parseInt(selectedValue, 10);
+  
     if (selectedValue === 'create-album') {
       handleCreateAlbumOption();
     } else {
-      setAlbum(selectedValue);
-      setAlbumId(selectedValue.id); 
+      setAlbum(selectedValueInt);
+  
+      const selectedAlbum = userAlbums.find((album) => album.id === selectedValueInt);
+      
+      if (selectedAlbum) {
+        setAlbumId(selectedAlbum.id);
+        setAlbumCover(selectedAlbum.albumCover);
+        setAlbumName(selectedAlbum.name);
+        setAlbumArtist(selectedAlbum.artist);
+      }
     }
   };
+  
 
   const handleBackToSelect = () => {
     setCreatingAlbum(false);
@@ -41,32 +57,54 @@ const AlbumDetails = ({setAlbumId}) => {
     <div className='flex w-full border-b-2 border-border py-4'>
       {creatingAlbum ? (
         <div className='flex flex-col w-full'>
-          <AlbumInputs handleBackToSelect={handleBackToSelect} albumId = {setAlbumId} />
+          <AlbumInputs handleBackToSelect={handleBackToSelect} setAlbumId = {setAlbumId} />
         </div>
       ) : (
         <div className='flex w-full gap-4'>
-          <select
-            title='Album'
-            id='album'
-            value={album}
-            onChange={handleAlbumChange}
-            className='w-1/2 bg-input p-2 h-10 rounded-lg'
-          >
-            <option value=''>Select Album</option>
-            <option className='text-primary border-b-2 border-border pb-2' value='create-album'>Create Album</option>
-            {userAlbums.length > 0 ? (
-              userAlbums.map((album) => (
-                <option key={album.id} value={album.id}>
-                  {album.name}
-                </option>
-              ))
-            ) : null}
-          </select>
-          <div className='flex justify-center items-center border-2 border-border p-4 w-1/2 min-h-[10rem]'>
+          <div className='flex flex-col w-1/2 gap-4'>
+            <select
+              title='Album'
+              id='album'
+              value={album}
+              onChange={handleAlbumChange}
+              className='w-full bg-input p-2 h-10 rounded-lg'
+            >
+              <option value=''>Select Album</option>
+              <option className='text-primary border-b-2 border-border pb-2' value='create-album'>Create Album</option>
+              {userAlbums.length > 0 ? (
+                userAlbums.map((album) => (
+                  <option key={album.id} value={album.id}>
+                    {album.name}
+                  </option>
+                ))
+              ) : null}
+            </select>
+            <div>
+              <h1>
+                Album Name:
+              </h1>
+              <h1
+              className='text-1vw'
+              >
+                  {albumName ? albumName : 'No Album Selected'}
+              </h1>
+            </div>
+            <div>
+              <h1>
+                Artist:
+              </h1>
+              <h1>
+
+              </h1>
+            </div>
+          </div>
+          <div className='flex justify-center items-center border-2 border-border w-1/3 min-h-[10rem] rounded-lg mx-auto'>
             {album ? (
-              <div>
-                <h2>{album.name}</h2>
-                <p>{album.description}</p>
+              <div className='flex justify-center h-auto w-full'>
+                <img 
+                src={albumCover}
+                className='h-full w-full object-cover'
+                />
               </div>
             ) : (
               <h2>No Album Selected</h2>

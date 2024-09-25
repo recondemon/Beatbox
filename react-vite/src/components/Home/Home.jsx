@@ -24,9 +24,9 @@ const Home = () => {
   const albums = useSelector(selectAlbumsArray);
   const playlists = useSelector(selectPlaylistsArray);
   const songs = useSelector(selectSongsArray);
-  const likedPlaylist = useLoaderData();
-  const liked = useSelector(selectLiked);
-  const likeIds = liked?.map(song => song.id) || [];
+  // const likedPlaylist = useLoaderData();
+  const likedSongs = useSelector(selectLiked);
+  const likeIds = likedSongs?.map(song => song.id) || [];
 
   useEffect(() => {
     dispatch(fetchAlbums());
@@ -35,9 +35,9 @@ const Home = () => {
     dispatch(fetchLiked());
   }, [dispatch]);
 
-  const handleLike = song => {
-    dispatch(addLike(likedPlaylist.id, song.id));
-  };
+  // const handleLike = song => {
+  //   dispatch(addLike(likedPlaylist.id, song));
+  // };
 
   const shuffleArray = array => {
     const shuffled = [...array];
@@ -129,14 +129,14 @@ const Home = () => {
                       <div className='flex justify-center items-center gap-2'>
                         <p className='text-lg font-semibold'>{song.name}</p>
 
-                        {song.id in likeIds ? (
-                          <FaHeart className='cursor-pointer text-primary font-xl' />
-                        ) : (
-                          <FaRegHeart
-                            onClick={() => handleLike(song)}
-                            className='cursor-pointer text-primary font-xl'
-                          />
-                        )}
+{/*                         {song.id in likeIds ? ( */}
+{/*                           <FaHeart className='cursor-pointer text-primary font-xl' /> */}
+{/*                         ) : ( */}
+{/*                           <FaRegHeart */}
+{/*                             onClick={() => handleLike(song)} */}
+{/*                             className='cursor-pointer text-primary font-xl' */}
+{/*                           /> */}
+{/*                         )} */}
                       </div>
 
                       <p className='text-sm'>

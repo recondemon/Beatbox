@@ -11,7 +11,7 @@ import {
 import { useEffect, useState } from 'react';
 import { fetchSongs, selectSongsArray } from '../../redux/songs';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { clearQueue, fetchQueue, addToQueue } from '../../redux/queue';
+import { clearQueue, addToQueue } from '../../redux/queue';
 // import { FaRegHeart, FaHeart } from 'react-icons/fa';
 
 const Home = () => {
@@ -31,7 +31,6 @@ const Home = () => {
     dispatch(fetchPlaylists());
     dispatch(fetchSongs());
     dispatch(fetchLiked());
-    dispatch(fetchQueue())
   }, [dispatch]);
 
   // const handleLike = song => {

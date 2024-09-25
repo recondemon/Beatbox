@@ -84,10 +84,12 @@ export const createSong = (songData) => async (dispatch) => {
 export const fetchSong = (songId) => async (dispatch) => {
   const song = await get("/songs/" + songId);
   dispatch(loadOne(song));
+  console.log(song);
   return song;
 };
 
 export const selectSongs = (state) => state.songs;
+export const selectSongById = (songId) => (state) => state.songs[songId];
 export const selectSongsArray = createSelector(selectSongs, (songs) => {
   return Object.values(songs);
 });

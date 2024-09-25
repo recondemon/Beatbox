@@ -94,6 +94,13 @@ def create_song():
 #     return [like.to_json() for like in likes]
 
 
+@songs.route("/<song_id>")
+@login_required
+def get_song(song_id):
+    song = Song.query.get(int(song_id))
+    return song.to_json()
+
+
 @songs.route("/<song_id>", methods=["PUT"])
 @login_required
 def edit_song(song_id):

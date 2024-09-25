@@ -6,11 +6,13 @@ import {
   postToQueue,
   fetchLiked,
   selectLiked,
-  addLike,
+  addLike, 
+  selectCurrentSong,
 } from '../../redux/playlists';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchArtist } from '../../redux/artists';
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
+
 
 export default function ListDetails({ list }) {
   const dispatch = useDispatch();
@@ -26,12 +28,9 @@ export default function ListDetails({ list }) {
   const songCount = list?.songs?.length;
   const liked = useSelector(selectLiked);
   const likeIds = liked?.map(song => song.id) || [];
+  const [allSongsLiked, setAllSongsLiked] = useState(false);
+  const currentSong = useSelector(selectCurrentSong); 
 
-  useEffect(() => {
-    dispatch(fetchLiked());
-  }, [dispatch]);
-
-  // If the info being displayed is a playlist, we need to handle artist data differently.
   useEffect(() => {
     if (url.includes('playlist') && list?.songs) {
       const fetchArtists = async () => {
@@ -215,17 +214,31 @@ export default function ListDetails({ list }) {
                   />
 
                   <div className='flex-1'>
-                    <h3 className='font-semibold'>{song.name}</h3>
+                  <h3
+                    className={`font-semibold ${
+                      currentSong?.id === song.id ? "text-green-500" : ""
+                    }`}
+                  >
+                    {song.name}
+                  </h3>
                   </div>
 
                   <div className='flex-1 text-center'>
-                    <p className='text-sm'>
-                      {url.includes('playlist') ? artists[song.artist_id] : artist}
+                    <p 
+                    className={`font-semibold ${
+                      currentSong?.id === song.id ? "text-green-500" : ""
+                    }`}
+                    >
+                      {artist}
                     </p>
                   </div>
 
                   <div className='flex-1 text-right'>
-                    <p className='text-xs'>
+                    <p 
+                    className={`font-semibold ${
+                      currentSong?.id === song.id ? "text-green-500" : ""
+                    }`}
+                    >
                       {songDurations[song.id] ? formatTime(songDurations[song.id]) : '--:--'}
                     </p>
                   </div>

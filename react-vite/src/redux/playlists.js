@@ -54,6 +54,12 @@ export const setCurrentSongIndex = index => ({
   index,
 });
 
+export const selectCurrentSong = (state) => {
+  const queue = state.playlists.queue;
+  const currentSongIndex = state.playlists.currentSongIndex;
+  return queue?.[currentSongIndex];
+};
+
 export const fetchPlaylists = () => async dispatch => {
   const res = await fetch('/api/playlists');
 

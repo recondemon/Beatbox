@@ -1,170 +1,193 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAlbumsByUserId, editAlbum, removeAlbum, selectAlbumsArray } from '../../redux/albums';
+import { fetchAlbumsByUserId, editAlbum, removeAlbum } from '../../redux/albums';
 import { editSong, removeSong } from '../../redux/songs';
 import { useEffect, useState } from 'react';
-import { ChevronUp, ChevronDown, Edit3, Trash2, Save } from 'lucide-react'; // Import Save icon
+import { ChevronUp, ChevronDown, Edit3, Trash2, Save } from 'lucide-react';
 
 const ManageSongs = () => {
   const dispatch = useDispatch();
-  const albums = useSelector(selectAlbumsArray);
+  const isLoading = useSelector((state) => state.albums.isLoading);
   const user = useSelector((state) => state.session.user);
-
+  const [albums, setAlbums] = useState([]);
   const [expandedAlbums, setExpandedAlbums] = useState({});
-  const [editingAlbum, setEditingAlbum] = useState({});
-  const [editingSong, setEditingSong] = useState({});
+  const [editing, setEditing] = useState(false);
+  const [editingImage, setEditingImage] = useState(false);
   const [albumName, setAlbumName] = useState({});
   const [songName, setSongName] = useState({});
 
   useEffect(() => {
+    console.log(user);
     if (user) {
-      dispatch(fetchAlbumsByUserId(user.id)); 
+      setAlbums(user.albums || []);
     }
-  }, [dispatch, user]);
+  }, [user]);
 
-  if (!albums || albums.length === 0) {
-    return <div>Loading albums...</div>; 
+  if (isLoading) {
+    return <div>Loading albums...</div>;
   }
 
-  const toggleAlbumVisibility = (albumId) => {
-    setExpandedAlbums((prevState) => ({
-      ...prevState,
-      [albumId]: !prevState[albumId],
-    }));
-  };
+  if (!albums || albums.length === 0) {
+    return <div>No albums found</div>;
+  }
 
-  const handleEditAlbum = (albumId, album) => {
-    setEditingAlbum((prevState) => ({
-      ...prevState,
-      [albumId]: !prevState[albumId],
-    }));
-    setAlbumName({ ...albumName, [albumId]: album.name });
+  const handleEditToggle = () => {
+    setEditing((prev) => !prev);
   };
 
   const handleSaveAlbum = (albumId) => {
     dispatch(editAlbum(albumId, { name: albumName[albumId] }));
-    setEditingAlbum((prevState) => ({
-      ...prevState,
-      [albumId]: false,
-    }));
-  };
-
-  const handleEditSong = (songId, song) => {
-    setEditingSong((prevState) => ({
-      ...prevState,
-      [songId]: !prevState[songId],
-    }));
-    setSongName({ ...songName, [songId]: song.name });
+    setEditing(false);
   };
 
   const handleSaveSong = (songId) => {
     dispatch(editSong(songId, { name: songName[songId] }));
-    setEditingSong((prevState) => ({
-      ...prevState,
-      [songId]: false,
-    }));
-  };
-
-  const handleDeleteAlbum = (albumId) => {
-    dispatch(removeAlbum(albumId));
-  };
-
-  const handleDeleteSong = (songId) => {
-    dispatch(removeSong(songId));
+    setEditing(false);
   };
 
   return (
-    <div className="flex flex-col mx-auto mt-6 w-3/5 py-6 items-center border-2 border-border rounded-lg min-h-[70vh] bg-card">
-      <h1 className='text-2vw'>Manage Songs</h1>
-      {albums.map((album) => (
-        <div key={album.id} className="flex flex-col w-full max-w-md p-4 border-b mt-6">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center">
-              <img src={album.albumCover} alt={album.name} className="w-12 h-12 mr-4" />
+    <div className="flex flex-col mx-auto mt-6 w-3/5 py-6 items-center border-2 border-border rounded-lg min-h-[70vh]">
+      <h1>Manage Songs</h1>
 
-              {editingAlbum[album.id] ? (
-                <>
-                  <input 
-                    type="text" 
-                    value={albumName[album.id]} 
-                    className="text-lg font-bold"
-                    onChange={(e) => setAlbumName({ ...albumName, [album.id]: e.target.value })}
+      {albums.map((album) => {
+        const artist =
+          album.artist?.[0]?.band_name ||
+          `${album.artist?.[0]?.first_name} ${album.artist?.[0]?.last_name}` ||
+          'Unknown Artist';
+        const releaseYear = album.release_date
+          ? new Date(album.release_date).getFullYear()
+          : 'Unknown Year';
+        const songCount = album.songs?.length || 0;
+
+        return (
+          <div key={album.id}>
+            <div className="flex gap-2 items-center justify-center mx-auto">
+              <div className="h-[15vh] w-auto">
+                {editingImage ? (
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      dispatch(editAlbum(album.id, { file }));
+                    }}
                   />
-                  <Save 
-                    className="cursor-pointer mx-2 text-green-500" 
-                    onClick={() => handleSaveAlbum(album.id)}
-                  />
-                </>
-              ) : (
-                <h2 
-                  className="cursor-pointer text-lg font-bold"
-                  onClick={() => toggleAlbumVisibility(album.id)}
-                >
-                  {album.name}
-                </h2>
-              )}
-            </div>
-
-            <div className="flex items-center">
-              {!editingAlbum[album.id] && (
-                <Edit3 
-                  className="cursor-pointer mx-2 text-yellow-500" 
-                  onClick={() => handleEditAlbum(album.id, album)} 
-                />
-              )}
-              <Trash2 
-                className="cursor-pointer mx-2 text-red-500" 
-                onClick={() => handleDeleteAlbum(album.id)} 
-              />
-
-              {expandedAlbums[album.id] ? (
-                <ChevronUp className="cursor-pointer" onClick={() => toggleAlbumVisibility(album.id)} />
-              ) : (
-                <ChevronDown className="cursor-pointer" onClick={() => toggleAlbumVisibility(album.id)} />
-              )}
-            </div>
-          </div>
-
-          {expandedAlbums[album.id] && (
-            <ul className="mt-2">
-              {album.songs?.map((song) => (
-                <li key={song.id} className="flex justify-between items-center py-1">
-                  <div className="flex items-center">
-                    {editingSong[song.id] ? (
-                      <>
-                        <input 
-                          type="text" 
-                          value={songName[song.id]} 
-                          className="pl-4"
-                          onChange={(e) => setSongName({ ...songName, [song.id]: e.target.value })}
-                        />
-                        <Save 
-                          className="cursor-pointer mx-2 text-green-500" 
-                          onClick={() => handleSaveSong(song.id)}
-                        />
-                      </>
-                    ) : (
-                      <span className="pl-4">{song.name}</span>
-                    )}
+                ) : (
+                  <div className='h-[20vh] w-auto'>
+                    <img
+                      src={album.album_cover}
+                      alt="album artwork"
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                    className='mt-2 border-2 border-border bg-muted p-2 rounded-lg'
+                    onClick={() => setEditingImage(true)}
+                    >
+                      Change Album Cover
+                    </button>
                   </div>
-
-                  <div className="flex items-center">
-                    {!editingSong[song.id] && (
-                      <Edit3 
-                        className="cursor-pointer mx-2 text-yellow-500" 
-                        onClick={() => handleEditSong(song.id, song)} 
-                      />
-                    )}
-                    <Trash2 
-                      className="cursor-pointer mx-2 text-red-500" 
-                      onClick={() => handleDeleteSong(song.id)}
+                  )}
+              </div>
+              <div className="flex flex-col justify-center h-full">
+                {editing ? (
+                  <input
+                    type="text"
+                    value={albumName[album.id] || album.name}
+                    onChange={(e) =>
+                      setAlbumName({ ...albumName, [album.id]: e.target.value })
+                    }
+                  />
+                ) : (
+                  <h1 className="text-3xl font-bold">{album.name}</h1>
+                )}
+                
+                <p className="text-sm">
+                  {releaseYear} • {songCount}{' '}
+                  {songCount === 1 ? 'song' : 'songs'}
+                </p>
+                {editing ? (
+                  <div className='w-[20vw] h-full'>
+                    <textarea
+                      value={album.description}
+                      onChange={(e) =>
+                        dispatch(editAlbum(album.id, { description: e.target.value }))
+                      }
+                      placeholder="Enter album description"
+                      className="bg-input text-secondary-foreground p-2 mt-2 w-full"
                     />
                   </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      ))}
+                ) : (
+                  <p className="text-sm py-2 text-wrap max-w-[20vw]">
+                    {album.description}
+                  </p>
+                )}
+              </div>
+              <div>
+                {expandedAlbums[album.id] ? (
+                  <ChevronUp
+                    onClick={() =>
+                      setExpandedAlbums({
+                        ...expandedAlbums,
+                        [album.id]: false,
+                      })
+                    }
+                  />
+                ) : (
+                  <ChevronDown
+                    onClick={() =>
+                      setExpandedAlbums({
+                        ...expandedAlbums,
+                        [album.id]: true,
+                      })
+                    }
+                  />
+                )}
+              </div>
+              <div className="ml-4">
+                {editing ? (
+                  <Save onClick={() => handleSaveAlbum(album.id)} />
+                ) : (
+                  <Edit3 onClick={handleEditToggle} />
+                )}
+              </div>
+            </div>
+            {/* songs */}
+            {expandedAlbums[album.id] && (
+              <div className='flex flex-col gap-2 mt-[11vh]'>
+                {user.songs?.map((song) => (
+                  <div className="flex items-center" key={song.id}>
+                    {editing ? (
+                      <input
+                        type="text"
+                        value={songName[song.id] || song.name}
+                        onChange={(e) =>
+                          setSongName({
+                            ...songName,
+                            [song.id]: e.target.value,
+                          })
+                        }
+                      />
+                    ) : (
+                      <p>{song.name}</p>
+                    )}
+                    {editing && (
+                      <div className='flex gap-4'>
+                        <Save
+                          className="ml-2"
+                          onClick={() => handleSaveSong(song.id)}
+                        />
+                        <Trash2
+                          className="ml-4"
+                          onClick={() => dispatch(removeSong(song.id))}
+                        />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 };

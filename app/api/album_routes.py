@@ -17,7 +17,7 @@ albums = Blueprint("albums", __name__)
 
 
 # get all albums
-@albums.route("/")
+@albums.route("")
 def all_albums():
     albums = Album.query.all()
     return [album.to_json() for album in albums]
@@ -41,7 +41,7 @@ def user_albums(user_id):
 
 
 # create an album, POST method
-@albums.route("/", methods=["POST"])
+@albums.route("", methods=["POST"])
 def create_album():
     form_data = dict(request.form)
 
@@ -71,7 +71,7 @@ def create_album():
     album = Album(
         name=name,
         description=description,
-        release_date=release_date,
+        release_date=datetime(*[int(arg) for arg in release_date.split("-")]),
         album_cover=url["url"],
         artist_id=current_user.id,
     )

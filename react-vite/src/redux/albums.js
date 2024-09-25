@@ -1,42 +1,42 @@
-import { createSelector } from 'reselect';
-import { post } from './csrf';
+import { createSelector } from "reselect";
+import { post } from "./csrf";
 
-const LOAD_ALL = 'albums/loadAll';
-const LOAD_ONE = 'albums/loadOne';
-const CREATE = 'albums/create';
-const UPDATE = 'albums/update';
-const DELETE = 'albums/delete';
-const RESET_ALBUMS = 'albums/reset';
+const LOAD_ALL = "albums/loadAll";
+const LOAD_ONE = "albums/loadOne";
+const CREATE = "albums/create";
+const UPDATE = "albums/update";
+const DELETE = "albums/delete";
+const RESET_ALBUMS = "albums/reset";
 
-export const loadAll = albums => {
+export const loadAll = (albums) => {
   return {
     type: LOAD_ALL,
     albums,
   };
 };
 
-export const loadOne = album => {
+export const loadOne = (album) => {
   return {
     type: LOAD_ONE,
     album,
   };
 };
 
-export const create = newAlbum => {
+export const create = (newAlbum) => {
   return {
     type: CREATE,
     newAlbum,
   };
 };
 
-export const updateAlbum = updatedAlbum => {
+export const updateAlbum = (updatedAlbum) => {
   return {
     type: UPDATE,
     updatedAlbum,
   };
 };
 
-export const deleteAlbum = albumId => {
+export const deleteAlbum = (albumId) => {
   return {
     type: DELETE,
     albumId,
@@ -49,11 +49,11 @@ export const resetAlbums = () => {
   };
 };
 
-export const editAlbum = (albumId, albumData) => async dispatch => {
+export const editAlbum = (albumId, albumData) => async (dispatch) => {
   const res = await fetch(`/api/albums/${albumId}`, {
-    method: 'PUT',
+    method: "PUT",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(albumData),
   });
@@ -66,9 +66,9 @@ export const editAlbum = (albumId, albumData) => async dispatch => {
   return res;
 };
 
-export const removeAlbum = albumId => async dispatch => {
+export const removeAlbum = (albumId) => async (dispatch) => {
   const res = await fetch(`/api/albums/${albumId}`, {
-    method: 'DELETE',
+    method: "DELETE",
   });
 
   if (res.ok) {
@@ -78,8 +78,8 @@ export const removeAlbum = albumId => async dispatch => {
   return false;
 };
 
-export const fetchAlbums = () => async dispatch => {
-  const res = await fetch('/api/albums');
+export const fetchAlbums = () => async (dispatch) => {
+  const res = await fetch("/api/albums");
 
   if (res.ok) {
     const data = await res.json();
@@ -91,7 +91,7 @@ export const fetchAlbums = () => async dispatch => {
   return res;
 };
 
-export const fetchAlbumById = id => async dispatch => {
+export const fetchAlbumById = (id) => async (dispatch) => {
   const res = await fetch(`/api/albums/${id}`);
 
   if (res.ok) {
@@ -104,7 +104,7 @@ export const fetchAlbumById = id => async dispatch => {
   return res;
 };
 
-export const fetchAlbumsByUserId = userId => async dispatch => {
+export const fetchAlbumsByUserId = (userId) => async (dispatch) => {
   dispatch(resetAlbums());
 
   const res = await fetch(`/api/albums/user/${userId}`);
@@ -118,22 +118,18 @@ export const fetchAlbumsByUserId = userId => async dispatch => {
   return res;
 };
 
-export const createAlbum = album => async dispatch => {
-  const data = await fetch('/api/albums', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: album,
-  });
+export const createAlbum = (album) => async (dispatch) => {
+  const data = await post("/api/albums", album);
   dispatch(create(data));
   return data;
 };
 
-export const selectAlbumByUserId = userId => state => {
-  return Object.values(state.albums).filter(album => album.userId === userId);
+export const selectAlbumByUserId = (userId) => (state) => {
+  return Object.values(state.albums).filter((album) => album.userId === userId);
 };
-export const selectAlbums = state => state.albums;
-export const selectAlbumById = albumId => state => state.albums[albumId];
-export const selectAlbumsArray = createSelector(selectAlbums, albums => {
+export const selectAlbums = (state) => state.albums;
+export const selectAlbumById = (albumId) => (state) => state.albums[albumId];
+export const selectAlbumsArray = createSelector(selectAlbums, (albums) => {
   return Object.values(albums);
 });
 
@@ -143,7 +139,7 @@ export default function albumsReducer(state = {}, action) {
       return {};
     case LOAD_ALL: {
       const newState = {};
-      action.albums.forEach(album => {
+      action.albums.forEach((album) => {
         newState[album.id] = album;
       });
       return {

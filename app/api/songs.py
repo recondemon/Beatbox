@@ -14,7 +14,7 @@ Like = Models.Like
 songs = Blueprint("songs", __name__)
 
 
-@songs.route("/")
+@songs.route("")
 def all_songs():
     query = Song.query
 
@@ -30,7 +30,7 @@ def all_songs():
     return jsonify([song.to_json() for song in songs])
 
 
-@songs.route("/", methods=["POST"])
+@songs.route("", methods=["POST"])
 # @login_required
 def create_song():
     print("WE MADE IT")

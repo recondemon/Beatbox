@@ -12,11 +12,16 @@ const ManageSongs = () => {
   const [expandedAlbums, setExpandedAlbums] = useState({});
   const [editing, setEditing] = useState(false);
   const [editingImage, setEditingImage] = useState(false);
-  const [albumName, setAlbumName] = useState({});
   const [songName, setSongName] = useState({});
 
+  const [albumName, setAlbumName] = useState('');
+  const [releaseDate, setReleaseDate] = useState('');
+  const [description, setDescription] = useState('');
+
+
+
   useEffect(() => {
-    console.log(user);
+    console.log('User:', user);
     if (user) {
       setAlbums(user.albums || []);
     }
@@ -44,150 +49,101 @@ const ManageSongs = () => {
     setEditing(false);
   };
 
+  const handleDeleteAlbum = (albumId) => {
+    dispatch(removeAlbum(albumId));
+  }
+
   return (
-    <div className="flex flex-col mx-auto mt-6 w-3/5 py-6 items-center border-2 border-border rounded-lg min-h-[70vh]">
+    <div className="flex flex-col mx-auto mt-6 w-4/5 py-6 items-center min-h-[70vh]">
       <h1>Manage Songs</h1>
-
-      {albums.map((album) => {
-        const artist =
-          album.artist?.[0]?.band_name ||
-          `${album.artist?.[0]?.first_name} ${album.artist?.[0]?.last_name}` ||
-          'Unknown Artist';
-        const releaseYear = album.release_date
-          ? new Date(album.release_date).getFullYear()
-          : 'Unknown Year';
-        const songCount = album.songs?.length || 0;
-
-        return (
-          <div key={album.id}>
-            <div className="flex gap-2 items-center justify-center mx-auto">
-              <div className="h-[15vh] w-auto">
-                {editingImage ? (
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                      const file = e.target.files[0];
-                      dispatch(editAlbum(album.id, { file }));
-                    }}
-                  />
-                ) : (
-                  <div className='h-[20vh] w-auto'>
-                    <img
-                      src={album.album_cover}
-                      alt="album artwork"
-                      className="w-full h-full object-cover"
-                    />
-                    <button
-                    className='mt-2 border-2 border-border bg-muted p-2 rounded-lg'
-                    onClick={() => setEditingImage(true)}
-                    >
-                      Change Album Cover
-                    </button>
-                  </div>
-                  )}
+      <div 
+      className='grid grid-cols-2 gap-4'
+      >
+        {albums.map((album => ( 
+          <div className='flex bg-card'>
+            <div className='flex flex-col gap-4 p-4'>
+              <div 
+                className='w-[10vw] h-auto'
+              >
+                <img 
+                src={album.album_cover} 
+                alt='album cover' 
+                className='w-full h-full object-cover' />
               </div>
-              <div className="flex flex-col justify-center h-full">
-                {editing ? (
-                  <input
-                    type="text"
-                    value={albumName[album.id] || album.name}
-                    onChange={(e) =>
-                      setAlbumName({ ...albumName, [album.id]: e.target.value })
-                    }
-                  />
-                ) : (
-                  <h1 className="text-3xl font-bold">{album.name}</h1>
-                )}
-                
-                <p className="text-sm">
-                  {releaseYear} • {songCount}{' '}
-                  {songCount === 1 ? 'song' : 'songs'}
-                </p>
-                {editing ? (
-                  <div className='w-[20vw] h-full'>
-                    <textarea
-                      value={album.description}
-                      onChange={(e) =>
-                        dispatch(editAlbum(album.id, { description: e.target.value }))
-                      }
-                      placeholder="Enter album description"
-                      className="bg-input text-secondary-foreground p-2 mt-2 w-full"
-                    />
-                  </div>
-                ) : (
-                  <p className="text-sm py-2 text-wrap max-w-[20vw]">
-                    {album.description}
-                  </p>
-                )}
-              </div>
-              <div>
-                {expandedAlbums[album.id] ? (
-                  <ChevronUp
-                    onClick={() =>
-                      setExpandedAlbums({
-                        ...expandedAlbums,
-                        [album.id]: false,
-                      })
-                    }
-                  />
-                ) : (
-                  <ChevronDown
-                    onClick={() =>
-                      setExpandedAlbums({
-                        ...expandedAlbums,
-                        [album.id]: true,
-                      })
-                    }
-                  />
-                )}
-              </div>
-              <div className="ml-4">
-                {editing ? (
-                  <Save onClick={() => handleSaveAlbum(album.id)} />
-                ) : (
-                  <Edit3 onClick={handleEditToggle} />
-                )}
+              <button className='border-2 border-border rounded-lg bg-muted p-2'>
+                  Change album cover
+              </button>
+            </div>
+            <div className='flex flex-col p-4 gap-2'>
+              {editing ? (
+                <input
+                  type='text'
+                  value={album.name}
+                  onChange={(e) => setAlbumName(e.target.value)}
+                  className='bg-input text-secondary-foreground p-2 w-full'
+                />
+              ) : (
+                <h1>
+                  {album.name}
+                </h1>
+              )}
+              {editing ? (
+                <input
+                  type='date'
+                  value={album.release_date}
+                  onChange={(e) => setReleaseDate(e.target.value)}
+                  className='bg-input text-secondary-foreground p-2 w-full'
+                />
+              ) : (
+                <h1>
+                  {album.release_date}
+                </h1>
+              )}
+              {editing ? (
+                <textarea
+                  type='text'
+                  value={album.description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className='bg-input text-secondary-foreground p-2 w-full'
+                />
+              ) : (
+                <h1>
+                  {album.description}
+                </h1>
+              )}
+              {/* need to add songs here */}
+              <div className='mt-8 text-1vw'>
+                songs
               </div>
             </div>
-            {/* songs */}
-            {expandedAlbums[album.id] && (
-              <div className='flex flex-col gap-2 mt-[11vh]'>
-                {user.songs?.map((song) => (
-                  <div className="flex items-center" key={song.id}>
-                    {editing ? (
-                      <input
-                        type="text"
-                        value={songName[song.id] || song.name}
-                        onChange={(e) =>
-                          setSongName({
-                            ...songName,
-                            [song.id]: e.target.value,
-                          })
-                        }
-                      />
-                    ) : (
-                      <p>{song.name}</p>
-                    )}
-                    {editing && (
-                      <div className='flex gap-4'>
-                        <Save
-                          className="ml-2"
-                          onClick={() => handleSaveSong(song.id)}
-                        />
-                        <Trash2
-                          className="ml-4"
-                          onClick={() => dispatch(removeSong(song.id))}
-                        />
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
+            <div className='pr-2 pt-2'>
+              {editing ? (
+                <button
+                  onClick={() => handleSaveAlbum(album.id)}
+                  className='p-2 text-green-600 rounded-lg'
+                >
+                  <Save />
+                </button>
+              ) : (
+                <div className='flex gap-2'>
+                  <button
+                    onClick={() => setEditing(true)}
+                    className='p-2 text-yellow-500 rounded-lg'
+                  >
+                    <Edit3 />
+                  </button>
+                  <button
+                    onClick={handleDeleteAlbum}
+                    className='p-2 text-red-500 rounded-lg'
+                  >
+                    <Trash2 />
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
-        );
-      })}
+        )))}
+      </div>
     </div>
   );
 };

@@ -10,6 +10,7 @@ const [albumId, setAlbumId] = useState('')
       <h2 className="text-2xl font-bold mb-4">Upload Your Song</h2>
       <AlbumDetails setAlbumId = {setAlbumId}/>
       <SongDetails albumId = {albumId} />
+      
     </div>
   );
 };

@@ -8,11 +8,15 @@ const ManageSongs = () => {
   const dispatch = useDispatch();
   const isLoading = useSelector((state) => state.albums.isLoading);
   const user = useSelector((state) => state.session.user);
-  const [albums, setAlbums] = useState([]);
+  const [albumsSongs, setAlbumsSongs] = useState({
+    albums: [],
+    songs: []
+  });
+
   const [expandedAlbums, setExpandedAlbums] = useState({});
   const [editing, setEditing] = useState(false);
   const [editingImage, setEditingImage] = useState(false);
-  const [songName, setSongName] = useState({});
+
 
   const [albumName, setAlbumName] = useState('');
   const [releaseDate, setReleaseDate] = useState('');
@@ -23,7 +27,11 @@ const ManageSongs = () => {
   useEffect(() => {
     console.log('User:', user);
     if (user) {
-      setAlbums(user.albums || []);
+      setAlbumsSongs({
+        albums: user.albums || [],
+        songs: user.songs || []
+      });
+      console.log(albumsSongs.albums, albumsSongs.songs); 
     }
   }, [user]);
 
@@ -31,7 +39,7 @@ const ManageSongs = () => {
     return <div>Loading albums...</div>;
   }
   
-  if (!albums || albums.length === 0) {
+  if (!albumsSongs.albums || albumsSongs.albums.length === 0) {
     return <div>No albums found</div>;
   }
 
@@ -59,89 +67,100 @@ const ManageSongs = () => {
       <div 
       className='grid grid-cols-2 gap-4'
       >
-        {albums.map((album => ( 
-          <div className='flex bg-card'>
-            <div className='flex flex-col gap-4 p-4'>
-              <div 
-                className='w-[10vw] h-auto'
-              >
-                <img 
-                src={album.album_cover} 
-                alt='album cover' 
-                className='w-full h-full object-cover' />
-              </div>
-              <button className='border-2 border-border rounded-lg bg-muted p-2'>
-                  Change album cover
-              </button>
-            </div>
-            <div className='flex flex-col p-4 gap-2'>
-              {editing ? (
-                <input
-                  type='text'
-                  value={album.name}
-                  onChange={(e) => setAlbumName(e.target.value)}
-                  className='bg-input text-secondary-foreground p-2 w-full'
-                />
-              ) : (
-                <h1>
-                  {album.name}
-                </h1>
-              )}
-              {editing ? (
-                <input
-                  type='date'
-                  value={album.release_date}
-                  onChange={(e) => setReleaseDate(e.target.value)}
-                  className='bg-input text-secondary-foreground p-2 w-full'
-                />
-              ) : (
-                <h1>
-                  {album.release_date}
-                </h1>
-              )}
-              {editing ? (
-                <textarea
-                  type='text'
-                  value={album.description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className='bg-input text-secondary-foreground p-2 w-full'
-                />
-              ) : (
-                <h1>
-                  {album.description}
-                </h1>
-              )}
-              {/* need to add songs here */}
-              <div className='mt-8 text-1vw'>
-                songs
-              </div>
-            </div>
-            <div className='pr-2 pt-2'>
-              {editing ? (
-                <button
-                  onClick={() => handleSaveAlbum(album.id)}
-                  className='p-2 text-green-600 rounded-lg'
+        {albumsSongs.albums.map((album => ( 
+        <div className='bg-card'>
+            <div className='flex'>
+              <div className='flex flex-col gap-4 p-4'>
+                <div 
+                  className='w-[10vw] h-auto'
                 >
-                  <Save />
-                </button>
-              ) : (
-                <div className='flex gap-2'>
-                  <button
-                    onClick={() => setEditing(true)}
-                    className='p-2 text-yellow-500 rounded-lg'
-                  >
-                    <Edit3 />
-                  </button>
-                  <button
-                    onClick={handleDeleteAlbum}
-                    className='p-2 text-red-500 rounded-lg'
-                  >
-                    <Trash2 />
-                  </button>
+                  <img 
+                  src={album.album_cover} 
+                  alt='album cover' 
+                  className='w-full h-full object-cover' />
                 </div>
-              )}
+                <button className='border-2 border-border rounded-lg bg-muted p-2'>
+                    Change album cover
+                </button>
+              </div>
+              <div className='flex flex-col p-4 gap-2'>
+                {editing ? (
+                  <input
+                    type='text'
+                    value={album.name}
+                    onChange={(e) => setAlbumName(e.target.value)}
+                    className='bg-input text-secondary-foreground p-2 w-full'
+                  />
+                ) : (
+                  <h1>
+                    {album.name}
+                  </h1>
+                )}
+                {editing ? (
+                  <input
+                    type='date'
+                    value={album.release_date}
+                    onChange={(e) => setReleaseDate(e.target.value)}
+                    className='bg-input text-secondary-foreground p-2 w-full'
+                  />
+                ) : (
+                  <h1>
+                    {album.release_date}
+                  </h1>
+                )}
+                {editing ? (
+                  <textarea
+                    type='text'
+                    value={album.description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    className='bg-input text-secondary-foreground p-2 w-full'
+                  />
+                ) : (
+                  <h1>
+                    {album.description}
+                  </h1>
+                )}
+              </div>
+              <div className='pr-2 pt-2'>
+                {editing ? (
+                  <button
+                    onClick={() => handleSaveAlbum(album.id)}
+                    className='p-2 text-green-600 rounded-lg'
+                  >
+                    <Save />
+                  </button>
+                ) : (
+                  <div className='flex gap-2'>
+                    <button
+                      onClick={() => setEditing(true)}
+                      className='p-2 text-yellow-500 rounded-lg'
+                    >
+                      <Edit3 />
+                    </button>
+                    <button
+                      onClick={handleDeleteAlbum}
+                      className='p-2 text-red-500 rounded-lg'
+                    >
+                      <Trash2 />
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+            {/* need to add songs here */}
+            <div className="mt-1 text-1vw px-4">
+              <h1>Songs - {albumsSongs.songs.filter(song => song.album_id === album.id).length}
+              </h1>
+              {albumsSongs.songs.filter(song => song.album_id === album.id).map((song) => (
+                <p 
+                key={song.id}
+                className='mt-2'
+                >
+                  {song.name}
+                </p>
+              ))}
+            </div>
+        </div>
         )))}
       </div>
     </div>

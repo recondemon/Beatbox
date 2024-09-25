@@ -183,9 +183,7 @@ export default function playlistsReducer(state = initialState, action) {
     case LOAD_ONE: {
       return {
         ...state,
-        [action.playlist.id]: {
-          ...action.playlist,
-        },
+        [action.playlist.id]: action.playlist,
       };
     }
     case LOAD_ALL: {

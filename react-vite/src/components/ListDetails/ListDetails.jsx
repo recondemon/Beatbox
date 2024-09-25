@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { CirclePlus, Play } from 'lucide-react';
-import { 
-  addToQueue, 
-  clearQueue, 
-  postToQueue,   
+import {
+  addToQueue,
+  clearQueue,
+  postToQueue,
   fetchLiked,
   selectLiked,
-  addLike, 
+  addLike,
 } from '../../redux/playlists';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchArtist } from '../../redux/artists';
@@ -27,6 +27,8 @@ export default function ListDetails({ list }) {
   const liked = useSelector(selectLiked);
   const likeIds = liked?.map(song => song.id) || [];
   const [allSongsLiked, setAllSongsLiked] = useState(false);
+
+  // If the info being displayed is a playlist, we need to handle artist data differently.
   useEffect(() => {
     if (url.includes('playlist') && list?.songs) {
       const fetchArtists = async () => {
@@ -71,7 +73,7 @@ export default function ListDetails({ list }) {
   const handlePlayAllSongs = () => {
     if (list?.songs && list.songs.length > 0) {
       dispatch(clearQueue());
-  
+
       const restructureSongs = list.songs.map(song => ({
         album: [
           {
@@ -92,21 +94,20 @@ export default function ListDetails({ list }) {
         name: song.name,
         url: song.url,
       }));
-  
+
       restructureSongs.forEach(song => {
         dispatch(addToQueue(song));
       });
-  
+
       dispatch(postToQueue(restructureSongs[0]));
     } else {
       console.error('No songs to add to the queue');
     }
   };
-  
 
   const playSong = song => {
     dispatch(clearQueue());
-    
+
     const structuredSong = {
       album: [
         {
@@ -127,17 +128,19 @@ export default function ListDetails({ list }) {
       name: song.name,
       url: song.url,
     };
-  
+
     dispatch(addToQueue(structuredSong));
   };
 
   const handleAddClick = () => {
-    {/* TODO: clicking opens drop down with options like: add to playlist, add to qeue, ect.  */}
-  }
+    {
+      /* TODO: clicking opens drop down with options like: add to playlist, add to qeue, ect.  */
+    }
+  };
 
   const handleLike = song => {
     dispatch(addLike(list.id, song));
-  }
+  };
 
   if (!list) {
     return <h2>Loading...</h2>;
@@ -153,7 +156,7 @@ export default function ListDetails({ list }) {
           />
 
           <div className='flex flex-col justify-center space-y-1'>
-            <p className='font-semibold'>Album</p>
+            <p className='font-semibold'>{url.includes('playlist') ? 'Playlist' : 'Album'}</p>
 
             <h1 className='text-3xl font-bold'>{list?.name}</h1>
 
@@ -173,7 +176,7 @@ export default function ListDetails({ list }) {
               <button className=''>
                 {/* TODO: check to see if all songs in the album are in liked, then render the appropriate heart. if all songs are not liked, then click the empty heart likes all songs in list */}
                 {allSongsLiked ? (
-                  <FaHeart 
+                  <FaHeart
                     className='cursor-pointer text-primary font-xl'
                     size={48}
                   />
@@ -186,9 +189,9 @@ export default function ListDetails({ list }) {
                 )}
               </button>
               <button className=''>
-                <CirclePlus 
-                className='cursor-pointer font-xl'
-                size={48}
+                <CirclePlus
+                  className='cursor-pointer font-xl'
+                  size={48}
                 />
               </button>
             </div>
@@ -203,9 +206,9 @@ export default function ListDetails({ list }) {
               <div className='flex mx-4 items-center py-4'>
                 <div className='flex gap-4 items-center mr-2'>
                   {song.id in likeIds ? (
-                    <FaHeart 
-                    className='cursor-pointer text-primary font-xl'
-                    size={24}
+                    <FaHeart
+                      className='cursor-pointer text-primary font-xl'
+                      size={24}
                     />
                   ) : (
                     <FaRegHeart
@@ -214,9 +217,7 @@ export default function ListDetails({ list }) {
                       size={24}
                     />
                   )}
-                  <button
-                  onClick={handleAddClick}
-                  >
+                  <button onClick={handleAddClick}>
                     <CirclePlus />
                   </button>
                 </div>
@@ -235,7 +236,9 @@ export default function ListDetails({ list }) {
                   </div>
 
                   <div className='flex-1 text-center'>
-                    <p className='text-sm'>{artist}</p>
+                    <p className='text-sm'>
+                      {url.includes('playlist') ? artists[song.artist_id] : artist}
+                    </p>
                   </div>
 
                   <div className='flex-1 text-right'>

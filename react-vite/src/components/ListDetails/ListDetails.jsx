@@ -1,8 +1,16 @@
 import { useState, useEffect } from 'react';
-import { Play } from 'lucide-react';
-import { addToQueue, clearQueue, postToQueue } from '../../redux/playlists';
-import { useDispatch } from 'react-redux';
+import { CirclePlus, Play } from 'lucide-react';
+import { 
+  addToQueue, 
+  clearQueue, 
+  postToQueue,   
+  fetchLiked,
+  selectLiked,
+  addLike, 
+} from '../../redux/playlists';
+import { useDispatch, useSelector } from 'react-redux';
 import { fetchArtist } from '../../redux/artists';
+import { FaRegHeart, FaHeart } from 'react-icons/fa';
 
 export default function ListDetails({ list }) {
   const dispatch = useDispatch();
@@ -16,7 +24,9 @@ export default function ListDetails({ list }) {
     : null;
   const releaseYear = new Date(list?.releaseDate).getFullYear() || null;
   const songCount = list?.songs?.length;
-
+  const liked = useSelector(selectLiked);
+  const likeIds = liked?.map(song => song.id) || [];
+  const [allSongsLiked, setAllSongsLiked] = useState(false);
   useEffect(() => {
     if (url.includes('playlist') && list?.songs) {
       const fetchArtists = async () => {
@@ -121,6 +131,14 @@ export default function ListDetails({ list }) {
     dispatch(addToQueue(structuredSong));
   };
 
+  const handleAddClick = () => {
+    {/* TODO: clicking opens drop down with options like: add to playlist, add to qeue, ect.  */}
+  }
+
+  const handleLike = song => {
+    dispatch(addLike(list.id, song));
+  }
+
   if (!list) {
     return <h2>Loading...</h2>;
   }
@@ -145,44 +163,86 @@ export default function ListDetails({ list }) {
               {`${songCount === 1 ? 'song' : 'songs'}`}
             </p>
             <p className='text-sm py-2 text-wrap w-4/5'>{list?.description}</p>
-            <div className='flex'>
+            <div className='flex gap-4'>
               <button
                 className='p-3 bg-green-500 w-fit rounded-full'
                 onClick={handlePlayAllSongs}
               >
                 <Play />
               </button>
+              <button className=''>
+                {/* TODO: check to see if all songs in the album are in liked, then render the appropriate heart. if all songs are not liked, then click the empty heart likes all songs in list */}
+                {allSongsLiked ? (
+                  <FaHeart 
+                    className='cursor-pointer text-primary font-xl'
+                    size={48}
+                  />
+                ) : (
+                  <FaRegHeart
+                    onClick={() => handleLike(list)}
+                    className='cursor-pointer text-primary font-xl'
+                    size={48}
+                  />
+                )}
+              </button>
+              <button className=''>
+                <CirclePlus 
+                className='cursor-pointer font-xl'
+                size={48}
+                />
+              </button>
             </div>
           </div>
         </span>
       </div>
 
-      <ul className='space-y-4 bg-card text-card-foreground w-full border border-border h-2/3 rounded-md py-4'>
+      <ul className='bg-card text-card-foreground w-full border border-border h-2/3 rounded-md'>
         {list?.songs.length ? (
           list.songs.map(song => (
-            <li className='flex flex-col'>
-              <div
-                className='flex mx-4 items-center justify-evenly cursor-pointer'
-                onClick={() => playSong(song)}
-              >
-                <audio
-                  src={song.url}
-                  onLoadedMetadata={e => handleLoadedMetadata(song.id, e.target)}
-                  className='hidden'
-                />
-
-                <div className='flex-1'>
-                  <h3 className='font-semibold'>{song.name}</h3>
+            <li className='flex flex-col hover:bg-muted h-full py-0'>
+              <div className='flex mx-4 items-center py-4'>
+                <div className='flex gap-4 items-center mr-2'>
+                  {song.id in likeIds ? (
+                    <FaHeart 
+                    className='cursor-pointer text-primary font-xl'
+                    size={24}
+                    />
+                  ) : (
+                    <FaRegHeart
+                      onClick={() => handleLike(song)}
+                      className='cursor-pointer text-primary font-xl'
+                      size={24}
+                    />
+                  )}
+                  <button
+                  onClick={handleAddClick}
+                  >
+                    <CirclePlus />
+                  </button>
                 </div>
+                <div
+                  className='flex w-full mx-4 items-center justify-evenly cursor-pointer'
+                  onClick={() => playSong(song)}
+                >
+                  <audio
+                    src={song.url}
+                    onLoadedMetadata={e => handleLoadedMetadata(song.id, e.target)}
+                    className='hidden'
+                  />
 
-                <div className='flex-1 text-center'>
-                  <p className='text-sm'>{artist}</p>
-                </div>
+                  <div className='flex-1'>
+                    <h3 className='font-semibold'>{song.name}</h3>
+                  </div>
 
-                <div className='flex-1 text-right'>
-                  <p className='text-xs'>
-                    {songDurations[song.id] ? formatTime(songDurations[song.id]) : '--:--'}
-                  </p>
+                  <div className='flex-1 text-center'>
+                    <p className='text-sm'>{artist}</p>
+                  </div>
+
+                  <div className='flex-1 text-right'>
+                    <p className='text-xs'>
+                      {songDurations[song.id] ? formatTime(songDurations[song.id]) : '--:--'}
+                    </p>
+                  </div>
                 </div>
               </div>
 

@@ -7,6 +7,7 @@ import PlaylistDetails from '../components/Home/PlaylistDetails/PlaylistDetails'
 import AlbumDetails from '../components/Home/AlbumDetails/AlbumDetails';
 import ArtistDetails from '../components/Home/ArtistDetails/ArtistDetails';
 import ManageSongs from '../components/ManageSongs/ManageSongs';
+import ManagePlaylists from '../components/ManagePlaylists/ManagePlaylists';
 
 export const router = createBrowserRouter([
   {
@@ -20,6 +21,11 @@ export const router = createBrowserRouter([
       {
         path: '/',
         element: <Home />,
+        loader: async () => {
+          const res = await fetch('/api/playlists/liked');
+          const likes = await res.json();
+          return likes;
+        },
       },
       {
         path: 'login',
@@ -39,7 +45,16 @@ export const router = createBrowserRouter([
       },
       {
         path: '/playlist/:playlistId',
-        element: <PlaylistDetails />,
+        children: [
+          {
+            index: true,
+            element: <PlaylistDetails />,
+          },
+          {
+            path: 'manage',
+            element: <ManagePlaylists />,
+          },
+        ],
       },
       {
         path: '/manage',

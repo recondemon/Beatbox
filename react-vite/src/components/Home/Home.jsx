@@ -61,13 +61,12 @@ const Home = () => {
   const filterContent = items => {
     return items.filter(item => item.name?.toLowerCase().includes(searchTerm.toLowerCase()));
   };
-
   const handleSongClick = (song, index) => {
     if (index !== undefined && index !== null && songs.length > 0) {
-      dispatch(clearQueue())
-      console.log('Adding song to queue:', song);
+      dispatch(clearQueue());
       dispatch(addToQueue(song));
-      dispatch(postToQueue(song));
+  
+ 
       setTimeout(() => {
         navigate(`/album/${song.albumId}`);
       }, 300);

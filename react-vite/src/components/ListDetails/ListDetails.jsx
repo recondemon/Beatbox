@@ -61,7 +61,7 @@ export default function ListDetails({ list }) {
   const handlePlayAllSongs = () => {
     if (list?.songs && list.songs.length > 0) {
       dispatch(clearQueue());
-
+  
       const restructureSongs = list.songs.map(song => ({
         album: [
           {
@@ -82,18 +82,21 @@ export default function ListDetails({ list }) {
         name: song.name,
         url: song.url,
       }));
-
+  
       restructureSongs.forEach(song => {
         dispatch(addToQueue(song));
       });
+  
+      dispatch(postToQueue(restructureSongs[0]));
     } else {
       console.error('No songs to add to the queue');
     }
   };
+  
 
   const playSong = song => {
     dispatch(clearQueue());
-
+    
     const structuredSong = {
       album: [
         {
@@ -114,7 +117,7 @@ export default function ListDetails({ list }) {
       name: song.name,
       url: song.url,
     };
-
+  
     dispatch(addToQueue(structuredSong));
   };
 

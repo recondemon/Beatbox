@@ -10,34 +10,52 @@ import {
   Shuffle,
 } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
-import { selectQueue, setCurrentSongIndex, selectCurrentSongIndex, fetchQueue } from "../../redux/playlists";
+import { selectQueue, setCurrentSongIndex, selectCurrentSongIndex } from "../../redux/playlists";
+
 
 export default function AudioPlayer() {
   const dispatch = useDispatch();
   const list = useSelector(selectQueue);
-  const [currentSong, setCurrentSong] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(
-    JSON.parse(localStorage.getItem('isPlaying')) || false
-  );
+  const queue = useSelector(selectQueue);
+  const currentSongIndex = useSelector(selectCurrentSongIndex);
+  const currentSong = queue?.[currentSongIndex];
+
+  const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
   const [isRepeating, setIsRepeating] = useState(false);
   const [lastSong, setLastSong] = useState(false);
-  const currentSongIndex = useSelector(selectCurrentSongIndex);
-  const audioRef = useRef(null);
-  const manualPlayTriggered = useRef(false); 
 
-const handleTimeUpdate = () => {
-  if (audioRef.current) {
-    setCurrentTime(audioRef.current.currentTime);
-  }
-};
+  const audioRef = useRef(null);
+  
+  const handleTimeUpdate = () => {
+    if (audioRef.current) {
+      setCurrentTime(audioRef.current.currentTime);
+    }
+  };
+
+  useEffect(() => {
+    if (currentSong && audioRef.current) {
+      audioRef.current.src = currentSong.url;
+      audioRef.current.play();
+    }
+  }, [currentSong]);
+
+  useEffect(() => {
+    if (list.length > 0 && currentSongIndex !== null && currentSongIndex !== undefined) {
+      const song = list[currentSongIndex];
+      if (audioRef.current && song?.url) {
+        audioRef.current.src = song.url;
+        audioRef.current.load();
+        audioRef.current.play().then(() => setIsPlaying(true)).catch(error => console.error("Auto play failed:", error));
+      }
+    }
+  }, [list, currentSongIndex]);
 
   useEffect(() => {
     const currRef = audioRef.current;
-  
     if (currRef) {
       currRef.addEventListener("timeupdate", handleTimeUpdate);
       currRef.addEventListener("ended", () => {
@@ -49,58 +67,22 @@ const handleTimeUpdate = () => {
         }
       });
     }
+
     return () => {
       if (currRef) {
         currRef.removeEventListener("timeupdate", handleTimeUpdate);
         currRef.removeEventListener("ended", skipForward);
       }
     };
-  }, [currentSong, isRepeating]);
-  
-  useEffect(() => {
-    const persistedIsPlaying = JSON.parse(localStorage.getItem('isPlaying'));
-    if (persistedIsPlaying !== null) {
-      setIsPlaying(persistedIsPlaying);
-    }
-  }, []);
-
-  useEffect(() => {
-    console.log("FETCHING QUEUE")
-    dispatch(fetchQueue());
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (list.length > 0 && currentSongIndex !== undefined && currentSongIndex !== null) {
-      const song = list[currentSongIndex];
-      setCurrentSong(song);
-      if (audioRef.current && song?.url) {
-        audioRef.current.src = song.url;
-        audioRef.current.load();
-  
-        if (manualPlayTriggered.current) {
-          audioRef.current.play().then(() => {
-            setIsPlaying(true);
-          }).catch((error) => {
-            console.error("Auto play failed:", error);
-          });
-          manualPlayTriggered.current = false;
-        }
-      }
-    }
-  }, [list, currentSongIndex]);
+  }, [isRepeating]);
 
   const togglePlay = () => {
     if (!audioRef.current) return;
   
     if (isPlaying) {
       audioRef.current.pause();
-      localStorage.setItem('isPlaying', JSON.stringify(false));
     } else {
-      manualPlayTriggered.current = true; 
-      audioRef.current.play().catch((error) => {
-        console.error("Failed to play audio:", error);
-      });
-      localStorage.setItem('isPlaying', JSON.stringify(true));
+      audioRef.current.play().catch(error => console.error("Failed to play audio:", error));
     }
     setIsPlaying(!isPlaying);
   };
@@ -147,14 +129,7 @@ const handleTimeUpdate = () => {
       audioRef.current.currentTime = 0;
     } else {
       if (list.length > 1) {
-        let newIndex;
-        
-        if (currentSongIndex === 0) {
-          newIndex = list.length - 1;
-        } else {
-          newIndex = currentSongIndex - 1;
-        }
-        
+        const newIndex = currentSongIndex === 0 ? list.length - 1 : currentSongIndex - 1;
         dispatch(setCurrentSongIndex(newIndex));
       } else {
         audioRef.current.currentTime = 0;
@@ -163,20 +138,18 @@ const handleTimeUpdate = () => {
   };
 
   const skipForward = () => {
-    if (!list || list.length === 0) return;
-  
     if (list.length === 1) {
       setLastSong(true);
       return;
     }
-  
+
     if (currentSongIndex === list.length - 1 && !isRepeating) {
       setLastSong(true);
       return;
     }
-  
+
     setLastSong(false);
-  
+
     if (isShuffling) {
       const randomIndex = Math.floor(Math.random() * list.length);
       dispatch(setCurrentSongIndex(randomIndex));
@@ -186,72 +159,17 @@ const handleTimeUpdate = () => {
     }
   };
 
-  const toggleShuffle = () => {
-    setIsShuffling(!isShuffling);
-  };
+  const toggleShuffle = () => setIsShuffling(!isShuffling);
 
-  const toggleRepeat = () => {
-    setIsRepeating(!isRepeating);
-  };
-
-  useEffect(() => {
-    if (
-      list?.length > 0 &&
-      currentSongIndex !== undefined &&
-      currentSongIndex !== null
-    ) {
-      const selectedSong = list[currentSongIndex];
-      setCurrentSong(selectedSong);
-      setCurrentTime(0);
-
-      if (audioRef.current && selectedSong?.url) {
-        console.log("Setting audio source to:", selectedSong.url);
-        audioRef.current.src = selectedSong.url;
-        audioRef.current.load();
-        audioRef.current
-          .play()
-          .then(() => {
-            setIsPlaying(true);
-            console.log("Audio started playing successfully");
-          })
-          .catch((error) => {
-            console.error("Auto play failed:", error);
-          });
-      }
-    } else {
-      console.log("No valid song found at the current index.");
-    }
-  }, [currentSongIndex, list]);
-
-  useEffect(() => {
-    const currRef = audioRef.current;
-
-    if (currRef) {
-      currRef.addEventListener("timeupdate", handleTimeUpdate);
-      currRef.addEventListener("ended", () => {
-        if (isRepeating) {
-          audioRef.current.currentTime = 0;
-          audioRef.current.play();
-        } else {
-          skipForward();
-        }
-      });
-    }
-    return () => {
-      if (currRef) {
-        currRef.removeEventListener("timeupdate", handleTimeUpdate);
-        currRef.removeEventListener("ended", skipForward);
-      }
-    };
-  }, [currentSong, isRepeating]);
+  const toggleRepeat = () => setIsRepeating(!isRepeating);
 
   return (
-    <div className="p-4 flex items-center bg-background fixed bottom-0 left-0 right-0 space-x-4 border-t border-accent">
+    <div className="p-4 grid grid-cols-4 items-center bg-background fixed bottom-0 left-0 right-0 space-x-4 border-t border-accent">
       <audio ref={audioRef} className="hidden" />
 
-      <div className="flex w-60">
+      <div className="flex w-full">
         {currentSong ? (
-          <div className="flex">
+          <div className="flex gap-4">
             <div className="w-12 h-12">
               <img
                 src={currentSong?.album[0].album_cover}
@@ -260,7 +178,7 @@ const handleTimeUpdate = () => {
               />
             </div>
             <div className="flex flex-col">
-              <h3 className="font-semibold">{currentSong?.name}</h3>
+              <h3 className="font-semibold text-nowrap overflow-x-hidden">{currentSong?.name}</h3>
               <p>{currentSong?.artist[0].band_name}</p>
             </div>
           </div>
@@ -269,13 +187,10 @@ const handleTimeUpdate = () => {
         )}
       </div>
 
-      <div className="flex-1 flex flex-col items-center">
+      <div className="col-span-2 flex-1 flex flex-col items-center">
         <div className="flex items-center space-x-4 mb-2">
           <button onClick={toggleShuffle}>
-            <Shuffle
-              size={20}
-              className={isShuffling ? "text-green-500" : ""}
-            />
+            <Shuffle size={20} className={isShuffling ? "text-green-500" : ""} />
           </button>
 
           <button onClick={skipBack}>
@@ -299,7 +214,7 @@ const handleTimeUpdate = () => {
           </button>
         </div>
 
-        <div className="w-full flex items-center space-x-2">
+        <div className="w-[50vw] flex items-center space-x-2">
           <span className="text-xs w-10 text-right">
             {formatTime(currentTime)}
           </span>
@@ -320,7 +235,7 @@ const handleTimeUpdate = () => {
         </div>
       </div>
 
-      <div className="w-32 flex items-center flex-shrink-0 space-x-2">
+      <div className="col-span-1 w-full mx-auto flex items-center justify-center space-x-2">
         <button onClick={toggleMute}>
           {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
         </button>

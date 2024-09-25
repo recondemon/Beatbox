@@ -156,7 +156,13 @@ export const selectPlaylistsArray = createSelector(selectPlaylists, playlists =>
   Object.values(playlists),
 );
 
-export default function playlistsReducer(state = { queue: [], currentSongIndex: 0 }, action) {
+{/* if a re-render happens this will restore the qeue */}
+const initialState = {
+  queue: JSON.parse(localStorage.getItem('queue')) || [],
+  currentSongIndex: parseInt(localStorage.getItem('currentSongIndex'), 10) || 0,
+};
+
+export default function playlistsReducer(state = initialState, action) {
   switch (action.type) {
     case LOAD_ALL: {
       const newState = { ...state };
@@ -165,14 +171,6 @@ export default function playlistsReducer(state = { queue: [], currentSongIndex: 
       });
       return newState;
     }
-    case LOAD_ONE: {
-      return {
-        ...state,
-        [action.playlist.id]: {
-          ...action.playlist,
-        },
-      };
-    }
     case LOAD_QUEUE: {
       const persistedQueue = JSON.parse(localStorage.getItem('queue')) || action.queue;
       const persistedIndex = parseInt(localStorage.getItem('currentSongIndex'), 10) || 0;
@@ -180,6 +178,14 @@ export default function playlistsReducer(state = { queue: [], currentSongIndex: 
         ...state,
         queue: persistedQueue,
         currentSongIndex: persistedIndex,
+      };
+    }
+    case LOAD_ONE: {
+      return {
+        ...state,
+        [action.playlist.id]: {
+          ...action.playlist,
+        },
       };
     }
     case LOAD_ALL: {
@@ -214,20 +220,22 @@ export default function playlistsReducer(state = { queue: [], currentSongIndex: 
         ...state,
         queue: newQueue,
       };
-    case SET_CURRENT_SONG_INDEX:
-      localStorage.setItem('currentSongIndex', action.index);
-      return {
-        ...state,
-        currentSongIndex: action.index,
-      };
-    case CLEAR_QUEUE:
-      localStorage.removeItem('queue');
-      localStorage.removeItem('currentSongIndex');
-      return {
-        ...state,
-        queue: [],
-        currentSongIndex: 0,
-      };
+      case SET_CURRENT_SONG_INDEX: {
+        localStorage.setItem('currentSongIndex', action.index);
+        return {
+          ...state,
+          currentSongIndex: action.index,
+        };
+      }
+      case CLEAR_QUEUE: {
+        localStorage.removeItem('queue');
+        localStorage.removeItem('currentSongIndex');
+        return {
+          ...state,
+          queue: [],
+          currentSongIndex: 0,
+        };
+      }
     default:
       return state;
   }

@@ -3,12 +3,13 @@ import { useState, useEffect } from 'react';
 import AlbumInputs from './AlbumInputs';
 import { fetchAlbumById, selectAlbumsArray } from '../../redux/albums';
 
-const AlbumDetails = () => {
+const AlbumDetails = ({setAlbumId}) => {
   const [album, setAlbum] = useState('');
   const [creatingAlbum, setCreatingAlbum] = useState(false);
   const dispatch = useDispatch();
   const userAlbums = useSelector(selectAlbumsArray);
   const user = useSelector((state) => state.session.user);
+
 
   useEffect(() => {
     if (user) {
@@ -28,6 +29,7 @@ const AlbumDetails = () => {
       handleCreateAlbumOption();
     } else {
       setAlbum(selectedValue);
+      setAlbumId(selectedValue.id); 
     }
   };
 
@@ -39,7 +41,7 @@ const AlbumDetails = () => {
     <div className='flex w-full border-b-2 border-border py-4'>
       {creatingAlbum ? (
         <div className='flex flex-col w-full'>
-          <AlbumInputs handleBackToSelect={handleBackToSelect} />
+          <AlbumInputs handleBackToSelect={handleBackToSelect} albumId = {setAlbumId} />
         </div>
       ) : (
         <div className='flex w-full gap-4'>

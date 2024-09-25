@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ArrowLeft } from 'lucide-react';
 import { createAlbum } from '../../redux/albums';
 
-const AlbumInputs = ({ handleBackToSelect }) => {
+const AlbumInputs = ({ handleBackToSelect, setAlbumId }) => {
   const dispatch = useDispatch();
   const [newAlbumName, setNewAlbumName] = useState('');
   const [newAlbumDescription, setNewAlbumDescription] = useState('');
@@ -11,6 +11,7 @@ const AlbumInputs = ({ handleBackToSelect }) => {
   const [albumCoverFile, setAlbumCoverFile] = useState(null);
   const [albumCoverUrl, setAlbumCoverUrl] = useState('');
   const currUserId = useSelector(state => state.session.user.id);
+  
 
   const handleFileChange = e => {
     const file = e.target.files[0];
@@ -36,6 +37,7 @@ const AlbumInputs = ({ handleBackToSelect }) => {
     try {
       const result = await dispatch(createAlbum(formData));
       if (!result.errors) {
+        setAlbumId(1); 
         handleBackToSelect();
       } else {
         console.error('Error creating album:', result.errors);

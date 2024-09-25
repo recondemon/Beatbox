@@ -7,10 +7,12 @@ import {
   fetchLiked,
   selectLiked,
   addLike, 
+  selectCurrentSong,
 } from '../../redux/playlists';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchArtist } from '../../redux/artists';
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
+
 
 export default function ListDetails({ list }) {
   const dispatch = useDispatch();
@@ -27,6 +29,8 @@ export default function ListDetails({ list }) {
   const liked = useSelector(selectLiked);
   const likeIds = liked?.map(song => song.id) || [];
   const [allSongsLiked, setAllSongsLiked] = useState(false);
+  const currentSong = useSelector(selectCurrentSong); 
+
   useEffect(() => {
     if (url.includes('playlist') && list?.songs) {
       const fetchArtists = async () => {
@@ -231,15 +235,31 @@ export default function ListDetails({ list }) {
                   />
 
                   <div className='flex-1'>
-                    <h3 className='font-semibold'>{song.name}</h3>
+                  <h3
+                    className={`font-semibold ${
+                      currentSong?.id === song.id ? "text-green-500" : ""
+                    }`}
+                  >
+                    {song.name}
+                  </h3>
                   </div>
 
                   <div className='flex-1 text-center'>
-                    <p className='text-sm'>{artist}</p>
+                    <p 
+                    className={`font-semibold ${
+                      currentSong?.id === song.id ? "text-green-500" : ""
+                    }`}
+                    >
+                      {artist}
+                    </p>
                   </div>
 
                   <div className='flex-1 text-right'>
-                    <p className='text-xs'>
+                    <p 
+                    className={`font-semibold ${
+                      currentSong?.id === song.id ? "text-green-500" : ""
+                    }`}
+                    >
                       {songDurations[song.id] ? formatTime(songDurations[song.id]) : '--:--'}
                     </p>
                   </div>

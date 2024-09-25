@@ -187,6 +187,21 @@ def add_to_queue():
     return queue.to_json()
 
 
+@playlists.route("/queue", methods=["DELETE"])
+def clear_queue():
+    queue = Playlist.query.filter_by(
+        owner_id=current_user.id, is_public=False, name="Queue"
+    ).first()
+
+    if not queue:
+        return {"error": "Queue not found"}, 404
+
+    PlaylistSong.query.filter_by(playlist_id=queue.id).delete()
+    db.session.commit()
+
+    return {"message": "Queue cleared successfully"}, 200
+
+
 @playlists.route("/library")
 @login_required
 def get_library():

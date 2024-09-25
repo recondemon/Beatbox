@@ -1,8 +1,6 @@
-import { post } from './csrf';
-
 const LOAD_QUEUE = 'queue/loadQueue';
 const ADD_TO_QUEUE = 'queue/addToQueue';
-const CLEAR_QUEUE = 'queue/clearQueue';
+const CLEAR = 'queue/clearQueue';
 const SET_CURRENT_SONG_INDEX = 'playlists/setCurrentSongIndex';
 
 export const loadQueue = queue => ({
@@ -15,8 +13,8 @@ export const addSong = song => ({
   song,
 });
 
-export const clearQueue = () => ({
-  type: CLEAR_QUEUE,
+export const clear = () => ({
+  type: CLEAR,
 });
 
 export const setCurrentSongIndex = index => ({
@@ -52,8 +50,29 @@ export const addToQueue = song => async dispatch => {
   return res.json();
 };
 
+export const clearQueue = () => async dispatch => {
+  console.log('\n\n CLEARING QUEUE \n\n')
+
+  const res = await fetch('/api/playlists/queue', {
+    method: 'DELETE',
+  });
+
+  if (res.ok) {
+    const data = await res.json();
+    dispatch(fetchQueue());
+    return data;
+  }
+
+  return res.json();
+};
+
 export const selectCurrentSongIndex = state => state.queue.currentSongIndex || 0;
 export const selectQueue = state => state.queue.songs;
+export const selectCurrentSong = state => {
+  const queue = state.queue?.songs;
+  const currentSongIndex = state.queue?.currentSongIndex;
+  return queue?.[currentSongIndex];
+};
 
 export default function queueReducer(state = {}, action) {
   switch (action.type) {
@@ -82,12 +101,6 @@ export default function queueReducer(state = {}, action) {
       return {
         ...state,
         currentSongIndex: action.index,
-      };
-    case CLEAR_QUEUE:
-      return {
-        ...state,
-        songs: [],
-        currentSongIndex: 0,
       };
     default:
       return state;

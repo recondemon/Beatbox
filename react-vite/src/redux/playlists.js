@@ -54,12 +54,6 @@ export const setCurrentSongIndex = index => ({
   index,
 });
 
-export const selectCurrentSong = state => {
-  const queue = state.playlists.queue;
-  const currentSongIndex = state.playlists.currentSongIndex;
-  return queue?.[currentSongIndex];
-};
-
 export const fetchPlaylists = () => async dispatch => {
   const res = await fetch('/api/playlists');
 
@@ -82,7 +76,6 @@ export const fetchPlaylist = playlistId => async dispatch => {
   return res;
 };
 export const putPlaylist = playlist => async dispatch => {
-  console.log('PUTTING', playlist);
   const res = await put(`/api/playlists/${playlist.id}`, playlist);
   if (res.ok) {
     const data = await res.json();
@@ -117,11 +110,9 @@ export const fetchLiked = () => async dispatch => {
 
 export const postToQueue = song => async dispatch => {
   const res = await post(`/api/playlists/queue`, { songs: [song.id] });
-  console.log('POSTING TO QUEUE');
   if (res.ok) {
     const data = await res.json();
     dispatch(loadQueue(data));
-    console.log('NEW QUEUE:', data);
     return data;
   }
   return res;
@@ -152,7 +143,7 @@ export const createPlaylists = playlistData => async dispatch => {
   return newPlaylist;
 };
 
-export const selectCurrentSongIndex = state => state.playlists.currentSongIndex;
+// export const selectCurrentSongIndex = state => state.playlists.currentSongIndex;
 export const selectPlaylists = state => state.playlists;
 export const selectPlaylistById = playlistId => state => state.playlists[playlistId];
 export const selectQueue = state => state.playlists.queue;
@@ -160,16 +151,18 @@ export const selectLiked = state => state.playlists.liked;
 export const selectPlaylistsArray = createSelector(selectPlaylists, playlists =>
   Object.values(playlists),
 );
+// export const selectCurrentSong = state => {
+//   const queue = state.playlists.queue;
+//   const currentSongIndex = state.playlists.currentSongIndex;
+//   return queue?.[currentSongIndex];
+// };
 
-{
-  /* if a re-render happens this will restore the qeue */
-}
-const initialState = {
-  queue: JSON.parse(localStorage.getItem('queue')) || [],
-  currentSongIndex: parseInt(localStorage.getItem('currentSongIndex'), 10) || 0,
-};
+// const initialState = {
+//   queue: JSON.parse(localStorage.getItem('queue')) || [],
+//   currentSongIndex: parseInt(localStorage.getItem('currentSongIndex'), 10) || 0,
+// };
 
-export default function playlistsReducer(state = initialState, action) {
+export default function playlistsReducer(state = {}, action) {
   switch (action.type) {
     case LOAD_ALL: {
       const newState = { ...state };

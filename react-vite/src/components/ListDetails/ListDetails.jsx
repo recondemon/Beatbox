@@ -1,18 +1,10 @@
 import { useState, useEffect } from 'react';
 import { CirclePlus, Play } from 'lucide-react';
-import {
-  addToQueue,
-  clearQueue,
-  postToQueue,
-  fetchLiked,
-  selectLiked,
-  addLike, 
-  selectCurrentSong,
-} from '../../redux/playlists';
+import { fetchLiked, selectLiked, addLike } from '../../redux/playlists';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchArtist } from '../../redux/artists';
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
-
+import { selectCurrentSong, addToQueue, clearQueue } from '../../redux/queue';
 
 export default function ListDetails({ list }) {
   const dispatch = useDispatch();
@@ -27,9 +19,9 @@ export default function ListDetails({ list }) {
   const releaseYear = new Date(list?.releaseDate).getFullYear() || null;
   const songCount = list?.songs?.length;
   const liked = useSelector(selectLiked);
-  const likeIds = liked?.map(song => song.id) || [];
+  const likedIds = liked?.map(song => song.id) || [];
   // const [allSongsLiked, setAllSongsLiked] = useState(false);
-  const currentSong = useSelector(selectCurrentSong); 
+  const currentSong = useSelector(selectCurrentSong);
 
   useEffect(() => {
     if (url.includes('playlist') && list?.songs) {
@@ -52,7 +44,7 @@ export default function ListDetails({ list }) {
       };
 
       fetchArtists();
-      dispatch(fetchLiked())
+      dispatch(fetchLiked());
     }
   }, [dispatch, list?.songs, url]);
 
@@ -74,71 +66,75 @@ export default function ListDetails({ list }) {
   };
 
   const handlePlayAllSongs = () => {
-    if (list?.songs && list.songs.length > 0) {
-      dispatch(clearQueue());
+    try {
+      if (list.songs?.length > 0) {
+        dispatch(clearQueue());
 
-      const restructureSongs = list.songs.map(song => ({
-        album: [
-          {
-            id: song.album_id,
-            album_cover: list.albumCover,
-          },
-        ],
-        albumId: song.album_id,
-        artist: [
-          {
-            band_name: list.artist[0].band_name,
-            first_name: list.artist[0].first_name,
-            last_name: list.artist[0].last_name,
-          },
-        ],
-        artistId: song.artist_id,
-        id: song.id,
-        name: song.name,
-        url: song.url,
-      }));
+        // const restructureSongs = list.songs.map(song => ({
+        //   album: [
+        //     {
+        //       id: song.album_id,
+        //       album_cover: list.albumCover,
+        //     },
+        //   ],
+        //   albumId: song.album_id,
+        //   artist: [
+        //     {
+        //       band_name: list?.artist?.[0].band_name,
+        //       first_name: list?.artist?.[0].first_name,
+        //       last_name: list?.artist?.[0].last_name,
+        //     },
+        //   ],
+        //   artistId: song.artist_id,
+        //   id: song.id,
+        //   name: song.name,
+        //   url: song.url,
+        // }));
 
-      restructureSongs.forEach(song => {
-        dispatch(addToQueue(song));
-      });
+        // restructureSongs.forEach(song => {
+        //   dispatch(addToQueue(song));
+        // });
 
-      dispatch(postToQueue(restructureSongs[0]));
-    } else {
-      console.error('No songs to add to the queue');
+        // dispatch(addToQueue(restructureSongs[0]));
+
+        list?.songs?.forEach(async song => {
+          await dispatch(addToQueue(song));
+        });
+      }
+    } catch (e) {
+      console.error(e);
     }
   };
 
   const playSong = song => {
-    dispatch(clearQueue());
+    // dispatch(clearQueue());
 
-    const structuredSong = {
-      album: [
-        {
-          id: song.album_id,
-          album_cover: list.albumCover,
-        },
-      ],
-      albumId: song.album_id,
-      artist: [
-        {
-          band_name: list.artist[0]?.band_name || '',
-          first_name: list.artist[0]?.first_name || '',
-          last_name: list.artist[0]?.last_name || '',
-        },
-      ],
-      artistId: song.artist_id,
-      id: song.id,
-      name: song.name,
-      url: song.url,
-    };
+    // const structuredSong = {
+    //   album: [
+    //     {
+    //       id: song.album_id,
+    //       album_cover: list.albumCover,
+    //     },
+    //   ],
+    //   albumId: song.album_id,
+    //   artist: [
+    //     {
+    //       band_name: list.artist[0]?.band_name || '',
+    //       first_name: list.artist[0]?.first_name || '',
+    //       last_name: list.artist[0]?.last_name || '',
+    //     },
+    //   ],
+    //   artistId: song.artist_id,
+    //   id: song.id,
+    //   name: song.name,
+    //   url: song.url,
+    // };
 
-    dispatch(addToQueue(structuredSong));
+    dispatch(addToQueue(song));
   };
 
   const handleAddClick = () => {
-    {
-      /* TODO: clicking opens drop down with options like: add to playlist, add to qeue, ect.  */
-    }
+    /* TODO: clicking opens drop down with options like: add to playlist, add to queue, etc.  */
   };
 
   const handleLike = song => {
@@ -154,7 +150,8 @@ export default function ListDetails({ list }) {
       <div className='mb-6 w-[80vw]'>
         <span className='flex gap-2 items-center'>
           <img
-            src={list.albumCover}
+            className='max-w-64 max-h-64 rounded-md border border-accent'
+            src={list?.name === 'Liked' ? '/liked.jpeg' : list.albumCover}
             alt='album artwork'
           />
 
@@ -188,7 +185,7 @@ export default function ListDetails({ list }) {
             <li className='flex flex-col hover:bg-muted h-full py-0'>
               <div className='flex mx-4 items-center py-4'>
                 <div className='flex gap-4 items-center mr-2'>
-                  {song.id in likeIds ? (
+                  {song.id in likedIds ? (
                     <FaHeart
                       className='cursor-pointer text-primary font-xl'
                       size={24}
@@ -215,30 +212,30 @@ export default function ListDetails({ list }) {
                   />
 
                   <div className='flex-1'>
-                  <h3
-                    className={`font-semibold ${
-                      currentSong?.id === song.id ? "text-green-500" : ""
-                    }`}
-                  >
-                    {song.name}
-                  </h3>
+                    <h3
+                      className={`font-semibold ${
+                        currentSong?.id === song.id ? 'text-green-500' : ''
+                      }`}
+                    >
+                      {song.name}
+                    </h3>
                   </div>
 
                   <div className='flex-1 text-center'>
-                    <p 
-                    className={`font-semibold ${
-                      currentSong?.id === song.id ? "text-green-500" : ""
-                    }`}
+                    <p
+                      className={`font-semibold ${
+                        currentSong?.id === song.id ? 'text-green-500' : ''
+                      }`}
                     >
                       {artist}
                     </p>
                   </div>
 
                   <div className='flex-1 text-right'>
-                    <p 
-                    className={`font-semibold ${
-                      currentSong?.id === song.id ? "text-green-500" : ""
-                    }`}
+                    <p
+                      className={`font-semibold ${
+                        currentSong?.id === song.id ? 'text-green-500' : ''
+                      }`}
                     >
                       {songDurations[song.id] ? formatTime(songDurations[song.id]) : '--:--'}
                     </p>

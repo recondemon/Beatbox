@@ -10,14 +10,19 @@ import {
   Shuffle,
 } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectQueue, setCurrentSongIndex, selectCurrentSongIndex, fetchQueue } from '../../redux/queue';
+import {
+  selectQueue,
+  setCurrentSongIndex,
+  selectCurrentSongIndex,
+  fetchQueue,
+  selectCurrentSong,
+} from '../../redux/queue';
 
 export default function AudioPlayer() {
   const dispatch = useDispatch();
-  const list = useSelector(selectQueue);
   const queue = useSelector(selectQueue);
   const currentSongIndex = useSelector(selectCurrentSongIndex);
-  const currentSong = queue?.[currentSongIndex];
+  const currentSong = useSelector(selectCurrentSong);
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -27,13 +32,11 @@ export default function AudioPlayer() {
   const [isRepeating, setIsRepeating] = useState(false);
   const [lastSong, setLastSong] = useState(false);
 
-  const audioRef = useRef(null);
-
-  console.log(currentSong)
+  const audioRef = useRef(new Audio());
 
   useEffect(() => {
-    dispatch(fetchQueue())
-  }, [dispatch])
+    dispatch(fetchQueue());
+  }, [dispatch]);
 
   const handleTimeUpdate = () => {
     if (audioRef.current) {
@@ -42,15 +45,8 @@ export default function AudioPlayer() {
   };
 
   useEffect(() => {
-    if (currentSong && audioRef.current) {
-      audioRef.current.src = currentSong.url;
-      audioRef.current.play();
-    }
-  }, [currentSong]);
-
-  useEffect(() => {
-    if (list?.length > 0 && currentSongIndex !== null && currentSongIndex !== undefined) {
-      const song = list[currentSongIndex];
+    if (queue?.length > 0 && currentSongIndex !== null && currentSongIndex !== undefined) {
+      const song = queue[currentSongIndex];
       if (audioRef.current && song?.url) {
         audioRef.current.src = song.url;
         audioRef.current.load();
@@ -60,10 +56,11 @@ export default function AudioPlayer() {
           .catch(error => console.error('Auto play failed:', error));
       }
     }
-  }, [list, currentSongIndex]);
+  }, [queue, currentSongIndex]);
 
   useEffect(() => {
     const currRef = audioRef.current;
+
     if (currRef) {
       currRef.addEventListener('timeupdate', handleTimeUpdate);
       currRef.addEventListener('ended', () => {
@@ -136,8 +133,8 @@ export default function AudioPlayer() {
     if (currentTime >= 5) {
       audioRef.current.currentTime = 0;
     } else {
-      if (list.length > 1) {
-        const newIndex = currentSongIndex === 0 ? list.length - 1 : currentSongIndex - 1;
+      if (queue.length > 1) {
+        const newIndex = currentSongIndex === 0 ? queue.length - 1 : currentSongIndex - 1;
         dispatch(setCurrentSongIndex(newIndex));
       } else {
         audioRef.current.currentTime = 0;
@@ -146,12 +143,12 @@ export default function AudioPlayer() {
   };
 
   const skipForward = () => {
-    if (list.length === 1) {
+    if (queue.length === 1) {
       setLastSong(true);
       return;
     }
 
-    if (currentSongIndex === list.length - 1 && !isRepeating) {
+    if (currentSongIndex === queue.length - 1 && !isRepeating) {
       setLastSong(true);
       return;
     }
@@ -159,10 +156,10 @@ export default function AudioPlayer() {
     setLastSong(false);
 
     if (isShuffling) {
-      const randomIndex = Math.floor(Math.random() * list.length);
+      const randomIndex = Math.floor(Math.random() * queue.length);
       dispatch(setCurrentSongIndex(randomIndex));
     } else {
-      const nextIndex = (currentSongIndex + 1) % list.length;
+      const nextIndex = (currentSongIndex + 1) % queue.length;
       dispatch(setCurrentSongIndex(nextIndex));
     }
   };

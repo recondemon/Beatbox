@@ -19,7 +19,6 @@ export default function ManagePlaylists() {
     setName(playlist?.name);
     setDescription(playlist?.description);
     setIsPublic(playlist?.isPublic);
-    console.log(playlist);
   }, [playlist]);
 
   const [name, setName] = useState(playlist?.name || "");

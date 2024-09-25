@@ -36,7 +36,7 @@ const Home = () => {
   }, [dispatch]);
 
   const handleLike = song => {
-    dispatch(addLike(likedPlaylist.id, song));
+    dispatch(addLike(likedPlaylist.id, song.id));
   };
 
   const shuffleArray = array => {

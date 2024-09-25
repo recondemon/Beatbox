@@ -28,8 +28,8 @@ export default function ListDetails({ list }) {
   const likeIds = liked?.map(song => song.id) || [];
 
   useEffect(() => {
-    dispatch(fetchLiked())
-  }, [dispatch])
+    dispatch(fetchLiked());
+  }, [dispatch]);
 
   // If the info being displayed is a playlist, we need to handle artist data differently.
   useEffect(() => {
@@ -142,7 +142,6 @@ export default function ListDetails({ list }) {
   };
 
   const handleLike = song => {
-    console.log('\n\n---SONG IS: ---\n\n', song)
     dispatch(addLike(list.id, song.id));
   };
 

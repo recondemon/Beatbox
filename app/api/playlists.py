@@ -1,4 +1,5 @@
 from flask import Blueprint, request
+from sqlalchemy.util import print_
 from app.models import Models, db
 from flask_login import current_user, login_required
 from app.forms.playlist_form import PlaylistForm
@@ -75,7 +76,9 @@ def create_playlist():
             "name",
             "My Playlist " + len(current_artist.playlists),  # pyright: ignore
         )
-        playlist.description = getattr(form, "description", playlist.description)
+        playlist.description = getattr(
+            form, "description", playlist.description
+        )
         playlist.is_public = getattr(form, "is_public", playlist.is_public)
         playlist.owner_id = current_user.id
 
@@ -112,13 +115,12 @@ def add_playlist_songs(playlist_id):
 
 @playlists.route("/<playlist_id>/song", methods=["POST"])
 def add_playlist_song(playlist_id):
-
     playlist = Playlist.query.get(playlist_id)
 
     db.session.add(
         PlaylistSong(
             song_index=len(playlist.songs),
-            song_id=request.args.get("song_id"),
+            song_id=request.get_json()["song_id"],  # pyright: ignore
             playlist_id=int(playlist_id),
         )
     )
@@ -154,7 +156,6 @@ def get_queue():
 
 
 @playlists.route("/queue", methods=["POST"])
-
 def add_to_queue():
     queue = Playlist.query.filter_by(
         owner_id=current_user.id, is_public=False, name="Queue"

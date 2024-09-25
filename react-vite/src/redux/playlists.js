@@ -121,16 +121,17 @@ export const postToQueue = song => async dispatch => {
   return res;
 };
 
-export const addLike = (id, song) => async dispatch => {
-  // NOTE: NOT CURRENTLY WORKING
-  const res = await fetch(`/api/playlists/${id}/song`, {
+export const addLike = (playlistId, songId) => async dispatch => {
+  const res = await fetch(`/api/playlists/${playlistId}/song`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: {
-      song_id: song.id,
-      playlist_id: id,
-    },
+    body: JSON.stringify({
+      song_id: songId,
+      playlist_id: playlistId,
+    }),
   });
+
+  console.log('\n\n---RES IS:---\n\n', res)
 
   if (res.ok) {
     const data = await res.json();

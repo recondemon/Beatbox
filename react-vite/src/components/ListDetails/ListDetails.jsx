@@ -142,7 +142,8 @@ export default function ListDetails({ list }) {
   };
 
   const handleLike = song => {
-    dispatch(addLike(list.id, song));
+    console.log('\n\n---SONG IS: ---\n\n', song)
+    dispatch(addLike(list.id, song.id));
   };
 
   if (!list) {
@@ -183,8 +184,8 @@ export default function ListDetails({ list }) {
       </div>
 
       <ul className='bg-card text-card-foreground w-full border border-border h-2/3 rounded-md'>
-        {list?.songs.length ? (
-          list.songs.map(song => (
+        {list?.songs?.length ? (
+          list?.songs?.map(song => (
             <li className='flex flex-col hover:bg-muted h-full py-0'>
               <div className='flex mx-4 items-center py-4'>
                 <div className='flex gap-4 items-center mr-2'>

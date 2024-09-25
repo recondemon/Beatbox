@@ -3,8 +3,8 @@ import { post, get } from "./csrf";
 
 const LOAD_ALL = "songs/loadAll";
 const LOAD_ONE = "songs/loadOne";
-const UPDATE_SONG = 'songs/update';
-const DELETE_SONG = 'songs/delete';
+const UPDATE_SONG = "songs/update";
+const DELETE_SONG = "songs/delete";
 
 export const loadAll = (songs) => {
   return {
@@ -35,9 +35,9 @@ export const deleteSong = (songId) => {
 
 export const editSong = (songId, songData) => async (dispatch) => {
   const res = await fetch(`/api/songs/${songId}`, {
-    method: 'PUT',
+    method: "PUT",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(songData),
   });
@@ -52,7 +52,7 @@ export const editSong = (songId, songData) => async (dispatch) => {
 
 export const removeSong = (songId) => async (dispatch) => {
   const res = await fetch(`/api/songs/${songId}`, {
-    method: 'DELETE',
+    method: "DELETE",
   });
 
   if (res.ok) {
@@ -75,13 +75,14 @@ export const fetchSongs = () => async (dispatch) => {
   return res;
 };
 
-export const createSong = (song) => async (dispatch) => {
-  const song = await post("/songs", song); //This will throw an error if there is an error
+export const createSong = (songData) => async (dispatch) => {
+  const song = await post("/songs", songData);
   dispatch(loadOne(song));
   return song;
 };
+
 export const fetchSong = (songId) => async (dispatch) => {
-  const song = await get("/songs/" + songId); //This will throw an error if there is an error
+  const song = await get("/songs/" + songId);
   dispatch(loadOne(song));
   return song;
 };

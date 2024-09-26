@@ -7,6 +7,7 @@ import {
   Volume2,
   VolumeX,
   Repeat,
+  Repeat1,
   Shuffle,
 } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
@@ -16,6 +17,8 @@ import {
   selectCurrentSong,
   playNext,
   playPrev,
+  loop,
+  reverseLoop,
 } from "../../redux/queue";
 import { fetchSong } from "../../redux/songs";
 
@@ -29,6 +32,7 @@ export default function AudioPlayer() {
   const [isMuted, setIsMuted] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
   const [isRepeating, setIsRepeating] = useState(false);
+  const [isRepeatOne, setIsRepeatOne] = useState(false);
 
   const audioRef = useRef(new Audio());
 
@@ -43,7 +47,7 @@ export default function AudioPlayer() {
   };
 
   useEffect(() => {
-    if (audioRef.current) {
+    if (audioRef.current && currentSong) {
       audioRef.current.src = currentSong?.url;
       audioRef.current.load();
       audioRef.current
@@ -129,17 +133,33 @@ export default function AudioPlayer() {
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
+  const startSongOver = () => {
+    audioRef.current.currentTime = 0;
+  };
+
   const skipBack = () => {
-    if (currentTime >= 5 || currentSong.isFirst) {
-      audioRef.current.currentTime = 0;
+    if (currentSong?.isFirst) {
+      if (isRepeating) {
+        dispatch(reverseLoop());
+      } else {
+        startSongOver();
+      }
+    } else if (currentTime >= 5) {
+      startSongOver();
     } else {
       dispatch(playPrev());
     }
   };
 
   const skipForward = () => {
-    if (currentSong.isLast) {
-      setIsPlaying(false);
+    if (isRepeatOne) {
+      startSongOver();
+    } else if (currentSong?.isLast) {
+      if (isRepeating) {
+        dispatch(loop());
+      } else {
+        setIsPlaying(false);
+      }
     } else if (isShuffling) {
       dispatch(playRandom());
     } else {
@@ -149,7 +169,18 @@ export default function AudioPlayer() {
 
   const toggleShuffle = () => setIsShuffling(!isShuffling);
 
-  const toggleRepeat = () => setIsRepeating(!isRepeating);
+  const toggleRepeat = () => {
+    if (isRepeatOne) {
+      setIsRepeating(false);
+      setIsRepeatOne(false);
+    } else if (isRepeating) {
+      setIsRepeatOne(true);
+      setIsRepeating(false);
+    } else {
+      setIsRepeating(true);
+      setIsRepeatOne(false);
+    }
+  };
 
   return (
     <div className="p-4 grid grid-cols-4 items-center bg-background fixed bottom-0 left-0 right-0 space-x-4 border-t border-accent">
@@ -198,15 +229,29 @@ export default function AudioPlayer() {
             {isPlaying ? <Pause size={24} /> : <Play size={24} />}
           </button>
 
-          <button onClick={skipForward} disabled={currentSong?.isLast}>
+          <button
+            onClick={skipForward}
+            disabled={currentSong?.isLast && !isRepeating && !isRepeatOne}
+          >
             <SkipForward
               size={24}
-              className={currentSong?.isLast ? "text-secondary" : ""}
+              className={
+                currentSong?.isLast && !isRepeating && !isRepeatOne
+                  ? "text-secondary"
+                  : ""
+              }
             />
           </button>
 
           <button onClick={toggleRepeat}>
-            <Repeat size={20} className={isRepeating ? "text-green-500" : ""} />
+            {isRepeatOne ? (
+              <Repeat1 size={20} className="text-green-500" />
+            ) : (
+              <Repeat
+                size={20}
+                className={isRepeating ? "text-green-500" : ""}
+              />
+            )}
           </button>
         </div>
 

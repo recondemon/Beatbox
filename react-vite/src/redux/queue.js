@@ -5,6 +5,8 @@ const SET_CURRENT_SONG_INDEX = "queue/setCurrentSongIndex";
 const PLAY_NEXT = "queue/playNext";
 const PLAY_PREV = "queue/playPrev";
 const PLAY_RANDOM = "queue/playRand";
+const LOOP = "queue/loop";
+const REV_LOOP = "queue/reverseLoop";
 
 export const loadQueue = (queue) => ({
   type: LOAD_QUEUE,
@@ -22,6 +24,12 @@ export const playNext = () => ({
 
 export const playPrev = () => ({
   type: PLAY_PREV,
+});
+export const loop = () => ({
+  type: LOOP,
+});
+export const reverseLoop = () => ({
+  type: REV_LOOP,
 });
 export const playRandom = () => ({
   type: PLAY_RANDOM,
@@ -41,7 +49,7 @@ export const fetchQueue = () => async (dispatch) => {
 
   if (res.ok) {
     const data = await res.json();
-    dispatch(loadQueue(data));
+    dispatch(loadQueue(data.songs));
     return data;
   }
 
@@ -58,8 +66,8 @@ export const addToQueue = (song) => async (dispatch) => {
   console.log("ADDING " + song.name + " TO QUEUE");
 
   if (res.ok) {
+    dispatch(addSong(song));
     const data = await res.json();
-    dispatch(addSong(data.songs));
     return data;
   }
 
@@ -74,8 +82,8 @@ export const clearQueue = () => async (dispatch) => {
   });
 
   if (res.ok) {
+    dispatch(clear());
     const data = await res.json();
-    dispatch(fetchQueue());
     return data;
   }
 
@@ -93,9 +101,8 @@ export default function queueReducer(
 ) {
   switch (action.type) {
     case LOAD_QUEUE: {
-      const songArray = Array.isArray(action.queue.songs)
-        ? action.queue.songs
-        : [];
+      const songArray = Array.isArray(action.queue) ? action.queue : [];
+      console.log("INSIDE REDUCER:", songArray);
       return {
         songs: songArray,
         currentSongIndex: 0,
@@ -106,24 +113,38 @@ export default function queueReducer(
         },
       };
     }
+    case CLEAR:
+      console.log("CLEARED", {
+        songs: [],
+        currentSongIndex: 0,
+        currentSong: null,
+      });
+      return {
+        songs: [],
+        currentSongIndex: 0,
+        currentSong: null,
+      };
     case ADD_TO_QUEUE:
-      const currentSongs = state.queue?.songs || [];
+      const currentSongs = state.songs || [];
 
-      if (currentSongs.length + 1 > 10) {
-        if (state.currentSongIndex == 0) {
-          return state;
-        }
-        return {
-          ...state,
-          songs: [...currentSongs.slice(1), action.song],
-          currentSongIndex: state.currentSongIndex - 1,
-        };
-      }
+      // if (currentSongs.length + 1 > 10) {
+      //   if (state.currentSongIndex == 0) {
+      //     return state;
+      //   }
+      //   return {
+      //     ...state,
+      //     songs: [...currentSongs.slice(1), action.song],
+      //     currentSongIndex: state.currentSongIndex - 1,
+      //     currentSong: [...currentSongs.slice(1), action.song][
+      //       state.currentSongIndex - 1
+      //     ],
+      //   };
+      // }
 
       return {
         ...state,
         songs: [...currentSongs, action.song],
-        currentSongIndex: state.currentSongIndex,
+        currentSong: [...currentSongs, action.song][state.currentSongIndex],
       };
     case SET_CURRENT_SONG_INDEX:
       return {
@@ -175,7 +196,26 @@ export default function queueReducer(
         currentSongIndex: randNum,
         currentSong: state.songs[randNum],
       };
-
+    case LOOP:
+      return {
+        ...state,
+        currentSongIndex: 0,
+        currentSong: {
+          ...state.songs[0],
+          isFirst: true,
+          isLast: state.songs.length == 1,
+        },
+      };
+    case REV_LOOP:
+      return {
+        ...state,
+        currentSongIndex: state.songs.length - 1,
+        currentSong: {
+          ...state.songs[state.songs.length - 1],
+          isFirst: state.songs.length == 1,
+          isLast: true,
+        },
+      };
     default:
       return state;
   }

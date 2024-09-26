@@ -1,4 +1,5 @@
 import { post, del, get } from "./csrf";
+import { createSelector } from "reselect";
 
 /* ACTION TYPES */
 
@@ -27,12 +28,10 @@ export const loadPlaylist = (playlist) => ({
 
 export const addSong = (song) => async (dispatch, getState) => {
   const songId =
-    typeof song == "integer" || typeof song == "string"
-      ? Number(song)
-      : song.id;
+    typeof song == "number" || typeof song == "string" ? Number(song) : song.id;
   const state = getState();
   const playlistId = state.library.id;
-  if (typeof playlistId != "integer" || typeof playlistId != "string") {
+  if (typeof playlistId != "number" && typeof playlistId != "string") {
     throw Error("Library Playlist is not initialized in store");
   }
   const updatedPlaylist = await post(`/api/playlists/${playlistId}/song`, {
@@ -49,15 +48,13 @@ export const addSong = (song) => async (dispatch, getState) => {
 
 export const removeSongFromLibrary = (song) => async (dispatch, getState) => {
   const songId =
-    typeof song == "integer" || typeof song == "string"
-      ? Number(song)
-      : song.id;
+    typeof song == "number" || typeof song == "string" ? Number(song) : song.id;
   const state = getState();
-  const playlistId = state.liked.id;
-  if (typeof playlistId != "integer" || typeof playlistId != "string") {
-    throw Error("Liked Playlist is not initialized in store");
+  const playlistId = state.library.id;
+  if (typeof playlistId != "number" && typeof playlistId != "string") {
+    throw Error("Library Playlist is not initialized in store");
   }
-  const res = await del(`/api/playlists/${playlistId}/${songId}`);
+  const res = await del(`/api/playlists/${playlistId}/songs/${songId}`);
   dispatch(removeSong(songId));
   return res;
 };
@@ -73,6 +70,10 @@ export const fetchLibrary = () => async (dispatch) => {
 export const selectLibrarySongs = (state) => state.library.songs;
 export const selectLibrarySongsCount = (state) => state.library.length;
 export const selectLibraryPlaylist = (state) => state.library;
+export const selectIsAdded = createSelector(
+  [selectLibrarySongs, (state, songId) => songId],
+  (songs, songId) => !!songs.find(({ id }) => id == songId)
+);
 
 /* INITIAL STATE */
 
@@ -96,9 +97,14 @@ export default function libraryReducer(state = initialState, action) {
       return {
         ...state,
         songs: [
-          ...state.songs.filter(({ id }) => id == action.song.id),
+          ...state.songs.filter(({ id }) => id != action.song.id),
           action.song,
         ],
+      };
+    case DELETE_SONG:
+      return {
+        ...state,
+        songs: state.songs.filter(({ id }) => id != action.songId),
       };
     default:
       return state;

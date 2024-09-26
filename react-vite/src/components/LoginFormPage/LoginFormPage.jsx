@@ -38,6 +38,20 @@ function LoginFormPage() {
     }
   };
 
+  const handleDemoLogin = async () => {
+    const serverResponse = await dispatch(
+      thunkLogin({
+        email: "demo@google.com",
+        password: "password",
+      })
+    );
+
+    if (!serverResponse) {
+      closeModal();
+      navigate("/");
+    }
+  };
+
   return (
     <div className="flex flex-col justify-center items-center p-4">
       <h1 className="text-2vw mb-4">Log In</h1>
@@ -82,10 +96,17 @@ function LoginFormPage() {
           {errors.password && <p>{errors.password}</p>}
           <button 
           type="submit"
-          className="bg-primary text-foreground text-.8vw p-2 rounded-lg w-[5vw] hover:bg-muted"
+          className="bg-primary text-foreground text-.8vw p-2 rounded-lg w-[10vw] hover:bg-muted"
           >
             Log In
           </button>
+          <button
+          type="button"
+          onClick={handleDemoLogin}
+          className="bg-primary text-foreground text-.8vw p-2 rounded-lg w-[10vw] hover:bg-muted"
+        >
+          Demo Login
+        </button>
         </form>
     </div>
   );

@@ -47,7 +47,7 @@ function SignupFormModal() {
   return (
     <div className="flex flex-col w-full">
       <h1 className="text-2vw text-center">Sign Up</h1>
-      {errors.server && <p className="text-red-400 italic">{errors.server}</p>}
+      {errors.server && <p className="text-destructive italic">{errors.server}</p>}
       <form onSubmit={handleSubmit} className="flex flex-col gap-2">
         <div className="flex gap-2 mt-4">
           <div className="flex flex-col">
@@ -86,7 +86,7 @@ function SignupFormModal() {
                 placeholder="Enter email"
                 required
               />
-            {errors.email && <p className="text-red-400 italic">{errors.email}</p>}
+            {errors.email && <p className="text-destructive italic">{errors.email}</p>}
           </div>
           <div className="flex flex-col">
             <label>
@@ -98,7 +98,7 @@ function SignupFormModal() {
                 onChange={(e) => setBandName(e.target.value)}
                 placeholder="Enter band name"
               />
-            {errors.username && <p className="text-red-400 italic">{errors.username}</p>}
+            {errors.username && <p className="text-destructive italic">{errors.username}</p>}
           </div>
         <div>
           <div className="flex flex-col">
@@ -112,7 +112,7 @@ function SignupFormModal() {
             required
             className="bg-input text-secondary-foreground p-2 rounded-lg"
             />
-            {errors.bio && <p className="text-red-400 italic">{errors.bio}</p>}
+            {errors.bio && <p className="text-destructive italic">{errors.bio}</p>}
           </div>
         </div>
 

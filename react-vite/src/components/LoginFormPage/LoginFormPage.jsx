@@ -60,7 +60,7 @@ function LoginFormPage() {
     <div className='flex flex-col justify-center items-center p-4'>
       <h1 className='text-2vw mb-4'>Log In</h1>
 
-      {errors.server && <p className='text-red-400 italic'>{errors.server}</p>}
+      {errors.server && <p className='text-destructive italic'>{errors.server}</p>}
 
       <form
         onSubmit={handleSubmit}
@@ -77,7 +77,7 @@ function LoginFormPage() {
           />
         </div>
 
-        {errors.email && <p className='text-red-400 italic'>{errors.email}</p>}
+        {errors.email && <p className='text-destructive italic'>{errors.email}</p>}
 
         <div className='flex flex-col text-1vw'>
           <label>Password:</label>
@@ -90,7 +90,7 @@ function LoginFormPage() {
           />
         </div>
 
-        {errors.password && <p className='text-red-400 italic'>{errors.password}</p>}
+        {errors.password && <p className='text-destructive italic'>{errors.password}</p>}
 
         <div>
           Don&apos;t have an account?

@@ -17,6 +17,17 @@ const Home = () => {
   const playlists = useSelector(selectPlaylistsArray);
   const songs = useSelector(selectSongsArray);
   const owner = user?.bandName || `${user?.firstName} ${user?.lastName}`;
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const updateMousePosition = e => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener('mousemove', updateMousePosition);
+    return () => {
+      window.removeEventListener('mousemove', updateMousePosition);
+    };
+  }, []);
 
   useEffect(() => {
     dispatch(fetchAlbums());
@@ -51,6 +62,13 @@ const Home = () => {
   if (!user) {
     return (
       <div className='h-[calc(100vh-64px)] flex flex-col items-center justify-center overflow-hidden'>
+        <div
+          className='absolute inset-0 opacity-50'
+          style={{
+            background: `radial-gradient(circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(155,89,182,0.3) 0%, rgba(155,89,182,0) 60%)`,
+          }}
+        />
+
         <h1 className='reflection relative text-3xl text-white'>Unlock Your Music Adventure</h1>
       </div>
     );

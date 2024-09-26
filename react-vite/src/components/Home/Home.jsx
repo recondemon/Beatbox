@@ -167,7 +167,7 @@ const Home = () => {
                       <img
                         src={album.albumCover}
                         alt='album cover'
-                        className='border-muted border-2 transition duration-300 hover:border-accent cursor-pointer w-full h-full object-cover rounded-md'
+                        className='cursor-pointer transition border-2 border-muted duration-200 hover:border-accent w-full h-full object-cover rounded-md'
                       />
 
                       <p className='text-lg font-semibold whitespace-pre-wrap'>{album.name}</p>
@@ -208,7 +208,7 @@ const Home = () => {
                   >
                     <div className='h-fit rounded-lg w-56 inline-block text-center shadow text-foreground justify-center'>
                       <img
-                        className='border-muted border-2 transition duration-300 hover:border-accent cursor-pointer w-full h-full object-cover rounded-md'
+                        className='cursor-pointer transition border-2 border-muted duration-200 hover:border-accent w-full h-full object-cover rounded-md'
                         src='/playlist.jpeg'
                         alt='playlist image'
                       />

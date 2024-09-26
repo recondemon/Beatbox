@@ -141,6 +141,20 @@ def get_liked():
 
     return liked.to_json()
 
+@playlists.route("/liked/<int:song_id>", methods=["DELETE"])
+@login_required
+def remove_from_liked(song_id):
+    liked = Playlist.query.filter_by(
+        owner_id=current_user.id, is_public=False, name="Liked"
+    ).first()
+
+    if not liked:
+        return {"errors": "Liked playlist not found"}, 404
+
+    PlaylistSong.query.filter_by(playlist_id=liked.id, song_id=song_id).delete()
+    db.session.commit()
+
+    return {"message": "Song unliked successfully"}, 200
 
 @playlists.route("/queue")
 @login_required

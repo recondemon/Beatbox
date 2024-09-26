@@ -7,6 +7,7 @@ const LOAD_QUEUE = 'playlists/loadQueue';
 const LOAD_LIKED = 'playlists/loadLiked';
 const ADD_TO_QUEUE = 'playlists/addToQueue';
 const ADD_TO_LIKED = 'playlists/addToLiked';
+const REMOVE_FROM_LIKED = 'playlists/removeFromLiked';
 const PLAY_NEXT = 'playlists/playNext';
 const SET_CURRENT_SONG_INDEX = 'playlists/setCurrentSongIndex';
 const CLEAR_QUEUE = 'playlists/clearQueue';
@@ -43,6 +44,11 @@ export const loadLiked = liked => ({
 export const addToLiked = song => ({
   type: ADD_TO_LIKED,
   song,
+});
+
+export const removeFromLiked = songId => ({
+  type: REMOVE_FROM_LIKED,
+  songId,
 });
 
 export const playNext = () => ({
@@ -85,18 +91,6 @@ export const putPlaylist = playlist => async dispatch => {
   }
 };
 
-// export const fetchQueue = () => async dispatch => {
-//   const res = await fetch(`/api/playlists/queue`);
-
-//   if (res.ok) {
-//     const data = await res.json();
-//     dispatch(loadQueue(data));
-//     return data;
-//   }
-
-//   return res;
-// };
-
 export const fetchLiked = () => async dispatch => {
   const res = await fetch('/api/playlists/liked');
 
@@ -109,15 +103,19 @@ export const fetchLiked = () => async dispatch => {
   return res;
 };
 
-// export const postToQueue = song => async dispatch => {
-//   const res = await post(`/api/playlists/queue`, { songs: [song.id] });
-//   if (res.ok) {
-//     const data = await res.json();
-//     dispatch(loadQueue(data));
-//     return data;
-//   }
-//   return res;
-// };
+export const unlike = songId => async dispatch => {
+  const res = await fetch(`/api/playlists/liked/${songId}`, {
+    method: 'DELETE',
+  });
+
+  if (res.ok) {
+    const data = await res.json();
+    dispatch(removeFromLiked(songId));
+    return data;
+  }
+
+  return res.json();
+};
 
 export const addLike = (playlistId, song) => async dispatch => {
   const res = await fetch(`/api/playlists/${playlistId}/song`, {
@@ -144,24 +142,12 @@ export const createPlaylists = playlistData => async dispatch => {
   return newPlaylist;
 };
 
-// export const selectCurrentSongIndex = state => state.playlists.currentSongIndex;
 export const selectPlaylists = state => state.playlists;
 export const selectPlaylistById = playlistId => state => state.playlists[playlistId];
-// export const selectQueue = state => state.playlists.queue;
 export const selectLiked = state => state.playlists.liked;
 export const selectPlaylistsArray = createSelector(selectPlaylists, playlists =>
   Object.values(playlists),
 );
-// export const selectCurrentSong = state => {
-//   const queue = state.playlists.queue;
-//   const currentSongIndex = state.playlists.currentSongIndex;
-//   return queue?.[currentSongIndex];
-// };
-
-// const initialState = {
-//   queue: JSON.parse(localStorage.getItem('queue')) || [],
-//   currentSongIndex: parseInt(localStorage.getItem('currentSongIndex'), 10) || 0,
-// };
 
 export default function playlistsReducer(state = {}, action) {
   switch (action.type) {
@@ -172,29 +158,12 @@ export default function playlistsReducer(state = {}, action) {
       });
       return newState;
     }
-    // case LOAD_QUEUE: {
-    //   const persistedQueue = JSON.parse(localStorage.getItem('queue')) || action.queue;
-    //   const persistedIndex = parseInt(localStorage.getItem('currentSongIndex'), 10) || 0;
-    //   return {
-    //     ...state,
-    //     queue: persistedQueue,
-    //     currentSongIndex: persistedIndex,
-    //   };
-    // }
     case LOAD_ONE: {
       return {
         ...state,
         [action.playlist.id]: action.playlist,
       };
     }
-    // case ADD_TO_QUEUE: {
-    //   const newQueue = [...state.queue, action.song];
-    //   localStorage.setItem('queue', JSON.stringify(newQueue));
-    //   return {
-    //     ...state,
-    //     queue: newQueue,
-    //   };
-    // }
     case LOAD_LIKED:
       return {
         ...state,
@@ -205,29 +174,13 @@ export default function playlistsReducer(state = {}, action) {
         ...state,
         liked: [...state.liked, action.song],
       };
-    case PLAY_NEXT:
-      const newQueue = state.queue.slice(1);
-      localStorage.setItem('queue', JSON.stringify(newQueue));
+    case REMOVE_FROM_LIKED: {
+      const updatedLiked = state.liked.filter(song => song.id !== action.songId);
       return {
         ...state,
-        queue: newQueue,
+        liked: updatedLiked,
       };
-    // case SET_CURRENT_SONG_INDEX: {
-    //   localStorage.setItem('currentSongIndex', action.index);
-    //   return {
-    //     ...state,
-    //     currentSongIndex: action.index,
-    //   };
-    // }
-    // case CLEAR_QUEUE: {
-    //   localStorage.removeItem('queue');
-    //   localStorage.removeItem('currentSongIndex');
-    //   return {
-    //     ...state,
-    //     queue: [],
-    //     currentSongIndex: 0,
-    //   };
-    // }
+    }
     default:
       return state;
   }

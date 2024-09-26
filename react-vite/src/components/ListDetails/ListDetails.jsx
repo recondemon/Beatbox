@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { CirclePlus, Play } from 'lucide-react';
-import { fetchLiked, selectLiked, addLike, fetchPlaylists } from '../../redux/playlists';
+import { fetchLiked, selectLiked, addLike, fetchPlaylists, unlike } from '../../redux/playlists';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchArtist } from '../../redux/artists';
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
@@ -151,6 +151,11 @@ export default function ListDetails({ list }) {
     dispatch(addLike(list.id, song));
   };
 
+  const handleUnlike = songId => {
+    console.log('Unliking song...');
+    dispatch(unlike(songId));
+  };
+
   if (!list) {
     return <h2>Loading...</h2>;
   }
@@ -198,6 +203,7 @@ export default function ListDetails({ list }) {
                 <div className='flex gap-4 items-center mr-2'>
                   {likedIds.includes(song.id) ? (
                     <FaHeart
+                      onClick={() => handleUnlike(song.id)}
                       className='cursor-pointer text-primary font-xl'
                       size={24}
                     />

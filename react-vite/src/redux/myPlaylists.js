@@ -29,11 +29,11 @@ export const loadPlaylist = (playlists) => ({
 
 export const addSongToPlaylist = (song, playlist) => async (dispatch) => {
   const songId =
-    typeof song == "integer" || typeof song == "string"
+    typeof song == "number" || typeof song == "string"
       ? Number(song)
       : song.id;
   const playlistId =
-    typeof playlist == "integer" || typeof playlist == "string"
+    typeof playlist == "number" || typeof playlist == "string"
       ? Number(playlist)
       : playlist.id;
 
@@ -51,14 +51,14 @@ export const addSongToPlaylist = (song, playlist) => async (dispatch) => {
 
 export const removeSongFromPlaylist = (song, playlist) => async (dispatch) => {
   const songId =
-    typeof song == "integer" || typeof song == "string"
+    typeof song == "number" || typeof song == "string"
       ? Number(song)
       : song.id;
   const playlistId =
-    typeof playlist == "integer" || typeof playlist == "string"
+    typeof playlist == "number" || typeof playlist == "string"
       ? Number(playlist)
       : playlist.id;
-  const res = await del(`/api/playlists/${playlistId}/${songId}`);
+  const res = await del(`/api/playlists/${playlistId}/songs/${songId}`);
   dispatch(removeSong(songId));
   return res;
 };

@@ -1,4 +1,5 @@
 import { post, del, get } from "./csrf";
+import { createSelector } from "reselect";
 
 /* ACTION TYPES */
 
@@ -27,12 +28,10 @@ export const removeSong = (songId) => ({
 
 export const likeSong = (song) => async (dispatch, getState) => {
   const songId =
-    typeof song == "integer" || typeof song == "string"
-      ? Number(song)
-      : song.id;
+    typeof song == "number" || typeof song == "string" ? Number(song) : song.id;
   const state = getState();
   const playlistId = state.liked.id;
-  if (typeof playlistId != "integer" || typeof playlistId != "string") {
+  if (typeof playlistId != "number" && typeof playlistId != "string") {
     throw Error("Liked Playlist is not initialized in store");
   }
   const updatedPlaylist = await post(`/api/playlists/${playlistId}/song`, {
@@ -48,15 +47,13 @@ export const likeSong = (song) => async (dispatch, getState) => {
 };
 export const unLikeSong = (song) => async (dispatch, getState) => {
   const songId =
-    typeof song == "integer" || typeof song == "string"
-      ? Number(song)
-      : song.id;
+    typeof song == "number" || typeof song == "string" ? Number(song) : song.id;
   const state = getState();
   const playlistId = state.liked.id;
-  if (typeof playlistId != "integer" || typeof playlistId != "string") {
+  if (typeof playlistId != "number" && typeof playlistId != "string") {
     throw Error("Liked Playlist is not initialized in store");
   }
-  const res = await del(`/api/playlists/${playlistId}/${songId}`);
+  const res = await del(`/api/playlists/${playlistId}/songs/${songId}`);
   dispatch(removeSong(songId));
   return res;
 };
@@ -69,9 +66,13 @@ export const fetchLikedPlaylist = () => async (dispatch) => {
 
 /* SELECTORS */
 
-export const selectLikedSongs = (state) => state.liked.songs;
 export const selectLikedSongsCount = (state) => state.liked.length;
 export const selectLikedPlaylist = (state) => state.liked;
+export const selectLikedSongs = (state) => state.liked.songs;
+export const selectIsLiked = createSelector(
+  [selectLikedSongs, (state, songId) => songId],
+  (songs, songId) => !!songs.find(({ id }) => id == songId)
+);
 
 /* INITIAL STATE */
 
@@ -95,7 +96,7 @@ export default function likedReducer(state = initialState, action) {
       return {
         ...state,
         songs: [
-          ...state.songs.filter(({ id }) => id == action.song.id),
+          ...state.songs.filter(({ id }) => id != action.song.id),
           action.song,
         ],
       };

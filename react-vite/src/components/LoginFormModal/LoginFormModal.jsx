@@ -3,6 +3,7 @@ import { thunkLogin } from '../../redux/session';
 import { useDispatch } from 'react-redux';
 import { useModal } from '../../context/Modal';
 import './LoginForm.css';
+import LoginFormPage from '../LoginFormPage/LoginFormPage';
 
 function LoginFormModal() {
   const dispatch = useDispatch();
@@ -29,32 +30,9 @@ function LoginFormModal() {
   };
 
   return (
-    <>
-      <h1>Log In</h1>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Email
-          <input
-            type='text'
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            required
-          />
-        </label>
-        {errors.email && <p>{errors.email}</p>}
-        <label>
-          Password
-          <input
-            type='password'
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            required
-          />
-        </label>
-        {errors.password && <p>{errors.password}</p>}
-        <button type='submit'>Log In</button>
-      </form>
-    </>
+    <div className='flex flex-col'>
+      <LoginFormPage />
+    </div>
   );
 }
 

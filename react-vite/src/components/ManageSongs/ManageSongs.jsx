@@ -35,11 +35,34 @@ const ManageSongs = () => {
   }, [user]);
 
   if (isLoading) {
-    return <div>Loading albums...</div>;
+    return <div 
+      className='flex w-3/5 min-h-4/5 justify-center items-center mx-auto mt-[20vh]'
+    >
+      <div className='flex flex-col gap-4'>
+        <h1 className='text-2vw'>
+          Manage Songs
+        </h1>
+        <p className='text-1vw text-center'>
+          No albums found
+        </p>       
+      </div>
+    </div>;
   }
   
   if (!albumsSongs.albums || albumsSongs.albums.length === 0) {
-    return <div>No albums found</div>;
+    return <div
+      className='flex w-3/5 min-h-4/5 justify-center items-center mx-auto mt-[20vh]'
+    >
+      <div className='flex flex-col gap-4'>
+        <h1 className='text-2vw'>
+          Manage Songs
+        </h1>
+        <p className='text-1vw text-center'>
+          No albums found
+        </p>       
+      </div>
+      
+    </div>;
   }
 
   const handleOpenDeleteModal = (id, type) => {
@@ -109,10 +132,6 @@ const ManageSongs = () => {
       });
   };
   
-  
-  
-  
-
   const handleInputChange = (albumId, field, value) => {
     setAlbumInputValues({
       ...albumInputValues,

@@ -33,12 +33,17 @@ def album(album_id):
 
 
 # get all albums by user id
+# @albums.route("/user/<int:user_id>")
+# def user_albums(user_id):
+#     albums = Album.query.filter_by(artist_id=user_id).all()
+#     return [album.to_json() for album in albums]
+
 @albums.route("/user/<int:user_id>")
-@login_required
 def user_albums(user_id):
     albums = Album.query.filter_by(artist_id=user_id).all()
-    return [album.to_json() for album in albums]
-
+    if not albums:
+        return jsonify({"error": "No albums found"}), 404
+    return jsonify([album.to_json() for album in albums]), 200
 
 # create an album, POST method
 @albums.route("", methods=["POST"])
@@ -110,44 +115,79 @@ def create_album():
 
 
 # edit an album
+# @albums.route("/<int:album_id>", methods=["PUT"])
+# def update_album(album_id):
+#     album = Album.query.get(int(album_id))
+
+#     if not album:
+#         return {"errors": "Album not found"}, 404
+
+#     form_data = dict(request.form)
+
+#     bad_data = ({"errors": "BAD DATA"}, 400)
+
+#     if "file" in dict(request.files).keys():
+#         file = request.files["file"]
+#         url = upload_file_to_s3(file)
+#         if "errors" in url.keys():
+#             {"errors": "BAD FILE"}, 400
+#         remove_file_from_s3(album.album_cover)
+#         album.album_cover = url["url"]
+
+#     name = file.filename
+#     if "name" in form_data.keys():
+#         name = form_data["name"]
+#         if type(name) is not str:
+#             return bad_data
+#     description = ""
+#     if "description" in form_data.keys():
+#         description = form_data["description"]
+#         if type(description) is not str:
+#             return bad_data
+
+#     release_date = form_data["release_date"]
+#     if type(release_date) is not str and type(release_date) is not datetime:
+#         return bad_data
+
+#     album.name = name
+#     album.description = description
+#     album.release_date = release_date
+
+#     db.session.commit()
+
+#     return album.to_json()
+
 @albums.route("/<int:album_id>", methods=["PUT"])
-@login_required
 def update_album(album_id):
     album = Album.query.get(int(album_id))
 
     if not album:
         return {"errors": "Album not found"}, 404
 
-    form_data = dict(request.form)
+    if request.is_json:
+        form_data = request.get_json()
 
-    bad_data = ({"errors": "BAD DATA"}, 400)
+        name = form_data.get("name", album.name)
+        description = form_data.get("description", album.description)
+        release_date = form_data.get("release_date", album.release_date)
 
-    if "file" in dict(request.files).keys():
+        album.name = name
+        album.description = description
+
+        try:
+            album.release_date = datetime.strptime(release_date, "%Y-%m-%d")
+        except ValueError:
+            return {"errors": "Invalid date format. Use YYYY-MM-DD."}, 400
+
+    elif "file" in request.files:
         file = request.files["file"]
         url = upload_file_to_s3(file)
+
         if "errors" in url.keys():
-            {"errors": "BAD FILE"}, 400
+            return {"errors": "BAD FILE"}, 400
+
         remove_file_from_s3(album.album_cover)
         album.album_cover = url["url"]
-
-    name = file.filename
-    if "name" in form_data.keys():
-        name = form_data["name"]
-        if type(name) is not str:
-            return bad_data
-    description = ""
-    if "description" in form_data.keys():
-        description = form_data["description"]
-        if type(description) is not str:
-            return bad_data
-
-    release_date = form_data["release_date"]
-    if type(release_date) is not str and type(release_date) is not datetime:
-        return bad_data
-
-    album.name = name
-    album.description = description
-    album.release_date = release_date
 
     db.session.commit()
 

@@ -35,6 +35,11 @@ export const router = createBrowserRouter([
       {
         path: '/album/:albumId',
         element: <AlbumDetails />,
+        loader: async () => {
+          const res = await fetch('/api/playlists/current');
+          const data = await res.json();
+          return data;
+        },
       },
       {
         path: '/artists/:artistId',
@@ -46,6 +51,11 @@ export const router = createBrowserRouter([
           {
             index: true,
             element: <PlaylistDetails />,
+            loader: async () => {
+              const res = await fetch('/api/playlists/current');
+              const data = await res.json();
+              return data;
+            },
           },
           {
             path: 'manage',

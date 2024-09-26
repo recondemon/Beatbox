@@ -118,7 +118,7 @@ const Home = () => {
                   <div key={song.id}>
                     <div className='h-fit rounded-lg w-56 h-52 inline-block whitespace-pre-wrap text-center text-foreground justify-center'>
                       <img
-                        src={song.album[0].album_cover}
+                        src={song.album?.[0]?.album_cover}
                         alt='album cover'
                         className='cursor-pointer transition border-2 border-muted duration-200 hover:border-accent w-full h-full object-cover rounded-md'
                         onClick={() => handleSongClick(song, index)}

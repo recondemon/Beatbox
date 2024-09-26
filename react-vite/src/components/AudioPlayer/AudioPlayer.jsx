@@ -193,7 +193,7 @@ export default function AudioPlayer() {
               <img
                 src={songDetails?.album?.[0].album_cover}
                 alt={currentSong?.name}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover rounded-md border border-accent"
               />
             </div>
             <div className="flex flex-col">

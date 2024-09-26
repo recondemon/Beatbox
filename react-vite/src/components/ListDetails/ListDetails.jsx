@@ -156,11 +156,11 @@ export default function ListDetails({ list }) {
   }
 
   return (
-    <div className='mt-14 mx-44 xl:max-w-fit sm:max-w-5xl max-h-[calc(100vh-200px)] overflow-y-auto scrollbar-thin scrollbar-thumb-primary scrollbar-thumb-rounded-full scrollbar-track-transparent'>
+    <div className='mt-14 mx-44 overflow-x-clip max-h-[calc(100vh-200px)] overflow-y-auto scrollbar-thin scrollbar-thumb-primary scrollbar-thumb-rounded-full scrollbar-track-transparent'>
       <div className='mb-6 w-[80vw]'>
         <span className='flex gap-2 items-center'>
           <img
-            className='max-w-64 max-h-64 rounded-md border border-accent'
+            className='max-w-56 max-h-56 rounded-md border border-accent'
             src={list?.name === 'Liked' ? '/liked.jpeg' : coverArt}
             alt='album artwork'
           />
@@ -214,7 +214,7 @@ export default function ListDetails({ list }) {
                 </div>
 
                 <div
-                  className='flex w-full mx-4 items-center justify-evenly cursor-pointer'
+                  className='flex w-full mx-2 items-center justify-evenly cursor-pointer'
                   onClick={() => playSong(song)}
                 >
                   <audio

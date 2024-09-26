@@ -200,7 +200,7 @@ export default function AudioPlayer() {
               <h3 className="font-semibold text-nowrap overflow-x-hidden">
                 {currentSong?.name}
               </h3>
-              <p>{currentSong?.artist?.[0].band_name}</p>
+              <p>{songDetails?.artist?.[0].band_name}</p>
             </div>
           </div>
         ) : (

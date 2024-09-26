@@ -16,6 +16,9 @@ export default function ManagePlaylists() {
   }, [dispatch, playlistId]);
 
   useEffect(() => {
+    if (!playlist) {
+      return;
+    }
     setName(playlist?.name);
     setDescription(playlist?.description);
     setIsPublic(playlist?.isPublic);
@@ -46,7 +49,9 @@ export default function ManagePlaylists() {
           is_public: isPublic,
           ownerId: user?.id,
         })
-      );
+      ).then((newPlaylist) => {
+        console.log(newPlaylist);
+      });
     } catch (err) {
       setErrors(err?.errors || { errors: "Something went wrong" });
     }

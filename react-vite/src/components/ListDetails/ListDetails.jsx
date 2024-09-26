@@ -1,16 +1,23 @@
 import { useState, useEffect } from 'react';
 import { CirclePlus, Play } from 'lucide-react';
-import { fetchLiked, selectLiked, addLike, fetchPlaylists, unlike } from '../../redux/playlists';
+import { fetchLiked, selectLiked, addLike, unlike } from '../../redux/playlists';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchArtist } from '../../redux/artists';
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
-import { selectCurrentSong, addToQueue, clearQueue, setCurrentSongIndex } from '../../redux/queue';
+import { selectCurrentSong, addToQueue, clearQueue } from '../../redux/queue';
+import { useLoaderData } from 'react-router-dom';
 
 export default function ListDetails({ list }) {
   const dispatch = useDispatch();
   const url = window.location.href;
   const [artists, setArtists] = useState({});
   const [songDurations, setSongDurations] = useState({});
+  const [visibleDropdowns, setVisibleDropdowns] = useState({});
+  const userPlaylists = useLoaderData();
+  const filteredUserPlaylists = userPlaylists.filter(
+    playlist =>
+      playlist.name !== 'Liked' && playlist.name !== 'Queue' && playlist.name !== 'Library',
+  );
   const artist = list?.artist
     ? list?.artist[0].band_name
       ? `${list?.artist[0].band_name}`
@@ -54,7 +61,6 @@ export default function ListDetails({ list }) {
 
   useEffect(() => {
     dispatch(fetchLiked());
-    dispatch(fetchPlaylists());
   }, [dispatch]);
 
   // Updates duration and stores it for each song, including current song
@@ -82,33 +88,6 @@ export default function ListDetails({ list }) {
             dispatch(addToQueue(song));
           });
         });
-
-        // const restructureSongs = list.songs.map(song => ({
-        //   album: [
-        //     {
-        //       id: song.album_id,
-        //       album_cover: list.albumCover,
-        //     },
-        //   ],
-        //   albumId: song.album_id,
-        //   artist: [
-        //     {
-        //       band_name: list?.artist?.[0].band_name,
-        //       first_name: list?.artist?.[0].first_name,
-        //       last_name: list?.artist?.[0].last_name,
-        //     },
-        //   ],
-        //   artistId: song.artist_id,
-        //   id: song.id,
-        //   name: song.name,
-        //   url: song.url,
-        // }));
-
-        // restructureSongs.forEach(song => {
-        //   dispatch(addToQueue(song));
-        // });
-
-        // dispatch(addToQueue(restructureSongs[0]));
       }
     } catch (e) {
       console.error(e);
@@ -117,34 +96,13 @@ export default function ListDetails({ list }) {
 
   const playSong = song => {
     dispatch(clearQueue()).then(() => dispatch(addToQueue(song)));
-
-    // const structuredSong = {
-    //   album: [
-    //     {
-    //       id: song.album_id,
-    //       album_cover: list.albumCover,
-    //     },
-    //   ],
-    //   albumId: song.album_id,
-    //   artist: [
-    //     {
-    //       band_name: list.artist[0]?.band_name || '',
-    //       first_name: list.artist[0]?.first_name || '',
-    //       last_name: list.artist[0]?.last_name || '',
-    //     },
-    //   ],
-    //   artistId: song.artist_id,
-    //   id: song.id,
-    //   name: song.name,
-    //   url: song.url,
-    // };
-
-    // dispatch(setCurrentSongIndex());
-    // dispatch(addToQueue(song));
   };
 
-  const handleAddClick = () => {
-    /* TODO: clicking opens drop down with options like: add to playlist, add to queue, etc.  */
+  const handleOpenDropdown = songId => {
+    setVisibleDropdowns(prev => ({
+      ...prev,
+      [songId]: !prev[songId],
+    }));
   };
 
   const handleLike = song => {
@@ -157,7 +115,7 @@ export default function ListDetails({ list }) {
   };
 
   if (!list) {
-    return <h2>Loading...</h2>;
+    return <h2 className='self-center text-center mt-12 text-2xl font-bold'>Loading...</h2>;
   }
 
   return (
@@ -198,7 +156,7 @@ export default function ListDetails({ list }) {
       <ul className='bg-card text-card-foreground w-full border border-border h-2/3 rounded-md'>
         {list?.songs?.length ? (
           list?.songs?.map(song => (
-            <li className='flex flex-col hover:bg-muted h-full py-0'>
+            <li className='flex flex-col hover:bg-muted h-full rounded-sm'>
               <div className='flex mx-4 items-center py-4'>
                 <div className='flex gap-4 items-center mr-2'>
                   {likedIds.includes(song.id) ? (
@@ -215,9 +173,22 @@ export default function ListDetails({ list }) {
                     />
                   )}
 
-                  <button onClick={handleAddClick}>
+                  <button onClick={() => handleOpenDropdown(song.id)}>
                     <CirclePlus />
                   </button>
+
+                  {visibleDropdowns[song.id] && (
+                    <div className='absolute z-10 origin-top-left mt-40 w-56 ml-8 rounded-md bg-background shadow-lg'>
+                      {filteredUserPlaylists.map(playlist => (
+                        <div
+                          key={playlist.id}
+                          className='p-2 hover:bg-muted cursor-pointer'
+                        >
+                          <span className='text-sm'>Add to {playlist.name}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div
@@ -261,12 +232,6 @@ export default function ListDetails({ list }) {
                   </div>
                 </div>
               </div>
-
-              {list?.songs[songCount - 1] === song ? (
-                ''
-              ) : (
-                <hr className='border-muted w-[99%] self-center mt-4' />
-              )}
             </li>
           ))
         ) : (

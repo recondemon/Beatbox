@@ -22,7 +22,7 @@ const Sidebar = () => {
             <Link to={`/playlist/${liked.id}`}>
               <img
                 className='w-12 h-12 rounded-md border border-accent'
-                src='liked.jpeg'
+                src='/liked.jpeg'
                 alt='heart logo for favorites playlist'
               />
             </Link>
@@ -36,7 +36,7 @@ const Sidebar = () => {
               <Link to={`/playlist/${playlist?.id}`}>
                 <img
                   className='w-12 h-12 rounded-md border border-accent'
-                  src='playlist.jpeg'
+                  src='/playlist.jpeg'
                   alt='heart logo for favorites playlist'
                 />
               </Link>

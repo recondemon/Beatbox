@@ -30,19 +30,7 @@ const Navigation = () => {
         <NavLink to="/">Home</NavLink>
       </li>
       <li>
-        {user ? (
-          <ProfileButton />
-        ):(
-          <div className="flex gap-6 mr-4 items-center justify-center">
-            <div className="text-primary hover:underline hover:text-foreground text-1.2vw">
-              <OpenModalMenuItem
-                itemText="Log In"
-                // onItemClick={closeMenu}
-                modalComponent={<LoginFormModal />}
-              />
-            </div>
-          </div>
-        )}
+        <ProfileButton />
       </li>
     </ul>
   );

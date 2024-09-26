@@ -63,7 +63,24 @@ const Home = () => {
   if (!user) {
     return (
       <div className='h-[calc(100vh-64px)] flex flex-col items-center justify-center overflow-hidden'>
-        <h1 className='text-3xl'>Unlock Your Music Adventure</h1>
+        <h1 className='reflection relative text-3xl text-white'>Unlock Your Music Adventure</h1>
+
+        <style jsx>{`
+          .reflection::after {
+            content: 'Unlock Your Music Adventure';
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: scaleY(-1);
+            color: rgba(255, 255, 255, 0.4);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            pointer-events: none;
+            mask-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.5), transparent);
+          }
+        `}</style>
       </div>
     );
   }

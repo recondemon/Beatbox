@@ -40,19 +40,11 @@ const Sidebar = () => {
   return (
     <div className="absolute top-20 left-4">
       <div className="flex flex-col h-full bg-popover rounded-md">
-        <div className="flex flex-col p-4">
-          <button
-            onClick={handleOpenModal}
-            className="bg-card flex justify-center items-center rounded-md"
-          >
-            <SquarePlus className='text-primary bg-card' size={54}/>
-          </button>
-        </div>
         <div className="flex flex-col p-4 gap-4">
-          <Link to={`/playlist/${library.id}`}title={library?.name}>
+          <Link to={`/playlist/${library.id}`} title={library?.name}>
             <img
               className="w-12 h-12 rounded-md border border-accent"
-              src="/liked.jpeg"
+              src="/library.jpeg"
               alt="heart logo for favorites playlist"
             />
           </Link>
@@ -65,6 +57,15 @@ const Sidebar = () => {
               alt="heart logo for favorites playlist"
             />
           </Link>
+        </div>
+
+        <div className="flex flex-col p-4">
+          <button
+            onClick={handleOpenModal}
+            className="bg-card flex justify-center items-center rounded-md"
+          >
+            <SquarePlus className="text-primary bg-card" size={54} />
+          </button>
         </div>
 
         {playlistsArray?.map((playlist) => (
@@ -83,7 +84,6 @@ const Sidebar = () => {
       <CreatePlaylistModal isOpen={isModalOpen} onClose={handleCloseModal}>
         <CreatePlaylistForm />
       </CreatePlaylistModal>
-
     </div>
   );
 };

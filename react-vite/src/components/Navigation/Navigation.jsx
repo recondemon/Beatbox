@@ -25,7 +25,7 @@ const Navigation = () => {
 
 
   return (
-    <ul className="flex justify-between mx-8 mt-4 text-lg">
+    <ul className="relative z-10 flex justify-between mx-8 mt-4 text-lg">
       <li>
         <NavLink to="/">Home</NavLink>
       </li>

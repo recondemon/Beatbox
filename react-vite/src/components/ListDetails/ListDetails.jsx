@@ -196,7 +196,7 @@ export default function ListDetails({ list }) {
             <li className='flex flex-col hover:bg-muted h-full py-0'>
               <div className='flex mx-4 items-center py-4'>
                 <div className='flex gap-4 items-center mr-2'>
-                  {song.id in likedIds ? (
+                  {likedIds.includes(song.id) ? (
                     <FaHeart
                       className='cursor-pointer text-primary font-xl'
                       size={24}
@@ -208,6 +208,7 @@ export default function ListDetails({ list }) {
                       size={24}
                     />
                   )}
+
                   <button onClick={handleAddClick}>
                     <CirclePlus />
                   </button>

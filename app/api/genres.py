@@ -9,7 +9,6 @@ genres = Blueprint("genres", __name__)
 
 
 @genres.route("/")
-@login_required
 def all_genre():
     Genres = Genre.query.all()
     return jsonify([genre.to_json() for genre in Genres])

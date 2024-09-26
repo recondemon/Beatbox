@@ -1,33 +1,34 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import AlbumInputs from './AlbumInputs';
-import { fetchAlbumById, selectAlbumsArray } from '../../redux/albums';
+import { fetchAlbumById, fetchAlbumsByUserId, selectAlbumsArray } from '../../redux/albums';
 
 const AlbumDetails = ({setAlbumId}) => {
   const [album, setAlbum] = useState('');
   const [creatingAlbum, setCreatingAlbum] = useState(false);
   const dispatch = useDispatch();
-  const userAlbums = useSelector(selectAlbumsArray);
   const user = useSelector((state) => state.session.user);
   const [albumName, setAlbumName] = useState('');
   const [albumCover, setAlbumCover] = useState('');
   const [albumArtist, setAlbumArtist] = useState('');
+  const [albums, setAlbums] = useState([]);
 
+  {/* Grab all albums for user */}
   useEffect(() => {
     if (user) {
-      console.log(`User ID: ${user.id}`);
+      console.log('Fetching albums for user:', user.id);
+      {/* Does this route work? Need to test */}
+      const fetchAlbums = async () => {
+        const data = await dispatch(fetchAlbumsByUserId(user.id)); // 
+        setAlbums(data);
+        console.log('Fetched user albums:', data);
+      };
+
+      fetchAlbums();
     }
-    dispatch(fetchAlbumById(user.id));
   }, [dispatch, user]);
 
-  const handleCreateAlbumOption = () => {
-    setCreatingAlbum(true);
-    setAlbum('');
-  };
-
   const handleAlbumChange = (e) => {
-    console.log('user albums:', userAlbums);
-    console.log(e.target.value);
     
     const selectedValue = e.target.value;
     const selectedValueInt = parseInt(selectedValue, 10);
@@ -37,17 +38,25 @@ const AlbumDetails = ({setAlbumId}) => {
     } else {
       setAlbum(selectedValueInt);
   
-      const selectedAlbum = userAlbums.find((album) => album.id === selectedValueInt);
+      const selectedAlbum = albums.find((album) => album.id === selectedValueInt);
       
       if (selectedAlbum) {
         setAlbumId(selectedAlbum.id);
         setAlbumCover(selectedAlbum.albumCover);
         setAlbumName(selectedAlbum.name);
-        setAlbumArtist(selectedAlbum.artist);
+        setAlbumArtist(selectedAlbum.artist.band_name? selectedAlbum.artist[0].band_name : selectedAlbum.artist[0].first_name + ' ' + selectedAlbum.artist[0].last_name);
+      } else {
+        setAlbumCover('');
+        setAlbumName('');
+        setAlbumArtist('');
       }
     }
   };
   
+  const handleCreateAlbumOption = () => {
+    setCreatingAlbum(true);
+    setAlbum('');
+  };
 
   const handleBackToSelect = () => {
     setCreatingAlbum(false);
@@ -71,8 +80,8 @@ const AlbumDetails = ({setAlbumId}) => {
             >
               <option value=''>Select Album</option>
               <option className='text-primary border-b-2 border-border pb-2' value='create-album'>Create Album</option>
-              {userAlbums.length > 0 ? (
-                userAlbums.map((album) => (
+              {albums.length > 0 ? (
+                albums.map((album) => (
                   <option key={album.id} value={album.id}>
                     {album.name}
                   </option>
@@ -86,15 +95,17 @@ const AlbumDetails = ({setAlbumId}) => {
               <h1
               className='text-1vw'
               >
-                  {albumName ? albumName : 'No Album Selected'}
+                  {albumName}
               </h1>
             </div>
             <div>
               <h1>
                 Artist:
               </h1>
-              <h1>
-
+              <h1 
+              className='text-1vw'
+              >
+                {albumArtist}
               </h1>
             </div>
           </div>

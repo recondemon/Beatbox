@@ -94,54 +94,107 @@ def create_song():
 #     return [like.to_json() for like in likes]
 
 
-@songs.route("/<song_id>", methods=["PUT"])
-@login_required
+@songs.route("/<int:song_id>", methods=["PUT"])
 def edit_song(song_id):
     song = Song.query.get(int(song_id))
+    if not song:
+        return {"errors": "Song not found"}, 404
 
-    form_data = dict(request.form)
+    form_data = request.get_json()
 
-    url = form_data["url"]
-
-    if "file" in dict(request.files).keys():
-        file = request.files["file"]
-        url = upload_file_to_s3(file)
-        if "errors" in url:
-            return {"errors": "BAD FILE"}, 400
-        remove_file_from_s3(song.url)
-        song.url = url
-
-    genre_name = form_data["genre"]
-    genre = Genre.query.filter(Genre.name == genre_name).first()
-    if not genre:
-        genre = Genre(name=genre_name)
-
-    name = file.filename
-    if "name" in form_data.keys():
+    if "name" in form_data:
         song.name = form_data["name"]
-    else:
-        song.name = name
 
-    song.genre_id = genre.id
+    if "url" in form_data:
+        song.url = form_data["url"]
 
-    db.session.commit()
+    genre_name = form_data.get("genre")
+    if genre_name:
+        genre = Genre.query.filter(Genre.name == genre_name).first()
+        if not genre:
+            genre = Genre(name=genre_name)
+            db.session.add(genre)
+        song.genre_id = genre.id
+
+    try:
+        db.session.commit()
+    except Exception as e:
+        print(f"Error committing to the database: {e}")
+        db.session.rollback()
+        return {"errors": "Internal Server Error"}, 500
 
     return song.to_json()
 
-    form = SongForm()
-
-    if form.validate_on_submit():
-        url = upload_file_to_s3(form.file)
-
-        genre_name = form.genre
-
-        genre = Genre.query.filter(Genre.name == genre_name).first()
-
-        if not genre:
-            genre = Genre(name=genre_name)
-
+@songs.route("/<int:song_id>", methods=["DELETE"])
+def delete_song(song_id):
+    try:
         song = Song.query.get(song_id)
         if not song:
-            return jsonify({"error": "Song not found"}), 404
+            return jsonify({"errors": "Song not found"}), 404
 
-        return jsonify(song.to_json())
+        if song.likes:
+            for like in song.likes:
+                db.session.delete(like)
+               
+        db.session.delete(song)
+
+        db.session.commit()
+
+        return jsonify({"message": "Song deleted successfully"}), 200
+    except Exception as e:
+        print(f"Error while deleting song: {e}")
+        db.session.rollback()
+        return jsonify({"errors": "Failed to delete song"}), 500
+
+
+
+# @songs.route("/<song_id>", methods=["PUT"])
+# def edit_song(song_id):
+#     song = Song.query.get(int(song_id))
+
+#     form_data = dict(request.form)
+
+#     url = form_data["url"]
+
+#     if "file" in dict(request.files).keys():
+#         file = request.files["file"]
+#         url = upload_file_to_s3(file)
+#         if "errors" in url:
+#             return {"errors": "BAD FILE"}, 400
+#         remove_file_from_s3(song.url)
+#         song.url = url
+
+#     genre_name = form_data["genre"]
+#     genre = Genre.query.filter(Genre.name == genre_name).first()
+#     if not genre:
+#         genre = Genre(name=genre_name)
+
+#     name = file.filename
+#     if "name" in form_data.keys():
+#         song.name = form_data["name"]
+#     else:
+#         song.name = name
+
+#     song.genre_id = genre.id
+
+#     db.session.commit()
+
+#     return song.to_json()
+
+#     form = SongForm()
+
+    # if form.validate_on_submit():
+    #     url = upload_file_to_s3(form.file)
+
+    #     genre_name = form.genre
+
+    #     genre = Genre.query.filter(Genre.name == genre_name).first()
+
+    #     if not genre:
+    #         genre = Genre(name=genre_name)
+
+    #     song = Song.query.get(song_id)
+    #     if not song:
+    #         return jsonify({"error": "Song not found"}), 404
+
+    #     return jsonify(song.to_json())

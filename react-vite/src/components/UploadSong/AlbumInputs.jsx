@@ -26,24 +26,20 @@ const AlbumInputs = ({ handleBackToSelect, setAlbumId }) => {
   const handleCreateAlbum = async (e) => {
     e.preventDefault();
 
-    // const formData = new FormData();
-    // formData.append('name', newAlbumName);
-    // formData.append('description', newAlbumDescription);
-    // formData.append('release_date', releaseDate);
-    // formData.append('file', albumCoverFile);
-    // formData.append('artist_id', currUserId);
-
     const formData = {
       name: newAlbumName,
       description: newAlbumDescription,
       release_date: releaseDate,
       file: albumCoverFile,
     };
+    
+    {/* Result does not return an Id!! need to fix this */}
 
     try {
       const result = await dispatch(createAlbum(formData));
       if (!result.errors) {
-        setAlbumId(1);
+        console.log('result:', result);
+        setAlbumId(result.id);
         handleBackToSelect();
       } else {
         console.error("Error creating album:", result.errors);

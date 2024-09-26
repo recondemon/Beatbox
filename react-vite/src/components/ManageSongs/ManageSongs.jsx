@@ -1,8 +1,9 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAlbumsByUserId, editAlbum, removeAlbum } from '../../redux/albums';
+import { editAlbum, removeAlbum } from '../../redux/albums';
 import { editSong, removeSong } from '../../redux/songs';
 import { useEffect, useState } from 'react';
-import { ChevronUp, ChevronDown, Edit3, Trash2, Save } from 'lucide-react';
+import { ChevronUp, ChevronDown, Edit3, Trash2, Save, X } from 'lucide-react';
+import ConfirmDeleteModal from './ConfirmDeleteModal';
 
 const ManageSongs = () => {
   const dispatch = useDispatch();
@@ -12,16 +13,14 @@ const ManageSongs = () => {
     albums: [],
     songs: []
   });
-
   const [expandedAlbums, setExpandedAlbums] = useState({});
-  const [editing, setEditing] = useState(false);
-  const [editingImage, setEditingImage] = useState(false);
-
-
-  const [albumName, setAlbumName] = useState('');
-  const [releaseDate, setReleaseDate] = useState('');
-  const [description, setDescription] = useState('');
-
+  const [editingAlbum, setEditingAlbum] = useState(null);
+  const [albumInputValues, setAlbumInputValues] = useState({});
+  const [editingSongs, setEditingSongs] = useState({});
+  const [songInputValues, setSongInputValues] = useState({});
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleteType, setDeleteType] = useState(null); 
 
 
   useEffect(() => {
@@ -43,23 +42,189 @@ const ManageSongs = () => {
     return <div>No albums found</div>;
   }
 
-  const handleEditToggle = () => {
-    setEditing((prev) => !prev);
+  const handleOpenDeleteModal = (id, type) => {
+    setDeleteTarget(id);
+    setDeleteType(type);
+    setDeleteModalOpen(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setDeleteModalOpen(false);
+    setDeleteTarget(null);
+    setDeleteType(null);
+  };
+
+  const handleConfirmDelete = () => {
+    if (deleteType === 'album') {
+      handleDeleteAlbum(deleteTarget);
+    } else if (deleteType === 'song') {
+      handleDeleteSong(deleteTarget);
+    }
+    handleCloseDeleteModal();
+  };
+
+  const handleEditToggle = (album) => {
+    setEditingAlbum(album.id);
+    setAlbumInputValues({
+      ...albumInputValues,
+      [album.id]: {
+        name: album.name,
+        release_date: album.release_date,
+        description: album.description
+      }
+    });
   };
 
   const handleSaveAlbum = (albumId) => {
-    dispatch(editAlbum(albumId, { name: albumName[albumId] }));
-    setEditing(false);
+    const originalAlbum = albumsSongs.albums.find(album => album.id === albumId);
+    const updatedData = {};
+    if (albumInputValues[albumId]?.name && albumInputValues[albumId].name !== originalAlbum.name) {
+      updatedData.name = albumInputValues[albumId].name;
+    } 
+    if (albumInputValues[albumId]?.release_date && albumInputValues[albumId].release_date !== originalAlbum.release_date) {
+      const formattedDate = new Date(albumInputValues[albumId].release_date).toISOString().split('T')[0];
+      updatedData.release_date = formattedDate;
+    } else {
+      updatedData.release_date = new Date(originalAlbum.release_date).toISOString().split('T')[0];
+    } 
+    if (albumInputValues[albumId]?.description && albumInputValues[albumId].description !== originalAlbum.description) {
+      updatedData.description = albumInputValues[albumId].description;
+    }
+    if (Object.keys(updatedData).length === 0) {
+      console.log("No changes detected, not sending the update request.");
+      return;
+    }
+    dispatch(editAlbum(albumId, updatedData))
+      .then((updatedAlbum) => {
+        setAlbumsSongs((prevState) => ({
+          ...prevState,
+          albums: prevState.albums.map((album) =>
+            album.id === albumId ? { ...album, ...updatedData } : album
+          ),
+        })); 
+        setEditingAlbum(null);
+      })
+      .catch((error) => {
+        console.error("Error updating album:", error);
+      });
   };
+  
+  
+  
+  
 
-  const handleSaveSong = (songId) => {
-    dispatch(editSong(songId, { name: songName[songId] }));
-    setEditing(false);
+  const handleInputChange = (albumId, field, value) => {
+    setAlbumInputValues({
+      ...albumInputValues,
+      [albumId]: {
+        ...albumInputValues[albumId],
+        [field]: value
+      }
+    });
   };
 
   const handleDeleteAlbum = (albumId) => {
-    dispatch(removeAlbum(albumId));
-  }
+    console.log('Deleting album:', albumId);
+    dispatch(removeAlbum(albumId)).then(() => {
+      setAlbumsSongs((prevState) => ({
+        ...prevState,
+        albums: prevState.albums.filter((album) => album.id !== albumId),
+        songs: prevState.songs.filter((song) => song.album_id !== albumId),
+      }));
+    });
+  };
+
+  const handleCloseEditing = (albumId) => {
+    if(editingAlbum === albumId){
+      setEditingAlbum(null);
+    }
+    }
+
+    const toggleAlbumExpand = (albumId) => {
+      setExpandedAlbums((prevState) => ({
+        ...prevState,
+        [albumId]: !prevState[albumId],
+      }));
+    };
+
+    const handleEditToggleSongs = (albumId) => {
+      setEditingSongs((prevState) => ({
+        ...prevState,
+        [albumId]: !prevState[albumId],
+      }));
+      const albumSongs = albumsSongs.songs.filter(song => song.album_id === albumId);
+      const songEdits = {};
+      albumSongs.forEach(song => {
+        songEdits[song.id] = { name: song.name };
+      });
+      setSongInputValues(songEdits);
+    };
+
+    const handleSongInputChange = (songId, field, value) => {
+      setSongInputValues({
+        ...songInputValues,
+        [songId]: {
+          ...songInputValues[songId],
+          [field]: value,
+        },
+      });
+    };
+
+    const handleSaveSongs = (albumId) => {
+      const albumSongs = albumsSongs.songs.filter(song => song.album_id === albumId);
+    
+      albumSongs.forEach((song) => {
+        const updatedData = {};
+    
+        if (songInputValues[song.id]?.name && songInputValues[song.id].name !== song.name) {
+          updatedData.name = songInputValues[song.id].name;
+        }
+    
+        if (Object.keys(updatedData).length > 0) {
+          dispatch(editSong(song.id, updatedData)).then((updatedSong) => {
+            setAlbumsSongs((prevState) => ({
+              ...prevState,
+              songs: prevState.songs.map((s) =>
+                s.id === song.id ? { ...s, ...updatedData } : s
+              ),
+            }));
+          });
+        }
+      });
+    
+      setEditingSongs((prevState) => ({
+        ...prevState,
+        [albumId]: false,
+      }));
+    };
+
+    const handleDeleteSong = (songId, albumId) => {
+      dispatch(removeSong(songId)).then(() => {
+        setAlbumsSongs((prevState) => ({
+          ...prevState,
+          songs: prevState.songs.filter((song) => song.id !== songId),
+        }));
+      });
+    };
+
+    const handleCloseEditingSongs = (albumId) => {
+      const originalSongs = albumsSongs.songs.filter(song => song.album_id === albumId);
+      
+      const resetSongValues = {};
+      originalSongs.forEach((song) => {
+        resetSongValues[song.id] = { name: song.name };
+      });
+    
+      setSongInputValues({
+        ...songInputValues,
+        [albumId]: resetSongValues,
+      });
+    
+      setEditingSongs((prevEditingSongs) => ({
+        ...prevEditingSongs,
+        [albumId]: false,
+      }));
+    };
 
   return (
     <div className="flex flex-col mx-auto mt-6 w-4/5 py-6 items-center min-h-[70vh]">
@@ -68,7 +233,7 @@ const ManageSongs = () => {
       className='grid grid-cols-2 gap-4'
       >
         {albumsSongs.albums.map((album => ( 
-        <div className='bg-card'>
+        <div key={album.id} className='bg-card'>
             <div className='flex'>
               <div className='flex flex-col gap-4 p-4'>
                 <div 
@@ -84,62 +249,64 @@ const ManageSongs = () => {
                 </button>
               </div>
               <div className='flex flex-col p-4 gap-2'>
-                {editing ? (
+                {editingAlbum === album.id ? (
+                <div className='flex flex-col gap-2'>
                   <input
                     type='text'
-                    value={album.name}
-                    onChange={(e) => setAlbumName(e.target.value)}
+                    value={albumInputValues[album.id]?.name || ''}
+                    onChange={(e) => handleInputChange(album.id, 'name', e.target.value)}
+                    placeholder={album.name}
                     className='bg-input text-secondary-foreground p-2 w-full'
                   />
-                ) : (
-                  <h1>
-                    {album.name}
-                  </h1>
-                )}
-                {editing ? (
                   <input
                     type='date'
-                    value={album.release_date}
-                    onChange={(e) => setReleaseDate(e.target.value)}
+                    value={albumInputValues[album.id]?.release_date || ''}
+                    onChange={(e) => handleInputChange(album.id, 'release_date', e.target.value)}
+                    placeholder={album.release_date}
                     className='bg-input text-secondary-foreground p-2 w-full'
                   />
-                ) : (
-                  <h1>
-                    {album.release_date}
-                  </h1>
-                )}
-                {editing ? (
                   <textarea
                     type='text'
-                    value={album.description}
-                    onChange={(e) => setDescription(e.target.value)}
+                    value={albumInputValues[album.id]?.description || ''}
+                    onChange={(e) => handleInputChange(album.id, 'description', e.target.value)}
                     className='bg-input text-secondary-foreground p-2 w-full'
                   />
+                </div>
                 ) : (
-                  <h1>
-                    {album.description}
-                  </h1>
+                  <div className='flex flex-col gap-2'>
+                    <h1>{album.name}</h1>
+                    <h1>{album.release_date}</h1>
+                    <h1>{album.description}</h1>
+                  </div>
                 )}
               </div>
               <div className='pr-2 pt-2'>
-                {editing ? (
+                {editingAlbum === album.id ? (
+                <div className='flex gap-2'>
                   <button
-                    onClick={() => handleSaveAlbum(album.id)}
+                     onClick={() => handleSaveAlbum(album.id)}
                     className='p-2 text-green-600 rounded-lg'
                   >
                     <Save />
                   </button>
+                  <button
+                    onClick={() => handleCloseEditing(album.id)}
+                    className='p-2 text-red-500 rounded-lg'
+                  >
+                    <X />
+                  </button>
+                </div>
                 ) : (
                   <div className='flex gap-2'>
                     <button
-                      onClick={() => setEditing(true)}
-                      className='p-2 text-yellow-500 rounded-lg'
+                      onClick={() => handleEditToggle(album)}
+                      className='p-2 text-yellow-500 rounded-lg hover:text-foreground'
                     >
                       <Edit3 />
                     </button>
                     <button
-                      onClick={handleDeleteAlbum}
-                      className='p-2 text-red-500 rounded-lg'
+                      onClick={() => handleOpenDeleteModal(album.id, 'album')}
+                      className='p-2 text-red-500 rounded-lg hover:text-foreground'
                     >
                       <Trash2 />
                     </button>
@@ -149,20 +316,78 @@ const ManageSongs = () => {
             </div>
             {/* need to add songs here */}
             <div className="mt-1 text-1vw px-4">
-              <h1>Songs - {albumsSongs.songs.filter(song => song.album_id === album.id).length}
-              </h1>
-              {albumsSongs.songs.filter(song => song.album_id === album.id).map((song) => (
-                <p 
-                key={song.id}
-                className='mt-2'
-                >
-                  {song.name}
-                </p>
-              ))}
+              <div className="flex justify-between items-center">
+                <div className='flex gap-4'>
+                  <h1>Songs - {albumsSongs.songs.filter(song => song.album_id === album.id).length}</h1>
+                  <button onClick={() => toggleAlbumExpand(album.id)}>
+                    {expandedAlbums[album.id] ? <ChevronUp /> : <ChevronDown />}
+                  </button>
+                  {editingSongs[album.id] ? (
+                    <div>
+                      <button
+                        onClick={() => handleSaveSongs(album.id)}
+                        className="p-2 text-green-600 rounded-lg"
+                      >
+                        <Save />
+                      </button>
+                      <button
+                        onClick={() => handleCloseEditingSongs(album.id)}
+                        className="p-2 text-red-500 rounded-lg"
+                      >
+                        <X />
+                      </button>
+                    </div>
+                  ): (
+                    <div className='flex gap-4'>
+                      <button onClick={() => handleEditToggleSongs(album.id)}>
+                        <Edit3 className="ml-2 text-yellow-500" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+              {expandedAlbums[album.id] && (
+                <div>
+                  {albumsSongs.songs.filter(song => song.album_id === album.id).map((song) => (
+                    <div key={song.id} className="flex items-center mt-2">
+                      {editingSongs[album.id] ? (
+                        <input
+                          type="text"
+                          value={songInputValues[song.id]?.name || song.name}
+                          onChange={(e) => handleSongInputChange(song.id, 'name', e.target.value)}
+                          className="bg-input text-secondary-foreground p-2 w-full"
+                        />
+                      ) : (
+                        <p className="w-full">{song.name}</p>
+                      )}
+                      {editingSongs[album.id] && (
+                        <button
+                          onClick={() => handleOpenDeleteModal(song.id, 'song')}
+                          className="p-2 text-red-500"
+                        >
+                          <Trash2 />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                  {editingSongs[album.id] && (
+                    <div className="mt-2">
+
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
-        </div>
+          </div>
         )))}
       </div>
+      {/* Delete Confirmation Modal */}
+        <ConfirmDeleteModal
+        isOpen={isDeleteModalOpen}
+        onClose={handleCloseDeleteModal}
+        onConfirm={handleConfirmDelete}
+        itemType={deleteType}
+      />
     </div>
   );
 };

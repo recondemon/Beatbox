@@ -109,7 +109,9 @@ class JSONable:
     # You can Override this as well
     @json_basic
     def to_dict_basic(self):
-        return self.attributes()
+        attributes = self.attributes()
+        attributes.append("id")  # Ensure `id` is included
+        return {attribute: getattr(self, attribute) for attribute in attributes}
 
     # You can Override this as well
     @json

@@ -171,7 +171,7 @@ export default function ListDetails({ list }) {
             <h1 className='text-3xl font-bold'>{list?.name}</h1>
 
             <p className='text-sm'>
-              {`${artist || owner} • `}
+              {`${artist || owner} `}
               {releaseYear && <>{` • ${releaseYear} • `}</>} {songCount}
               {`${songCount === 1 ? ' song' : ' songs'}`}
             </p>

@@ -1,18 +1,11 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLoaderData, useNavigate } from 'react-router-dom';
 import { fetchAlbums, selectAlbumsArray } from '../../redux/albums';
-import {
-  fetchPlaylists,
-  selectPlaylistsArray,
-  fetchLiked,
-  selectLiked,
-  // addLike,
-} from '../../redux/playlists';
+import { fetchPlaylists, selectPlaylistsArray, fetchLiked } from '../../redux/playlists';
 import { useEffect, useState } from 'react';
 import { fetchSongs, selectSongsArray } from '../../redux/songs';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { clearQueue, addToQueue } from '../../redux/queue';
-// import { FaRegHeart, FaHeart } from 'react-icons/fa';
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -22,9 +15,7 @@ const Home = () => {
   const albums = useSelector(selectAlbumsArray);
   const playlists = useSelector(selectPlaylistsArray);
   const songs = useSelector(selectSongsArray);
-  // const likedPlaylist = useLoaderData();
-  const likedSongs = useSelector(selectLiked);
-  // const likeIds = likedSongs?.map(song => song.id) || [];
+  const owner = user?.bandName || `${user?.firstName} ${user?.lastName}`;
 
   useEffect(() => {
     dispatch(fetchAlbums());
@@ -201,22 +192,24 @@ const Home = () => {
                 id='playlists-section'
                 className='flex overflow-x-auto overflow-y-hidden whitespace-nowrap gap-4 mx-auto min-w-[70vw] max-w-[70vw] scrollbar-thin scrollbar-thumb-primary scrollbar-thumb-rounded-full scrollbar-track-transparent'
               >
-                {filterContent(playlists).map(playlist => (
-                  <Link
-                    key={playlist.id}
-                    to={`/playlist/${playlist.id}`}
-                  >
-                    <div className='h-fit rounded-lg w-56 inline-block text-center shadow text-foreground justify-center'>
-                      <img
-                        className='cursor-pointer transition border-2 border-muted duration-200 hover:border-accent w-full h-full object-cover rounded-md'
-                        src='/playlist.jpeg'
-                        alt='playlist image'
-                      />
-
-                      <p className='text-lg font-semibold whitespace-pre-wrap'>{playlist.name}</p>
-                    </div>
-                  </Link>
-                ))}
+                {filterContent(playlists).map(playlist =>
+                  playlist.owner[0].band_name !== owner &&
+                  `${playlist.owner[0].first_name} ${playlist.owner[0].last_name}` !== owner ? (
+                    <Link
+                      key={playlist.id}
+                      to={`/playlist/${playlist.id}`}
+                    >
+                      <div className='h-fit rounded-lg w-56 inline-block text-center shadow text-foreground justify-center'>
+                        <img
+                          className='cursor-pointer transition border-2 border-muted duration-200 hover:border-accent w-full h-full object-cover rounded-md'
+                          src='/playlist.jpeg'
+                          alt='playlist image'
+                        />
+                        <p className='text-lg font-semibold whitespace-pre-wrap'>{playlist.name}</p>
+                      </div>
+                    </Link>
+                  ) : null,
+                )}
               </div>
               <ChevronRight
                 className='cursor-pointer'

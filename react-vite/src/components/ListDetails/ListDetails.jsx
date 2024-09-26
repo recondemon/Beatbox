@@ -156,7 +156,7 @@ export default function ListDetails({ list }) {
   }
 
   return (
-    <div className='container mt-14 xl:max-w-fit sm:max-w-5xl max-h-[calc(100vh-200px)] overflow-y-auto scrollbar-thin scrollbar-thumb-primary scrollbar-thumb-rounded-full scrollbar-track-transparent'>
+    <div className='mt-14 mx-44 xl:max-w-fit sm:max-w-5xl max-h-[calc(100vh-200px)] overflow-y-auto scrollbar-thin scrollbar-thumb-primary scrollbar-thumb-rounded-full scrollbar-track-transparent'>
       <div className='mb-6 w-[80vw]'>
         <span className='flex gap-2 items-center'>
           <img
@@ -175,6 +175,7 @@ export default function ListDetails({ list }) {
               {releaseYear && <>{` ${releaseYear} • `}</>} {songCount}
               {`${songCount === 1 ? ' song' : ' songs'}`}
             </p>
+
             <p className='text-sm py-2 text-wrap w-fit'>{list?.description}</p>
 
             <div className='flex gap-4'>
@@ -238,7 +239,7 @@ export default function ListDetails({ list }) {
                         currentSong?.id === song.id ? 'text-green-500' : ''
                       }`}
                     >
-                      {artist}
+                      {song.artist_id in artists && artists[song.artist_id]}
                     </p>
                   </div>
 

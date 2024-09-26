@@ -165,19 +165,9 @@ export default function ListDetails({ list }) {
       <div className="mb-6 w-[80vw]">
         <span className="flex gap-2 items-center">
           <img
-<<<<<<< HEAD
             className='max-w-64 max-h-64 rounded-md border border-accent'
             src={list?.name === 'Liked' ? '/liked.jpeg' : coverArt}
             alt='album artwork'
-||||||| 0775854
-            className='max-w-64 max-h-64 rounded-md border border-accent'
-            src={list?.name === 'Liked' ? '/liked.jpeg' : list.albumCover}
-            alt='album artwork'
-=======
-            className="max-w-64 max-h-64 rounded-md border border-accent"
-            src={list?.name === "Liked" ? "/liked.jpeg" : list.albumCover}
-            alt="album artwork"
->>>>>>> 0d2cf1b728665c1432382a351b8d0a712d74c099
           />
 
           <div className="flex flex-col justify-center space-y-1">

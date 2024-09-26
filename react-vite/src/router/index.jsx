@@ -13,19 +13,16 @@ export const router = createBrowserRouter([
   {
     element: <Layout />,
     loader: async () => {
-      const res = await fetch('/api/playlists/liked');
-      const likes = await res.json();
-      return likes;
+      const likedRes = await fetch('/api/playlists/liked');
+      const currRes = await fetch('/api/playlists/current');
+      const liked = await likedRes.json();
+      const currPlaylists = await currRes.json();
+      return { liked, currPlaylists };
     },
     children: [
       {
         path: '/',
         element: <Home />,
-        loader: async () => {
-          const res = await fetch('/api/playlists/liked');
-          const likes = await res.json();
-          return likes;
-        },
       },
       {
         path: 'login',

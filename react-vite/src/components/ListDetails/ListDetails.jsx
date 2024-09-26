@@ -20,8 +20,8 @@ export default function ListDetails({ list }) {
   const songCount = list?.songs?.length;
   const liked = useSelector(selectLiked);
   const likedIds = liked?.map(song => song.id) || [];
-  // const [allSongsLiked, setAllSongsLiked] = useState(false);
   const currentSong = useSelector(selectCurrentSong);
+  const coverArt = list?.albumCover || '/playlist.jpeg';
 
   useEffect(() => {
     if (url.includes('playlist') && list?.songs) {
@@ -156,7 +156,7 @@ export default function ListDetails({ list }) {
         <span className='flex gap-2 items-center'>
           <img
             className='max-w-64 max-h-64 rounded-md border border-accent'
-            src={list?.name === 'Liked' ? '/liked.jpeg' : list.albumCover}
+            src={list?.name === 'Liked' ? '/liked.jpeg' : coverArt}
             alt='album artwork'
           />
 

@@ -1,20 +1,10 @@
-import { useState, useEffect } from "react";
-import { CirclePlus, Play } from "lucide-react";
-import {
-  fetchLiked,
-  selectLiked,
-  addLike,
-  fetchPlaylists,
-} from "../../redux/playlists";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchArtist } from "../../redux/artists";
-import { FaRegHeart, FaHeart } from "react-icons/fa";
-import {
-  selectCurrentSong,
-  addToQueue,
-  clearQueue,
-  setCurrentSongIndex,
-} from "../../redux/queue";
+import { useState, useEffect } from 'react';
+import { CirclePlus, Play } from 'lucide-react';
+import { fetchLiked, selectLiked, addLike, fetchPlaylists } from '../../redux/playlists';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchArtist } from '../../redux/artists';
+import { FaRegHeart, FaHeart } from 'react-icons/fa';
+import { selectCurrentSong, addToQueue, clearQueue, setCurrentSongIndex } from '../../redux/queue';
 
 export default function ListDetails({ list }) {
   const dispatch = useDispatch();
@@ -26,24 +16,29 @@ export default function ListDetails({ list }) {
       ? `${list?.artist[0].band_name}`
       : `${list?.artist[0].first_name} ${list?.artist[0].last_name}`
     : null;
+  const owner = list?.owner
+    ? list?.owner[0].band_name
+      ? `${list?.owner[0].band_name}`
+      : `${list?.owner[0].first_name} ${list?.owner[0].last_name}`
+    : null;
   const releaseYear = new Date(list?.releaseDate).getFullYear() || null;
   const songCount = list?.songs?.length;
   const liked = useSelector(selectLiked);
-  const likedIds = liked?.map((song) => song.id) || [];
+  const likedIds = liked?.map(song => song.id) || [];
   const currentSong = useSelector(selectCurrentSong);
   const coverArt = list?.albumCover || '/playlist.jpeg';
 
   useEffect(() => {
-    if (url.includes("playlist") && list?.songs) {
+    if (url.includes('playlist') && list?.songs) {
       const fetchArtists = async () => {
-        const artistPromises = list?.songs?.map(async (song) =>
-          dispatch(fetchArtist(song.artist_id))
+        const artistPromises = list?.songs?.map(async song =>
+          dispatch(fetchArtist(song.artist_id)),
         );
 
         const artistData = await Promise.all(artistPromises);
         const artists = {};
 
-        artistData.forEach((artist) => {
+        artistData.forEach(artist => {
           const artistName = artist.bandName
             ? artist.bandName
             : `${artist.firstName} ${artist.lastName}`;
@@ -67,23 +62,23 @@ export default function ListDetails({ list }) {
     // FIXME: Optional chaining cuz I was getting a random null error...should probably fix that...
     const duration = audioElement?.duration;
 
-    setSongDurations((prevDurations) => ({
+    setSongDurations(prevDurations => ({
       ...prevDurations,
       [songId]: duration,
     }));
   };
 
-  const formatTime = (time) => {
+  const formatTime = time => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
   const handlePlayAllSongs = () => {
     try {
       if (list.songs?.length > 0) {
         dispatch(clearQueue()).then(() => {
-          list?.songs?.forEach((song) => {
+          list?.songs?.forEach(song => {
             dispatch(addToQueue(song));
           });
         });
@@ -120,7 +115,7 @@ export default function ListDetails({ list }) {
     }
   };
 
-  const playSong = (song) => {
+  const playSong = song => {
     dispatch(clearQueue()).then(() => dispatch(addToQueue(song)));
 
     // const structuredSong = {
@@ -152,7 +147,7 @@ export default function ListDetails({ list }) {
     /* TODO: clicking opens drop down with options like: add to playlist, add to queue, etc.  */
   };
 
-  const handleLike = (song) => {
+  const handleLike = song => {
     dispatch(addLike(list.id, song));
   };
 
@@ -161,32 +156,30 @@ export default function ListDetails({ list }) {
   }
 
   return (
-    <div className="container mt-14 xl:max-w-fit sm:max-w-5xl max-h-[calc(100vh-200px)] overflow-y-auto scrollbar-thin scrollbar-thumb-primary scrollbar-thumb-rounded-full scrollbar-track-transparent">
-      <div className="mb-6 w-[80vw]">
-        <span className="flex gap-2 items-center">
+    <div className='container mt-14 xl:max-w-fit sm:max-w-5xl max-h-[calc(100vh-200px)] overflow-y-auto scrollbar-thin scrollbar-thumb-primary scrollbar-thumb-rounded-full scrollbar-track-transparent'>
+      <div className='mb-6 w-[80vw]'>
+        <span className='flex gap-2 items-center'>
           <img
             className='max-w-64 max-h-64 rounded-md border border-accent'
             src={list?.name === 'Liked' ? '/liked.jpeg' : coverArt}
             alt='album artwork'
           />
 
-          <div className="flex flex-col justify-center space-y-1">
-            <p className="font-semibold">
-              {url.includes("playlist") ? "Playlist" : "Album"}
+          <div className='flex flex-col justify-center space-y-1'>
+            <p className='font-semibold'>{url.includes('playlist') ? 'Playlist' : 'Album'}</p>
+
+            <h1 className='text-3xl font-bold'>{list?.name}</h1>
+
+            <p className='text-sm'>
+              {`${artist || owner} • `}
+              {releaseYear && <>{` • ${releaseYear} • `}</>} {songCount}
+              {`${songCount === 1 ? ' song' : ' songs'}`}
             </p>
+            <p className='text-sm py-2 text-wrap w-fit'>{list?.description}</p>
 
-            <h1 className="text-3xl font-bold">{list?.name}</h1>
-
-            <p className="text-sm">
-              {artist}
-              {releaseYear && <>{` • ${releaseYear}`}</>} • {songCount}{" "}
-              {`${songCount === 1 ? "song" : "songs"}`}
-            </p>
-            <p className="text-sm py-2 text-wrap w-fit">{list?.description}</p>
-
-            <div className="flex gap-4">
+            <div className='flex gap-4'>
               <button
-                className="p-3 bg-green-500 w-fit rounded-full"
+                className='p-3 bg-green-500 w-fit rounded-full'
                 onClick={handlePlayAllSongs}
               >
                 <Play />
@@ -196,21 +189,21 @@ export default function ListDetails({ list }) {
         </span>
       </div>
 
-      <ul className="bg-card text-card-foreground w-full border border-border h-2/3 rounded-md">
+      <ul className='bg-card text-card-foreground w-full border border-border h-2/3 rounded-md'>
         {list?.songs?.length ? (
-          list?.songs?.map((song) => (
-            <li className="flex flex-col hover:bg-muted h-full py-0">
-              <div className="flex mx-4 items-center py-4">
-                <div className="flex gap-4 items-center mr-2">
+          list?.songs?.map(song => (
+            <li className='flex flex-col hover:bg-muted h-full py-0'>
+              <div className='flex mx-4 items-center py-4'>
+                <div className='flex gap-4 items-center mr-2'>
                   {song.id in likedIds ? (
                     <FaHeart
-                      className="cursor-pointer text-primary font-xl"
+                      className='cursor-pointer text-primary font-xl'
                       size={24}
                     />
                   ) : (
                     <FaRegHeart
                       onClick={() => handleLike(song)}
-                      className="cursor-pointer text-primary font-xl"
+                      className='cursor-pointer text-primary font-xl'
                       size={24}
                     />
                   )}
@@ -220,60 +213,56 @@ export default function ListDetails({ list }) {
                 </div>
 
                 <div
-                  className="flex w-full mx-4 items-center justify-evenly cursor-pointer"
+                  className='flex w-full mx-4 items-center justify-evenly cursor-pointer'
                   onClick={() => playSong(song)}
                 >
                   <audio
                     src={song.url}
-                    onLoadedMetadata={(e) =>
-                      handleLoadedMetadata(song.id, e.target)
-                    }
-                    className="hidden"
+                    onLoadedMetadata={e => handleLoadedMetadata(song.id, e.target)}
+                    className='hidden'
                   />
 
-                  <div className="flex-1">
+                  <div className='flex-1'>
                     <h3
                       className={`font-semibold ${
-                        currentSong?.id === song.id ? "text-green-500" : ""
+                        currentSong?.id === song.id ? 'text-green-500' : ''
                       }`}
                     >
                       {song.name}
                     </h3>
                   </div>
 
-                  <div className="flex-1 text-center">
+                  <div className='flex-1 text-center'>
                     <p
                       className={`font-semibold ${
-                        currentSong?.id === song.id ? "text-green-500" : ""
+                        currentSong?.id === song.id ? 'text-green-500' : ''
                       }`}
                     >
                       {artist}
                     </p>
                   </div>
 
-                  <div className="flex-1 text-right">
+                  <div className='flex-1 text-right'>
                     <p
                       className={`font-semibold ${
-                        currentSong?.id === song.id ? "text-green-500" : ""
+                        currentSong?.id === song.id ? 'text-green-500' : ''
                       }`}
                     >
-                      {songDurations[song.id]
-                        ? formatTime(songDurations[song.id])
-                        : "--:--"}
+                      {songDurations[song.id] ? formatTime(songDurations[song.id]) : '--:--'}
                     </p>
                   </div>
                 </div>
               </div>
 
               {list?.songs[songCount - 1] === song ? (
-                ""
+                ''
               ) : (
-                <hr className="border-muted w-[99%] self-center mt-4" />
+                <hr className='border-muted w-[99%] self-center mt-4' />
               )}
             </li>
           ))
         ) : (
-          <h2 className="text-center text-2xl mt-2">No songs yet</h2>
+          <h2 className='text-center text-2xl mt-2'>No songs yet</h2>
         )}
       </ul>
     </div>

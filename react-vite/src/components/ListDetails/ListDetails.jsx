@@ -121,7 +121,7 @@ export default function ListDetails({ list }) {
   };
 
   const playSong = (song) => {
-    dispatch(clearQueue());
+    dispatch(clearQueue()).then(() => dispatch(addToQueue(song)));
 
     // const structuredSong = {
     //   album: [
@@ -144,8 +144,8 @@ export default function ListDetails({ list }) {
     //   url: song.url,
     // };
 
-    dispatch(setCurrentSongIndex());
-    dispatch(addToQueue(song));
+    // dispatch(setCurrentSongIndex());
+    // dispatch(addToQueue(song));
   };
 
   const handleAddClick = () => {

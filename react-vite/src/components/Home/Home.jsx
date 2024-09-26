@@ -1,5 +1,6 @@
+import './home.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useLoaderData, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { fetchAlbums, selectAlbumsArray } from '../../redux/albums';
 import { fetchPlaylists, selectPlaylistsArray, fetchLiked } from '../../redux/playlists';
 import { useEffect, useState } from 'react';
@@ -23,19 +24,6 @@ const Home = () => {
     dispatch(fetchSongs());
     dispatch(fetchLiked());
   }, [dispatch]);
-
-  // const handleLike = song => {
-  //   dispatch(addLike(likedPlaylist.id, song));
-  // };
-
-  // const shuffleArray = array => {
-  //   const shuffled = [...array];
-  //   for (let i = shuffled.length - 1; i > 0; i--) {
-  //     const j = Math.floor(Math.random() * (i + 1));
-  //     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  //   }
-  //   return shuffled;
-  // };
 
   const handleScroll = (direction, section) => {
     const container = document.getElementById(section);
@@ -64,23 +52,6 @@ const Home = () => {
     return (
       <div className='h-[calc(100vh-64px)] flex flex-col items-center justify-center overflow-hidden'>
         <h1 className='reflection relative text-3xl text-white'>Unlock Your Music Adventure</h1>
-
-        <style jsx>{`
-          .reflection::after {
-            content: 'Unlock Your Music Adventure';
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            transform: scaleY(-1);
-            color: rgba(255, 255, 255, 0.4);
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
-            pointer-events: none;
-            mask-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.5), transparent);
-          }
-        `}</style>
       </div>
     );
   }

@@ -270,7 +270,7 @@ export default function ListDetails({ list }) {
             </li>
           ))
         ) : (
-          <h2 className='text-center text-2xl mt-2'>No songs yet</h2>
+          <h2 className='text-center text-2xl my-2'>No songs yet</h2>
         )}
       </ul>
     </div>

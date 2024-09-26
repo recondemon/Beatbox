@@ -5,7 +5,7 @@ const Sidebar = () => {
   const user = useSelector(state => state.session.user);
   const { liked, currPlaylists } = useLoaderData();
 
-  if (!user) {
+  if (!user || !currPlaylists) {
     return;
   }
 

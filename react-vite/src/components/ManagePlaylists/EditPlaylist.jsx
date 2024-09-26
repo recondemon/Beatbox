@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { CirclePlus, Play } from 'lucide-react';
+import { ChevronDown, ChevronUp, CircleMinus, Trash2, } from 'lucide-react';
 import { fetchLiked, selectLiked, addLike, fetchPlaylists, unlike } from '../../redux/playlists';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchArtist } from '../../redux/artists';
@@ -7,6 +7,45 @@ import { FaRegHeart, FaHeart } from 'react-icons/fa';
 import { selectCurrentSong, addToQueue, clearQueue, setCurrentSongIndex } from '../../redux/queue';
 
 const EditPlaylist = ({list}) => {
+  list = {
+    name: 'Liked',
+    artist: [
+      {
+        band_name: 'Liked',
+        first_name: 'Liked',
+        last_name: 'Liked',
+      },
+    ],
+    owner: [
+      {
+        band_name: 'Liked',
+        first_name: 'Liked',
+        last_name: 'Liked',
+      },
+    ],
+    releaseDate: '2022-02-22T00:00:00.000Z',
+    songs: [
+      {
+        id: 6,
+        name: 'My Disaster',
+        artist_id: 4,
+        url: 'https://beatbox-songs.s3.us-east-2.amazonaws.com/Seether/Isolate+and+Medicate/My+Disaster.mp3',
+      },
+      {
+        id: 3,
+        name: 'In the End',
+        artist_id: 3,
+        url: 'https://beatbox-songs.s3.us-east-2.amazonaws.com/Linkin+Park/Hybrid+Theory/In+the+End.mp3',       
+      },
+      {
+        id: 3,
+        name: 'Sabotage',
+        artist_id: 8,
+        url: 'https://beatbox-songs.s3.us-east-2.amazonaws.com/Beastie+Boys/Sabotage.mp3',
+      }
+
+    ],
+  }
   const dispatch = useDispatch();
   const [artists, setArtists] = useState({});
   const [songDurations, setSongDurations] = useState({});
@@ -28,7 +67,7 @@ const EditPlaylist = ({list}) => {
   const coverArt = list?.albumCover || '/playlist.jpeg';
 
   useEffect(() => {
-    if (url.includes('playlist') && list?.songs) {
+    if (list?.songs) {
       const fetchArtists = async () => {
         const artistPromises = list?.songs?.map(async song =>
           dispatch(fetchArtist(song.artist_id)),
@@ -49,7 +88,7 @@ const EditPlaylist = ({list}) => {
 
       fetchArtists();
     }
-  }, [dispatch, list?.songs, url]);
+  }, [dispatch, list?.songs]);
 
   useEffect(() => {
     dispatch(fetchLiked());
@@ -90,8 +129,6 @@ const EditPlaylist = ({list}) => {
           />
 
           <div className='flex flex-col justify-center space-y-1'>
-            <p className='font-semibold'>{url.includes('playlist') ? 'Playlist' : 'Album'}</p>
-
             {/* Edit Playlist Name */}
             <label 
               htmlFor='name'
@@ -104,6 +141,7 @@ const EditPlaylist = ({list}) => {
               type='text' 
               className='' 
               value={list?.name} 
+              placeholder='Playlist Name'
               onChange={/* handleNameChange */ () => {}}
             />
 
@@ -118,8 +156,9 @@ const EditPlaylist = ({list}) => {
             <textarea 
               id='description'
               title='description'
-              className=''
+              className='bg-input w-80 h-20 text-secondaryForeground rounded-lg'
               value={list?.description}
+              placeholder='Description'
               onChange={/* handleDescriptionChange */ () => {}}
             />
           </div>
@@ -129,9 +168,28 @@ const EditPlaylist = ({list}) => {
         {list?.songs?.length ? (
           list?.songs?.map((song, index) => (
             <li key={song.id} className='flex items-center py-4 hover:bg-muted'>
-              {/* Song number */}
-              <div className='mr-4'>{index + 1}.</div>
-
+              <div className='flex gap-4 mx-4'>
+                {/* Song number */}
+                <div className=''>{index + 1}.</div>
+                {/* Remove song from playlist */}
+                <button
+                  onClick={() => removeSongFromPlaylist(song.id)}
+                  className='text-red-500 ml-2'
+                >
+                  <CircleMinus />
+                </button>
+                {/* Buttons to reorder songs */}
+                <button 
+                onClick={() => moveSongUp(index)} className='text-gray-500'
+                >
+                  <ChevronUp />
+                </button>
+                <button 
+                onClick={() => moveSongDown(index)} className='text-gray-500'
+                >
+                  <ChevronDown />
+                </button>
+              </div>
               {/* Song content */}
               <div className='flex w-full mx-2 items-center justify-evenly cursor-pointer'>
                 <audio
@@ -169,24 +227,6 @@ const EditPlaylist = ({list}) => {
                     {songDurations[song.id] ? formatTime(songDurations[song.id]) : '--:--'}
                   </p>
                 </div>
-              </div>
-
-              {/* Buttons to reorder songs */}
-              <div className='flex gap-2'>
-                <button onClick={() => moveSongUp(index)} className='text-gray-500'>
-                  <ChevronUp />
-                </button>
-                <button onClick={() => moveSongDown(index)} className='text-gray-500'>
-                  <ChevronDown />
-                </button>
-
-                {/* Remove song from playlist */}
-                <button
-                  onClick={() => removeSongFromPlaylist(song.id)}
-                  className='text-red-500 ml-2'
-                >
-                  <Trash2 />
-                </button>
               </div>
             </li>
           ))

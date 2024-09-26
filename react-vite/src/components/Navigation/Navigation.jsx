@@ -30,6 +30,9 @@ const Navigation = () => {
         <NavLink to="/">Home</NavLink>
       </li>
       <li>
+        <NavLink to='/manage/playlistId'>Edit Playlist</NavLink>
+      </li>
+      <li>
         <ProfileButton />
       </li>
     </ul>

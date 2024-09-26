@@ -6,7 +6,10 @@ import {
 } from "../../../redux/myPlaylists";
 import { selectLikedPlaylist, fetchLikedPlaylist } from "../../../redux/liked";
 import { fetchLibrary, selectLibraryPlaylist } from "../../../redux/library";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { SquarePlus } from "lucide-react";
+import CreatePlaylistModal from "../../ManagePlaylists/CreatePlaylistModal";
+import CreatePlaylistForm from "../../ManagePlaylists/CreatePlaylistForm";
 
 const Sidebar = () => {
   const user = useSelector((state) => state.session.user);
@@ -14,11 +17,21 @@ const Sidebar = () => {
   const liked = useSelector(selectLikedPlaylist);
   const library = useSelector(selectLibraryPlaylist);
   const dispatch = useDispatch();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   useEffect(() => {
     dispatch(fetchLikedPlaylist());
     dispatch(fetchLibrary());
     dispatch(fetchMyPlaylists());
   }, [dispatch]);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
   if (!user) {
     return;
@@ -27,6 +40,14 @@ const Sidebar = () => {
   return (
     <div className="absolute top-20 left-4">
       <div className="flex flex-col h-full bg-popover rounded-md">
+        <div className="flex flex-col p-4">
+          <button
+            onClick={handleOpenModal}
+            className="bg-card flex justify-center items-center rounded-md"
+          >
+            <SquarePlus className='text-primary bg-card' size={54}/>
+          </button>
+        </div>
         <div className="flex flex-col p-4 gap-4">
           <Link to={`/playlist/${library.id}`}title={library?.name}>
             <img
@@ -58,6 +79,11 @@ const Sidebar = () => {
           </div>
         ))}
       </div>
+
+      <CreatePlaylistModal isOpen={isModalOpen} onClose={handleCloseModal}>
+        <CreatePlaylistForm />
+      </CreatePlaylistModal>
+
     </div>
   );
 };

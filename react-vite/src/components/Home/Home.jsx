@@ -1,5 +1,6 @@
+import './home.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useLoaderData, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { fetchAlbums, selectAlbumsArray } from '../../redux/albums';
 import { fetchPlaylists, selectPlaylistsArray, fetchLiked } from '../../redux/playlists';
 import { useEffect, useState } from 'react';
@@ -23,19 +24,6 @@ const Home = () => {
     dispatch(fetchSongs());
     dispatch(fetchLiked());
   }, [dispatch]);
-
-  // const handleLike = song => {
-  //   dispatch(addLike(likedPlaylist.id, song));
-  // };
-
-  // const shuffleArray = array => {
-  //   const shuffled = [...array];
-  //   for (let i = shuffled.length - 1; i > 0; i--) {
-  //     const j = Math.floor(Math.random() * (i + 1));
-  //     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  //   }
-  //   return shuffled;
-  // };
 
   const handleScroll = (direction, section) => {
     const container = document.getElementById(section);
@@ -63,7 +51,7 @@ const Home = () => {
   if (!user) {
     return (
       <div className='h-[calc(100vh-64px)] flex flex-col items-center justify-center overflow-hidden'>
-        <h1 className='text-3xl'>Unlock Your Music Adventure</h1>
+        <h1 className='reflection relative text-3xl text-white'>Unlock Your Music Adventure</h1>
       </div>
     );
   }

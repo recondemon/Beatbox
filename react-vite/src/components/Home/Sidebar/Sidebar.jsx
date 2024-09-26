@@ -4,15 +4,18 @@ import { Link, useLoaderData } from 'react-router-dom';
 const Sidebar = () => {
   const user = useSelector(state => state.session.user);
   const { liked, currPlaylists } = useLoaderData();
+  let filteredPlaylists = [];
 
   if (!user || !currPlaylists) {
     return;
   }
 
-  const filteredPlaylists = currPlaylists?.filter(
-    playlist =>
-      playlist.name !== 'Liked' && playlist.name !== 'Queue' && playlist.name !== 'Library',
-  );
+  if (currPlaylists) {
+    filteredPlaylists = currPlaylists?.filter(
+      playlist =>
+        playlist.name !== 'Liked' && playlist.name !== 'Queue' && playlist.name !== 'Library',
+    );
+  }
 
   return (
     currPlaylists && (

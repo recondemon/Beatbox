@@ -14,7 +14,6 @@ const SongDetails = ({ albumId }) => {
 );
 
   useEffect(() => {
-    console.log('album id:', albumId)
     dispatch(fetchGenres());
   }, [dispatch]);
 

@@ -227,3 +227,20 @@ def get_library():
         return {"errors": "Could not fetch Library"}, 404
 
     return library.to_json()
+
+@playlists.route("/<int:playlist_id>/songs/<int:song_id>", methods=["DELETE"])
+@login_required
+def remove_song(playlist_id, song_id):
+    playlist = Playlist.query.get(playlist_id)
+    song = Playlist.query.get(song_id)
+
+    if not playlist:
+        return {"errors": "Playlist not found"}, 404
+
+    if not song:
+        return {"errors": "Song not found"}, 404
+
+    PlaylistSong.query.filter_by(playlist_id=playlist_id, song_id=song_id).delete()
+    db.session.commit()
+
+    return {"message": "Song removed successfully"}, 200

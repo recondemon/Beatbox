@@ -1,52 +1,52 @@
-import { createSelector } from 'reselect';
-import { post, put } from './csrf';
+import { createSelector } from "reselect";
+import { post, put, get } from "./csrf";
 
-const LOAD_ALL = 'playlists/loadAll';
-const LOAD_ONE = 'playlists/loadOne';
-const LOAD_QUEUE = 'playlists/loadQueue';
-const LOAD_LIKED = 'playlists/loadLiked';
-const ADD_TO_QUEUE = 'playlists/addToQueue';
-const ADD_TO_LIKED = 'playlists/addToLiked';
-const REMOVE_FROM_LIKED = 'playlists/removeFromLiked';
-const PLAY_NEXT = 'playlists/playNext';
-const SET_CURRENT_SONG_INDEX = 'playlists/setCurrentSongIndex';
-const CLEAR_QUEUE = 'playlists/clearQueue';
+const LOAD_ALL = "playlists/loadAll";
+const LOAD_ONE = "playlists/loadOne";
+const LOAD_QUEUE = "playlists/loadQueue";
+const LOAD_LIKED = "playlists/loadLiked";
+const ADD_TO_QUEUE = "playlists/addToQueue";
+const ADD_TO_LIKED = "playlists/addToLiked";
+const REMOVE_FROM_LIKED = "playlists/removeFromLiked";
+const PLAY_NEXT = "playlists/playNext";
+const SET_CURRENT_SONG_INDEX = "playlists/setCurrentSongIndex";
+const CLEAR_QUEUE = "playlists/clearQueue";
 
 export const clearQueue = () => ({
   type: CLEAR_QUEUE,
 });
 
-export const loadAll = playlists => ({
+export const loadAll = (playlists) => ({
   type: LOAD_ALL,
   playlists,
 });
 
-export const loadOne = playlist => ({
+export const loadOne = (playlist) => ({
   type: LOAD_ONE,
   playlist,
 });
 
-export const loadQueue = queue => ({
+export const loadQueue = (queue) => ({
   type: LOAD_QUEUE,
   queue,
 });
 
-export const addToQueue = song => ({
+export const addToQueue = (song) => ({
   type: ADD_TO_QUEUE,
   song,
 });
 
-export const loadLiked = liked => ({
+export const loadLiked = (liked) => ({
   type: LOAD_LIKED,
   liked,
 });
 
-export const addToLiked = song => ({
+export const addToLiked = (song) => ({
   type: ADD_TO_LIKED,
   song,
 });
 
-export const removeFromLiked = songId => ({
+export const removeFromLiked = (songId) => ({
   type: REMOVE_FROM_LIKED,
   songId,
 });
@@ -55,13 +55,13 @@ export const playNext = () => ({
   type: PLAY_NEXT,
 });
 
-export const setCurrentSongIndex = index => ({
+export const setCurrentSongIndex = (index) => ({
   type: SET_CURRENT_SONG_INDEX,
   index,
 });
 
-export const fetchPlaylists = () => async dispatch => {
-  const res = await fetch('/api/playlists');
+export const fetchPlaylists = () => async (dispatch) => {
+  const res = await fetch("/api/playlists");
 
   if (res.ok) {
     const data = await res.json();
@@ -71,7 +71,7 @@ export const fetchPlaylists = () => async dispatch => {
   return res;
 };
 
-export const fetchPlaylist = playlistId => async dispatch => {
+export const fetchPlaylist = (playlistId) => async (dispatch) => {
   const res = await fetch(`/api/playlists/${playlistId}`);
 
   if (res.ok) {
@@ -82,7 +82,7 @@ export const fetchPlaylist = playlistId => async dispatch => {
   return res;
 };
 
-export const putPlaylist = playlist => async dispatch => {
+export const putPlaylist = (playlist) => async (dispatch) => {
   const res = await put(`/api/playlists/${playlist.id}`, playlist);
   if (res.ok) {
     const data = await res.json();
@@ -91,21 +91,15 @@ export const putPlaylist = playlist => async dispatch => {
   }
 };
 
-export const fetchLiked = () => async dispatch => {
-  const res = await fetch('/api/playlists/liked');
-
-  if (res.ok) {
-    const data = await res.json();
-    dispatch(loadLiked(data));
-    return data;
-  }
-
+export const fetchLiked = () => async (dispatch) => {
+  const res = await get("/api/playlists/liked");
+  dispatch(loadLiked(res));
   return res;
 };
 
-export const unlike = songId => async dispatch => {
+export const unlike = (songId) => async (dispatch) => {
   const res = await fetch(`/api/playlists/liked/${songId}`, {
-    method: 'DELETE',
+    method: "DELETE",
   });
 
   if (res.ok) {
@@ -117,10 +111,10 @@ export const unlike = songId => async dispatch => {
   return res.json();
 };
 
-export const addLike = (playlistId, song) => async dispatch => {
+export const addLike = (playlistId, song) => async (dispatch) => {
   const res = await fetch(`/api/playlists/${playlistId}/song`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       song_id: song.id,
       playlist_id: playlistId,
@@ -136,24 +130,26 @@ export const addLike = (playlistId, song) => async dispatch => {
   return res;
 };
 
-export const createPlaylists = playlistData => async dispatch => {
-  const newPlaylist = await post('/playlists', playlistData);
+export const createPlaylists = (playlistData) => async (dispatch) => {
+  const newPlaylist = await post("/playlists", playlistData);
   dispatch(loadOne(newPlaylist));
   return newPlaylist;
 };
 
-export const selectPlaylists = state => state.playlists;
-export const selectPlaylistById = playlistId => state => state.playlists[playlistId];
-export const selectLiked = state => state.playlists.liked;
-export const selectPlaylistsArray = createSelector(selectPlaylists, playlists =>
-  Object.values(playlists),
+export const selectPlaylists = (state) => state.playlists;
+export const selectPlaylistById = (playlistId) => (state) =>
+  state.playlists[playlistId];
+export const selectLiked = (state) => state.playlists.liked;
+export const selectPlaylistsArray = createSelector(
+  selectPlaylists,
+  (playlists) => Object.values(playlists)
 );
 
 export default function playlistsReducer(state = {}, action) {
   switch (action.type) {
     case LOAD_ALL: {
       const newState = { ...state };
-      action.playlists.forEach(playlist => {
+      action.playlists.forEach((playlist) => {
         newState[playlist.id] = playlist;
       });
       return newState;
@@ -175,7 +171,9 @@ export default function playlistsReducer(state = {}, action) {
         liked: [...state.liked, action.song],
       };
     case REMOVE_FROM_LIKED: {
-      const updatedLiked = state.liked.filter(song => song.id !== action.songId);
+      const updatedLiked = state.liked.filter(
+        (song) => song.id !== action.songId
+      );
       return {
         ...state,
         liked: updatedLiked,

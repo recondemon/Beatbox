@@ -1,4 +1,4 @@
-import { post, del } from "./csrf";
+import { post, del, get } from "./csrf";
 
 /* ACTION TYPES */
 
@@ -62,7 +62,7 @@ export const unLikeSong = (song) => async (dispatch, getState) => {
 };
 
 export const fetchLikedPlaylist = () => async (dispatch) => {
-  const playlist = await fetch("/api/playlists/liked");
+  const playlist = await get("/api/playlists/liked");
   dispatch(loadPlaylist(playlist));
   return playlist;
 };

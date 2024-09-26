@@ -1,4 +1,4 @@
-import { post, del } from "./csrf";
+import { post, del, get } from "./csrf";
 
 /* ACTION TYPES */
 
@@ -48,22 +48,22 @@ export const addSong = (song) => async (dispatch, getState) => {
 };
 
 export const removeSongFromLibrary = (song) => async (dispatch, getState) => {
-    const songId =
-      typeof song == "integer" || typeof song == "string"
-        ? Number(song)
-        : song.id;
-    const state = getState();
-    const playlistId = state.liked.id;
-    if (typeof playlistId != "integer" || typeof playlistId != "string") {
-      throw Error("Liked Playlist is not initialized in store");
-    }
-    const res = await del(`/api/playlists/${playlistId}/${songId}`);
-    dispatch(removeSong(songId));
-    return res;
-  };
+  const songId =
+    typeof song == "integer" || typeof song == "string"
+      ? Number(song)
+      : song.id;
+  const state = getState();
+  const playlistId = state.liked.id;
+  if (typeof playlistId != "integer" || typeof playlistId != "string") {
+    throw Error("Liked Playlist is not initialized in store");
+  }
+  const res = await del(`/api/playlists/${playlistId}/${songId}`);
+  dispatch(removeSong(songId));
+  return res;
+};
 
 export const fetchLibrary = () => async (dispatch) => {
-  const playlist = await fetch("/api/playlists/library");
+  const playlist = await get("/api/playlists/library");
   dispatch(loadPlaylist(playlist));
   return playlist;
 };

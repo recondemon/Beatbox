@@ -1,11 +1,12 @@
-import { useState, useEffect } from "react";
-import { CirclePlus, Play } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { CirclePlus, Edit, MoreHorizontal, Play } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchArtist } from "../../redux/artists";
 import { selectCurrentSong, addToQueue, clearQueue } from "../../redux/queue";
 import { selectMyPlaylistsArray } from "../../redux/myPlaylists";
 import LikeButton from "./LikeButton";
 import AddToLibrary from "./AddToLibrary";
+import EditPlaylist from "../ManagePlaylists/EditPlaylist";
 
 export default function ListDetails({ list }) {
   const dispatch = useDispatch();
@@ -28,8 +29,13 @@ export default function ListDetails({ list }) {
   const songCount = list?.songs?.length;
   const currentSong = useSelector(selectCurrentSong);
   const coverArt = list?.albumCover || "/playlist.jpeg";
+  const [editingPlaylist, setEditingPlaylist] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  const buttonRef = useRef(null);  
 
   useEffect(() => {
+    console.log("list", list);
     if (url.includes("playlist") && list?.songs) {
       const fetchArtists = async () => {
         const artistPromises = list?.songs?.map(async (song) =>
@@ -94,12 +100,54 @@ export default function ListDetails({ list }) {
       [songId]: !prev[songId],
     }));
   };
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
+  const handleEditPlaylist = () => {
+    setEditingPlaylist(true);
+    setMenuOpen(false);
+  };
+
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setMenuOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    if (menuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+  
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [menuOpen]);
+
+
   if (!list) {
     return (
       <h2 className="self-center text-center mt-12 text-2xl font-bold">
         Loading...
       </h2>
     );
+  }
+  const handleCloseEdit = () => {
+    setEditingPlaylist(false);
+  };
+
+  useEffect(() => {
+    return () => {
+      setEditingPlaylist(false);
+    };
+  }, []);
+  
+  if (editingPlaylist) {
+    return <EditPlaylist list={list} onClose={handleCloseEdit} />;
   }
 
   return (
@@ -113,9 +161,35 @@ export default function ListDetails({ list }) {
           />
 
           <div className="flex flex-col justify-center space-y-1">
-            <p className="font-semibold">
-              {url.includes("playlist") ? "Playlist" : "Album"}
-            </p>
+            <div className="flex justify-between items-center space-y-1 relative">
+              <p className="flex font-semibold justify-start">
+                {url.includes("playlist") ? "Playlist" : "Album"}
+              </p>
+              <button onClick={toggleMenu} className="relative">
+                <MoreHorizontal className="text-primary cursor-pointer hover:bg-muted rounded-lg hover:text-foreground" size={30} />
+              </button>
+              {menuOpen && (
+              <div ref={dropdownRef} className="absolute text-foreground bg-card right-0 top-6 mt-2 rounded-lg shadow-lg z-10 p-2 w-1/2">
+                <ul>
+                  <li>
+                    <button
+                      onClick={handleEditPlaylist}
+                      className="block px-4 py-2 text-sm w-full text-center hover:bg-muted rounded-lg"
+                    >
+                      Edit Playlist
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      className="block px-4 py-2 text-sm w-full text-center hover:bg-muted rounded-lg"                   
+                    >
+                      Create New Playlist
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            )}
+            </div>
 
             <h1 className="text-3xl font-bold">{list?.name}</h1>
 

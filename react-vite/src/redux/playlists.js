@@ -130,6 +130,66 @@ export const addLike = (playlistId, song) => async (dispatch) => {
   return res;
 };
 
+export const editPlaylist = (playlistData) => async (dispatch) => {
+  const { id, name, description, is_public, songs } = playlistData;
+
+  try {
+    const response = await fetch(`/api/playlists/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name,
+        description,
+        is_public,
+        songs,  // Include the reordered songs array with song_id and song_index
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.errors || 'Failed to update playlist');
+    }
+
+    const updatedPlaylist = await response.json();
+
+    dispatch({
+      type: 'UPDATE_PLAYLIST',
+      payload: updatedPlaylist,
+    });
+
+    return updatedPlaylist;
+  } catch (error) {
+    dispatch({
+      type: 'UPDATE_PLAYLIST_ERROR',
+      payload: error.message,
+    });
+
+    return { error: error.message };
+  }
+};
+
+
+export const removeSongFromPlaylist = (playlistId, songId) => async (dispatch) => {
+  try {
+    const response = await fetch(`/api/playlists/${playlistId}/songs/${songId}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to remove the song from the playlist");
+    }
+
+    dispatch({
+      type: "REMOVE_SONG_FROM_PLAYLIST",
+      payload: { playlistId, songId },
+    });
+  } catch (error) {
+    console.error("Error removing song:", error);
+  }
+};
+
 export const createPlaylists = (playlistData) => async (dispatch) => {
   const newPlaylist = await post("/playlists", playlistData);
   dispatch(loadOne(newPlaylist));
@@ -179,6 +239,15 @@ export default function playlistsReducer(state = {}, action) {
         liked: updatedLiked,
       };
     }
+    case "REMOVE_SONG_FROM_PLAYLIST":
+      const { playlistId, songId } = action.payload;
+      return {
+        ...state,
+        [playlistId]: {
+          ...state[playlistId],
+          songs: state[playlistId].songs.filter((song) => song.id !== songId),
+        },
+      };
     default:
       return state;
   }

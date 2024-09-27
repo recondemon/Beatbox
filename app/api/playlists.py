@@ -37,6 +37,30 @@ def get_playlist(playlist_id):
     return playlist.to_json()
 
 
+# @playlists.route("/<playlist_id>", methods=["PUT"])
+# def edit_playlist(playlist_id):
+#     playlist = Playlist.query.get(int(playlist_id))
+
+#     if not playlist:
+#         return {"errors": "Playlist not found"}, 404
+
+#     data = request.get_json()
+#     bad_data = ({"errors": "Bad Data"}, 400)
+
+#     if (
+#         type(data["is_public"]) is not bool
+#         or type(data["name"]) is not str
+#         or type(data["description"]) is not str
+#     ):
+#         return bad_data
+
+#     playlist.is_public = data["is_public"]
+#     playlist.name = data["name"]
+#     playlist.description = data["description"]
+#     db.session.commit()
+
+#     return playlist.to_json()
+
 @playlists.route("/<playlist_id>", methods=["PUT"])
 def edit_playlist(playlist_id):
     playlist = Playlist.query.get(int(playlist_id))
@@ -57,37 +81,75 @@ def edit_playlist(playlist_id):
     playlist.is_public = data["is_public"]
     playlist.name = data["name"]
     playlist.description = data["description"]
+
+    if "songs" in data:
+        for song_data in data["songs"]:
+            if "song_id" not in song_data or "song_index" not in song_data:
+                return bad_data
+
+            playlist_song = PlaylistSong.query.filter_by(
+                playlist_id=playlist_id, song_id=song_data["song_id"]
+            ).first()
+
+            if playlist_song:
+                playlist_song.song_index = song_data["song_index"]
+            else:
+                return {"errors": f"Song {song_data['song_id']} not found in playlist"}, 404
+
     db.session.commit()
 
     return playlist.to_json()
 
 
-@playlists.route("/", methods=["POST"])
+
+# @playlists.route("/", methods=["POST"])
+# def create_playlist():
+#     form = PlaylistForm()
+#     form.csrf_token.data = generate_csrf()
+
+#     current_artist = Models.Artist.query.get(current_user.id)  # pyright: ignore
+
+#     if form.validate_on_submit():
+#         playlist = Playlist()
+#         playlist.name = getattr(
+#             form,
+#             "name",
+#             "My Playlist " + len(current_artist.playlists),  # pyright: ignore
+#         )
+#         playlist.description = getattr(
+#             form, "description", playlist.description
+#         )
+#         playlist.is_public = getattr(form, "is_public", playlist.is_public)
+#         playlist.owner_id = current_user.id
+
+#         db.session.add(playlist)
+#         db.session.commit()
+
+#         return playlist.to_json()
+
+#     return "Bad Form Request", 400
+
+@playlists.route("/create", methods=["POST"])
 def create_playlist():
-    form = PlaylistForm()
-    form.csrf_token.data = generate_csrf()
+    data = request.get_json()
+
+
+    if not data.get("name") or not data.get("description"):
+        return {"errors": "Playlist name and description are required."}, 400
+
 
     current_artist = Models.Artist.query.get(current_user.id)  # pyright: ignore
 
-    if form.validate_on_submit():
-        playlist = Playlist()
-        playlist.name = getattr(
-            form,
-            "name",
-            "My Playlist " + len(current_artist.playlists),  # pyright: ignore
-        )
-        playlist.description = getattr(
-            form, "description", playlist.description
-        )
-        playlist.is_public = getattr(form, "is_public", playlist.is_public)
-        playlist.owner_id = current_user.id
+    playlist = Playlist()
+    playlist.name = data["name"]
+    playlist.description = data["description"]
+    playlist.is_public = data.get("is_public", False)
+    playlist.owner_id = current_user.id
 
-        db.session.add(playlist)
-        db.session.commit()
+    db.session.add(playlist)
+    db.session.commit()
 
-        return playlist.to_json()
-
-    return "Bad Form Request", 400
+    return playlist.to_json(), 201
 
 
 @playlists.route("/<playlist_id>/songs", methods=["POST"])
@@ -228,11 +290,26 @@ def get_library():
 
     return library.to_json()
 
+# @playlists.route("/<int:playlist_id>/songs/<int:song_id>", methods=["DELETE"])
+# def remove_song(playlist_id, song_id):
+#     playlist = Playlist.query.get(playlist_id)
+#     song = Playlist.query.get(song_id)
+
+#     if not playlist:
+#         return {"errors": "Playlist not found"}, 404
+
+#     if not song:
+#         return {"errors": "Song not found"}, 404
+
+#     PlaylistSong.query.filter_by(playlist_id=playlist_id, song_id=song_id).delete()
+#     db.session.commit()
+
+#     return {"message": "Song removed successfully"}, 200
+
 @playlists.route("/<int:playlist_id>/songs/<int:song_id>", methods=["DELETE"])
-@login_required
 def remove_song(playlist_id, song_id):
     playlist = Playlist.query.get(playlist_id)
-    song = Playlist.query.get(song_id)
+    song = Song.query.get(song_id)
 
     if not playlist:
         return {"errors": "Playlist not found"}, 404
@@ -240,7 +317,13 @@ def remove_song(playlist_id, song_id):
     if not song:
         return {"errors": "Song not found"}, 404
 
-    PlaylistSong.query.filter_by(playlist_id=playlist_id, song_id=song_id).delete()
+    playlist_song = PlaylistSong.query.filter_by(playlist_id=playlist_id, song_id=song_id).first()
+
+    if not playlist_song:
+        return {"errors": "Song not found in this playlist"}, 404
+
+    db.session.delete(playlist_song)
     db.session.commit()
 
     return {"message": "Song removed successfully"}, 200
+

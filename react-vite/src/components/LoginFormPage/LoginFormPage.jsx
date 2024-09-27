@@ -97,7 +97,6 @@ function LoginFormPage() {
           <span className='text-primary text-center list-none hover:underline hover:text-foreground'>
             <OpenModalMenuItem
               itemText='Sign Up'
-              // onItemClick={closeMenu}
               modalComponent={<SignupFormModal />}
             />
           </span>

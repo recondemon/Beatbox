@@ -1,4 +1,5 @@
 import './home.css';
+import { useModal } from '../../context/Modal';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { fetchAlbums, selectAlbumsArray } from '../../redux/albums';
@@ -7,10 +8,14 @@ import { useEffect, useState } from 'react';
 import { fetchSongs, selectSongsArray } from '../../redux/songs';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { clearQueue, addToQueue } from '../../redux/queue';
+import OpenModalMenuItem from '../Navigation/OpenModalMenuItem';
+import SignupFormModal from '../SignupFormModal';
+import LoginFormModal from '../LoginFormModal';
 
 const Home = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { setModalContent, setOnModalClose } = useModal();
   const [searchTerm, setSearchTerm] = useState('');
   const user = useSelector(state => state.session.user);
   const albums = useSelector(selectAlbumsArray);
@@ -48,10 +53,40 @@ const Home = () => {
     }
   };
 
+  const onClick = modal => {
+    setModalContent(modal);
+  };
+
   if (!user) {
     return (
       <div className='h-[calc(100vh-64px)] flex flex-col items-center justify-center overflow-hidden'>
-        <h1 className='reflection relative text-3xl text-white'>Unlock Your Music Adventure</h1>
+        <h1 className='reflection relative text-3xl text-foreground'>
+          Unlock Your Music Adventure
+        </h1>
+
+        <div className='flex gap-4 mt-14'>
+          <button
+            onClick={() => onClick(<SignupFormModal />)}
+            className='bg-primary text-foreground text-sm md:text-lg px-4 py-1 rounded-md hover:bg-muted'
+          >
+            Sign Up
+          </button>
+
+          <button
+            onClick={() => onClick(<LoginFormModal />)}
+            className='bg-primary text-foreground text-sm md:text-lg px-4 py-1 rounded-md hover:bg-muted'
+          >
+            Log In
+          </button>
+        </div>
+
+        <img
+          className='absolute z-[-1] h-1/2 w-full blur-md object-cover opacity-70 rounded-sm'
+          src='/banner.jpeg'
+          alt='record cover image'
+        />
+
+        <div className='absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-50 z-[-1]'></div>
       </div>
     );
   }

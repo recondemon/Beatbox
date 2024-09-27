@@ -10,5 +10,5 @@
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   overflow: hidden;
   pointer-events: none;
-  mask-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.5), transparent);
+  mask-image: linear-gradient(to bottom, rgba(255,255,255,0.8), transparent);
 }

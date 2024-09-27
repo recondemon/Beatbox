@@ -37,48 +37,65 @@ const Sidebar = () => {
     return;
   }
 
+  const duration = 200;
+
   return (
-    <div className="absolute top-20 left-4">
-      <div className="flex flex-col h-full bg-popover rounded-md">
-        <div className="flex flex-col p-4 gap-4">
-          <Link to={`/playlist/${library.id}`} title={library?.name}>
-            <img
-              className="w-12 h-12 rounded-md border border-accent"
-              src="/library.jpeg"
-              alt="heart logo for favorites playlist"
-            />
-          </Link>
-        </div>
-        <div className="flex flex-col p-4 gap-4">
-          <Link to={`/playlist/${liked.id}`} title={liked?.name}>
-            <img
-              className="w-12 h-12 rounded-md border border-accent"
-              src="/liked.jpeg"
-              alt="heart logo for favorites playlist"
-            />
-          </Link>
-        </div>
-
-        <div className="flex flex-col p-4">
-          <button
-            onClick={handleOpenModal}
-            className="bg-card flex justify-center items-center rounded-md"
+    <div className={`absolute rounded-md top-20 left-4 h-3/4 transition-shadow duration-${duration} hover:shadow-md hover:shadow-accent`}>
+      <div
+        className={`flex flex-col h-full bg-popover rounded-md items-center`}
+      >
+        <div className="flex flex-col bg-secondary rounded-t-md justify-between items-center">
+          <div
+            className={`flex flex-col p-4 gap-4 transition-transform hover:scale-125 duration-${duration}`}
           >
-            <SquarePlus className="text-primary bg-card" size={54} />
-          </button>
-        </div>
-
-        {playlistsArray?.map((playlist) => (
-          <div key={playlist?.id} className="flex flex-col p-4 gap-4">
-            <Link to={`/playlist/${playlist?.id}`} title={playlist?.name}>
+            <Link to={`/playlist/${library.id}`} title={library?.name}>
               <img
                 className="w-12 h-12 rounded-md border border-accent"
-                src="/playlist.jpeg"
+                src="/library.jpeg"
+                alt="library logo for library"
+              />
+            </Link>
+          </div>
+          <div
+            className={`flex flex-col p-4 gap-4 transition-transform hover:scale-125 duration-${duration}`}
+          >
+            <Link to={`/playlist/${liked.id}`} title={liked?.name}>
+              <img
+                className="w-12 h-12 rounded-md border border-accent"
+                src="/liked.jpeg"
                 alt="heart logo for favorites playlist"
               />
             </Link>
           </div>
-        ))}
+
+          <div
+            className={`flex flex-col p-4 transition-transform hover:scale-125 duration-${duration}`}
+          >
+            <button
+              onClick={handleOpenModal}
+              className="bg-card flex justify-center items-center rounded-md"
+            >
+              <SquarePlus className="text-primary bg-secondary" size={54} />
+            </button>
+          </div>
+        </div>
+
+        <div className="flex flex-col h-full rounded-b-md w-full items-center justify-start">
+          {playlistsArray?.map((playlist) => (
+            <div
+              key={playlist?.id}
+              className={`flex flex-col p-4 gap-4 transition-transform hover:scale-110 duration-${duration}`}
+            >
+              <Link to={`/playlist/${playlist?.id}`} title={playlist?.name}>
+                <img
+                  className="w-12 h-12 rounded-md border border-accent"
+                  src="/playlist.jpeg"
+                  alt="heart logo for favorites playlist"
+                />
+              </Link>
+            </div>
+          ))}
+        </div>
       </div>
 
       <CreatePlaylistModal isOpen={isModalOpen} onClose={handleCloseModal}>

@@ -25,17 +25,20 @@ const Navigation = () => {
 
 
   return (
-    <ul className="relative z-10 flex justify-between mx-8 mt-4 text-lg">
-      <li>
-        <NavLink to="/">Home</NavLink>
-      </li>
-      <li>
-        <NavLink to='/manage/playlistId'>Edit Playlist</NavLink>
-      </li>
-      <li>
-        <ProfileButton />
-      </li>
-    </ul>
+    <>
+      {user ? (
+      <ul className="relative z-10 flex justify-between mx-8 mt-4 text-lg">
+        <li>
+          <NavLink to="/">Home</NavLink>
+        </li>
+        <li>
+          <ProfileButton />
+        </li>
+      </ul>
+      ):(
+        <> </>
+      )}
+    </>
   );
 };
 

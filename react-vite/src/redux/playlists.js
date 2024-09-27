@@ -191,7 +191,7 @@ export const removeSongFromPlaylist = (playlistId, songId) => async (dispatch) =
 };
 
 export const createPlaylists = (playlistData) => async (dispatch) => {
-  const newPlaylist = await post("/playlists", playlistData);
+  const newPlaylist = await post("/playlists/create", playlistData);
   dispatch(loadOne(newPlaylist));
   return newPlaylist;
 };

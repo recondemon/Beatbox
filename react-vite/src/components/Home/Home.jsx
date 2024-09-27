@@ -8,7 +8,6 @@ import { useEffect, useState } from 'react';
 import { fetchSongs, selectSongsArray } from '../../redux/songs';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { clearQueue, addToQueue } from '../../redux/queue';
-import OpenModalMenuItem from '../Navigation/OpenModalMenuItem';
 import SignupFormModal from '../SignupFormModal';
 import LoginFormModal from '../LoginFormModal';
 

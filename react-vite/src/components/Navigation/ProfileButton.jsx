@@ -95,23 +95,27 @@ function ProfileButton() {
                 />
               </li>
 
-              <li className='hover:cursor-pointer'>
+              <li className='cursor-pointer'>
                 <button onClick={logout}>Log Out</button>
               </li>
             </>
           ) : (
             <>
-              <OpenModalMenuItem
-                itemText='Log In'
-                onItemClick={closeMenu}
-                modalComponent={<LoginFormModal />}
-              />
+              <li className='cursor-pointer'>
+                <OpenModalMenuItem
+                  itemText='Log In'
+                  onItemClick={closeMenu}
+                  modalComponent={<LoginFormModal />}
+                />
+              </li>
 
-              <OpenModalMenuItem
-                itemText='Sign Up'
-                onItemClick={closeMenu}
-                modalComponent={<SignupFormModal />}
-              />
+              <li className='cursor-pointer'>
+                <OpenModalMenuItem
+                  itemText='Sign Up'
+                  onItemClick={closeMenu}
+                  modalComponent={<SignupFormModal />}
+                />
+              </li>
             </>
           )}
         </ul>

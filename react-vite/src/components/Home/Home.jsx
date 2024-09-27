@@ -66,14 +66,14 @@ const Home = () => {
         <div className='flex gap-4 mt-14'>
           <button
             onClick={() => onClick(<SignupFormModal />)}
-            className='bg-primary text-foreground text-sm md:text-lg px-4 py-1 rounded-md hover:bg-muted'
+            className='bg-primary text-foreground text-sm md:text-lg px-4 py-1 transition duration-300 rounded-md hover:bg-muted'
           >
             Sign Up
           </button>
 
           <button
             onClick={() => onClick(<LoginFormModal />)}
-            className='bg-primary text-foreground text-sm md:text-lg px-4 py-1 rounded-md hover:bg-muted'
+            className='bg-primary text-foreground text-sm md:text-lg px-4 py-1 transition duration-300 rounded-md hover:bg-muted'
           >
             Log In
           </button>

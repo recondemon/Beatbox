@@ -33,6 +33,7 @@ export function ModalProvider({ children }) {
       <ModalContext.Provider value={contextValue}>
         {children}
       </ModalContext.Provider>
+
       <div ref={modalRef} />
     </>
   );
@@ -44,13 +45,12 @@ export function Modal() {
 
   return ReactDOM.createPortal(
     <div id="modal">
-      {/* Modal Background with Tailwind classes for shading */}
       <div
         id="modal-background"
         className="bg-black bg-opacity-70 fixed inset-0 z-0"
         onClick={closeModal}
       />
-      {/* Modal Content with Tailwind background card style */}
+
       <div id="modal-content" className="bg-card p-6 rounded-lg shadow-lg">
         {modalContent}
       </div>

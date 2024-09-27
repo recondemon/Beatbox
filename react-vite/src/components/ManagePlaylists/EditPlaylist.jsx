@@ -8,6 +8,8 @@ import { Link } from 'react-router-dom';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDrop, useDrag, DndProvider } from 'react-dnd';
 
+
+{/* Able to move songs around, but unable to get backend to accept the changes. will need to add logs and trace the logic.  */}
 const ItemType = {
   SONG: 'song',
 };
@@ -120,7 +122,6 @@ const EditPlaylist = ({ list, onClose }) => {
       name: playlistName,
       description,
       is_public: isPublic,
-      // Send the song_id and song_index to the backend
       songs: songs.map((song, index) => ({
         song_id: song.id,
         song_index: index
@@ -140,7 +141,7 @@ const EditPlaylist = ({ list, onClose }) => {
     const updatedSongs = [...songs];
     const [movedSong] = updatedSongs.splice(fromIndex, 1);
     updatedSongs.splice(toIndex, 0, movedSong);
-    setSongs(updatedSongs);  // Update the state with the reordered songs
+    setSongs(updatedSongs);
   };
 
 

@@ -143,7 +143,7 @@ export const editPlaylist = (playlistData) => async (dispatch) => {
         name,
         description,
         is_public,
-        songs,  // Include the reordered songs array with song_id and song_index
+        songs,
       }),
     });
 

@@ -9,30 +9,23 @@ import AddToLibrary from "./AddToLibrary";
 import EditPlaylist from "../ManagePlaylists/EditPlaylist";
 
 export default function ListDetails({ list }) {
+  {/* Reordered declarations to keep things in consistent order, moved hooks to top to prevent the error of "more hooks rendered than previous render" on refresh */}
   const dispatch = useDispatch();
   const url = window.location.href;
   const [artists, setArtists] = useState({});
   const [songDurations, setSongDurations] = useState({});
   const [visibleDropdowns, setVisibleDropdowns] = useState({});
-  const myPlaylists = useSelector(selectMyPlaylistsArray);
-  const artist = list?.artist
-    ? list?.artist[0].band_name
-      ? `${list?.artist[0].band_name}`
-      : `${list?.artist[0].first_name} ${list?.artist[0].last_name}`
-    : null;
-  const owner = list?.owner
-    ? list?.owner[0].band_name
-      ? `${list?.owner[0].band_name}`
-      : `${list?.owner[0].first_name} ${list?.owner[0].last_name}`
-    : null;
-  const releaseYear = new Date(list?.releaseDate).getFullYear() || null;
-  const songCount = list?.songs?.length;
-  const currentSong = useSelector(selectCurrentSong);
-  const coverArt = list?.albumCover || "/playlist.jpeg";
   const [editingPlaylist, setEditingPlaylist] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const user = useSelector((state) => state.session.user);
+  const myPlaylists = useSelector(selectMyPlaylistsArray);
+  const currentSong = useSelector(selectCurrentSong);
+  const [showAlert, setShowAlert] = useState(false);
   const dropdownRef = useRef(null);
-  const buttonRef = useRef(null);  
+  
+  
+
+
 
   useEffect(() => {
     console.log("list", list);
@@ -57,11 +50,9 @@ export default function ListDetails({ list }) {
 
       fetchArtists();
     }
-  }, [dispatch, list?.songs, url]);
+  }, [dispatch, list?.songs, url, list]);
 
-  // Updates duration and stores it for each song, including current song
   const handleLoadedMetadata = (songId, audioElement) => {
-    // FIXME: Optional chaining cuz I was getting a random null error...should probably fix that...
     const duration = audioElement?.duration;
 
     setSongDurations((prevDurations) => ({
@@ -105,9 +96,18 @@ export default function ListDetails({ list }) {
     setMenuOpen(!menuOpen);
   };
 
+  {/* included alert message if user doesnt own playlist */}
   const handleEditPlaylist = () => {
-    setEditingPlaylist(true);
-    setMenuOpen(false);
+    if(user?.id === list.owner_id){
+      setEditingPlaylist(true);
+      setMenuOpen(false);
+    }else {
+      setShowAlert(true); 
+    }
+  };
+
+  const handleCloseAlert = () => {
+    setShowAlert(false);
   };
 
   const handleClickOutside = (event) => {
@@ -129,17 +129,36 @@ export default function ListDetails({ list }) {
   }, [menuOpen]);
 
 
-  if (!list) {
-    return (
-      <h2 className="self-center text-center mt-12 text-2xl font-bold">
-        Loading...
-      </h2>
-    );
-  }
+
   const handleCloseEdit = () => {
     setEditingPlaylist(false);
   };
 
+    {/* The block of code before is cause a mismatch of renders if page is manually refreshed. Might needs to take a different approach to the conditional rendering. Commenting out the conditional below stops the error. */}
+
+    // if (!list) {
+    //   return (
+    //     <h2 className="self-center text-center mt-12 text-2xl font-bold">
+    //       Loading...
+    //     </h2>
+    //   );
+    // }
+    
+    const artist = list?.artist
+      ? list?.artist[0].band_name
+        ? `${list?.artist[0].band_name}`
+        : `${list?.artist[0].first_name} ${list?.artist[0].last_name}`
+      : null;
+    const owner = list?.owner
+      ? list?.owner[0].band_name
+        ? `${list?.owner[0].band_name}`
+        : `${list?.owner[0].first_name} ${list?.owner[0].last_name}`
+      : null;
+    const releaseYear = new Date(list?.releaseDate).getFullYear() || null;
+    const songCount = list?.songs?.length;
+    const coverArt = list?.albumCover || "/playlist.jpeg";
+
+  {/* IMPORTANT! ...this ensures editing is reset so you can navigate back to component */}
   useEffect(() => {
     return () => {
       setEditingPlaylist(false);
@@ -172,12 +191,12 @@ export default function ListDetails({ list }) {
               <div ref={dropdownRef} className="absolute text-foreground bg-card right-0 top-6 mt-2 rounded-lg shadow-lg z-10 p-2 w-1/2">
                 <ul>
                   <li>
-                    <button
-                      onClick={handleEditPlaylist}
-                      className="block px-4 py-2 text-sm w-full text-center hover:bg-muted rounded-lg"
-                    >
-                      Edit Playlist
-                    </button>
+                      <button
+                        onClick={handleEditPlaylist}
+                        className="block px-4 py-2 text-sm w-full text-center hover:bg-muted rounded-lg"
+                      >
+                        Edit Playlist
+                      </button>
                   </li>
                   <li>
                     <button
@@ -187,6 +206,21 @@ export default function ListDetails({ list }) {
                     </button>
                   </li>
                 </ul>
+              </div>
+            )}
+            {/* Conditional rendering of the alert */}
+            {showAlert && (
+              <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center">
+                <div className="bg-card p-6 rounded-lg shadow-lg">
+                  <h3 className="text-xl font-semibold">Permission Denied</h3>
+                  <p className="mt-2">You don't have permission to edit this playlist.</p>
+                  <button 
+                    onClick={handleCloseAlert} 
+                    className="mt-4 px-4 py-2 bg-primary text-white rounded-lg"
+                  >
+                    Close
+                  </button>
+                </div>
               </div>
             )}
             </div>

@@ -1,11 +1,7 @@
 from flask import Blueprint, request, jsonify
 from app.models import Models, db
-from flask_login import current_user, login_user, logout_user, login_required
-from app.api.aws_upload import (
-    get_unique_filename,
-    upload_file_to_s3,
-    remove_file_from_s3,
-)
+from flask_login import current_user, login_required
+from app.api.aws_upload import upload_file_to_s3
 from app.forms.song_form import SongForm
 
 Song = Models.Song
@@ -24,10 +20,25 @@ def all_songs():
         query = query.filter(Song.genre.name == query_dir["genre"])
 
     if query_dir and "artist" in query_dir:
-        query = query.filter(Song.artist.band_name.like(f"%{query_dir['artist']}%"))
+        query = query.filter(
+            Song.artist.band_name.like(f"%{query_dir['artist']}%")
+        )
 
-    songs = query.all()
-    return jsonify([song.to_json() for song in songs])
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("limit", 10, type=int)
+    paginated_songs = query.paginate(
+        page=page, per_page=per_page, error_out=False
+    )
+
+    songs = [song.to_json() for song in paginated_songs.items]
+
+    return jsonify(
+        {
+            "songs": songs,
+            "total_pages": paginated_songs.pages,
+            "current_page": paginated_songs.page,
+        }
+    )
 
 
 @songs.route("", methods=["POST"])
@@ -133,6 +144,7 @@ def edit_song(song_id):
 
     return song.to_json()
 
+
 @songs.route("/<int:song_id>", methods=["DELETE"])
 def delete_song(song_id):
     try:
@@ -143,7 +155,7 @@ def delete_song(song_id):
         if song.likes:
             for like in song.likes:
                 db.session.delete(like)
-               
+
         db.session.delete(song)
 
         db.session.commit()
@@ -153,7 +165,6 @@ def delete_song(song_id):
         print(f"Error while deleting song: {e}")
         db.session.rollback()
         return jsonify({"errors": "Failed to delete song"}), 500
-
 
 
 # @songs.route("/<song_id>", methods=["PUT"])
@@ -191,18 +202,18 @@ def delete_song(song_id):
 
 #     form = SongForm()
 
-    # if form.validate_on_submit():
-    #     url = upload_file_to_s3(form.file)
+# if form.validate_on_submit():
+#     url = upload_file_to_s3(form.file)
 
-    #     genre_name = form.genre
+#     genre_name = form.genre
 
-    #     genre = Genre.query.filter(Genre.name == genre_name).first()
+#     genre = Genre.query.filter(Genre.name == genre_name).first()
 
-    #     if not genre:
-    #         genre = Genre(name=genre_name)
+#     if not genre:
+#         genre = Genre(name=genre_name)
 
-    #     song = Song.query.get(song_id)
-    #     if not song:
-    #         return jsonify({"error": "Song not found"}), 404
+#     song = Song.query.get(song_id)
+#     if not song:
+#         return jsonify({"error": "Song not found"}), 404
 
-    #     return jsonify(song.to_json())
+#     return jsonify(song.to_json())

@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { fetchAlbums, selectAlbumsArray } from '../../redux/albums';
 import { fetchPlaylists, selectPlaylistsArray } from '../../redux/playlists';
 import { useEffect, useState } from 'react';
-import { fetchSongs, selectSongsArray } from '../../redux/songs';
+import { fetchSongs, selectSongsArray, selectPagination } from '../../redux/songs';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { clearQueue, addToQueue } from '../../redux/queue';
 import SignupFormModal from '../SignupFormModal';
@@ -16,6 +16,9 @@ const Home = () => {
   const navigate = useNavigate();
   const { setModalContent, setOnModalClose } = useModal();
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const songsPerPage = 10;
+  const { totalPages } = useSelector(selectPagination);
   const user = useSelector(state => state.session.user);
   const albums = useSelector(selectAlbumsArray);
   const playlists = useSelector(selectPlaylistsArray);
@@ -25,8 +28,12 @@ const Home = () => {
   useEffect(() => {
     dispatch(fetchAlbums());
     dispatch(fetchPlaylists());
-    dispatch(fetchSongs());
-  }, [dispatch]);
+    dispatch(fetchSongs(currentPage, songsPerPage));
+  }, [dispatch, currentPage, songsPerPage]);
+
+  const handlePageChange = newPage => {
+    setCurrentPage(newPage);
+  };
 
   const handleScroll = (direction, section) => {
     const container = document.getElementById(section);
@@ -43,7 +50,7 @@ const Home = () => {
   };
 
   const handleSongClick = (song, index) => {
-    if (index !== undefined && index !== null && songs.length > 0) {
+    if (index !== undefined && index !== null && songs?.length > 0) {
       dispatch(clearQueue()).then(() => dispatch(addToQueue(song)));
       navigate(`/album/${song.albumId}`);
     } else {
@@ -105,7 +112,7 @@ const Home = () => {
       </div>
 
       {/* Content Section */}
-      {albums.length || playlists.length || songs.length ? (
+      {albums?.length || playlists?.length || songs?.length ? (
         <div className='overflow-y-auto scrollbar-thin scrollbar-thumb-primary scrollbar-thumb-rounded-full scrollbar-track-transparent max-h-[calc(100vh-250px)]'>
           <h2 className='mb-6 text-2xl font-bold'>Explore</h2>
 
@@ -122,7 +129,7 @@ const Home = () => {
                 id='songs-section'
                 className='flex overflow-x-auto overflow-y-hidden whitespace-nowrap gap-4 min-w-[70vw] max-w-[70vw] mx-auto scrollbar-thin scrollbar-thumb-primary scrollbar-thumb-rounded-full scrollbar-track-transparent'
               >
-                {songs.map((song, index) => (
+                {songs?.map((song, index) => (
                   <div key={song.id}>
                     <div className='h-fit rounded-lg w-56 h-52 inline-block whitespace-pre-wrap text-center text-foreground justify-center'>
                       <img
@@ -142,10 +149,28 @@ const Home = () => {
                   </div>
                 ))}
               </div>
+
               <ChevronRight
                 className='cursor-pointer'
                 onClick={() => handleScroll('right', 'songs-section')}
               />
+            </div>
+
+            {/* Pagination */}
+            <div className='flex justify-center mt-4'>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                <button
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  className={`mx-1 px-3 py-1 rounded ${
+                    currentPage === page
+                      ? 'bg-primary text-foreground'
+                      : 'bg-secondary text-foreground'
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
             </div>
           </div>
 

@@ -88,44 +88,44 @@ export const putPlaylist = (playlist) => async (dispatch) => {
   return res;
 };
 
-export const fetchLiked = () => async (dispatch) => {
-  const res = await get("/api/playlists/liked");
-  dispatch(loadLiked(res));
-  return res;
-};
+// export const fetchLiked = () => async (dispatch) => {
+//   const res = await get("/api/playlists/liked");
+//   dispatch(loadLiked(res));
+//   return res;
+// };
 
-export const unlike = (songId) => async (dispatch) => {
-  const res = await fetch(`/api/playlists/liked/${songId}`, {
-    method: "DELETE",
-  });
+// export const unlike = (songId) => async (dispatch) => {
+//   const res = await fetch(`/api/playlists/liked/${songId}`, {
+//     method: "DELETE",
+//   });
 
-  if (res.ok) {
-    const data = await res.json();
-    dispatch(removeFromLiked(songId));
-    return data;
-  }
+//   if (res.ok) {
+//     const data = await res.json();
+//     dispatch(removeFromLiked(songId));
+//     return data;
+//   }
 
-  return res.json();
-};
+//   return res.json();
+// };
 
-export const addLike = (playlistId, song) => async (dispatch) => {
-  const res = await fetch(`/api/playlists/${playlistId}/song`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      song_id: song.id,
-      playlist_id: playlistId,
-    }),
-  });
+// export const addLike = (playlistId, song) => async (dispatch) => {
+//   const res = await fetch(`/api/playlists/${playlistId}/song`, {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify({
+//       song_id: song.id,
+//       playlist_id: playlistId,
+//     }),
+//   });
 
-  if (res.ok) {
-    const data = await res.json();
-    dispatch(addToLiked(song));
-    return data;
-  }
+//   if (res.ok) {
+//     const data = await res.json();
+//     dispatch(addToLiked(song));
+//     return data;
+//   }
 
-  return res;
-};
+//   return res;
+// };
 
 export const editPlaylist = (playlistData) => async (dispatch) => {
   const { id, name, description, is_public, songs } = playlistData;

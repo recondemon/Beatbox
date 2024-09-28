@@ -3,7 +3,7 @@ import { useModal } from '../../context/Modal';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { fetchAlbums, selectAlbumsArray } from '../../redux/albums';
-import { fetchPlaylists, selectPlaylistsArray, fetchLiked } from '../../redux/playlists';
+import { fetchPlaylists, selectPlaylistsArray } from '../../redux/playlists';
 import { useEffect, useState } from 'react';
 import { fetchSongs, selectSongsArray } from '../../redux/songs';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -26,7 +26,6 @@ const Home = () => {
     dispatch(fetchAlbums());
     dispatch(fetchPlaylists());
     dispatch(fetchSongs());
-    dispatch(fetchLiked());
   }, [dispatch]);
 
   const handleScroll = (direction, section) => {
@@ -232,7 +231,7 @@ const Home = () => {
           </div>
         </div>
       ) : (
-        <p className='text-2xl'>Loading...</p>
+        <h2 className='text-2xl'>Loading...</h2>
       )}
     </div>
   );

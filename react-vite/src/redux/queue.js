@@ -74,6 +74,12 @@ export const addToQueue = (song) => async (dispatch) => {
   return res.json();
 };
 
+export const addAllToQueue = (songs) => async (dispatch) => {
+  for (const song of songs){
+    await dispatch(addToQueue(song))
+  }
+};
+
 export const clearQueue = () => async (dispatch) => {
   console.log("\n\n CLEARING QUEUE \n\n");
 
@@ -96,9 +102,17 @@ export const selectQueue = (state) => state.queue.songs;
 export const selectCurrentSong = (state) => state.queue.currentSong;
 
 export default function queueReducer(
-  state = { currentSongIndex: 0, currentSong: null },
+  state = { currentSongIndex: 0, songs: [], currentSong: null },
   action
 ) {
+  const isFirst =
+    action.type == PLAY_PREV
+      ? state.currentSongIndex - 1 == 0
+      : action.index === 0;
+  const isLast =
+    action.type == PLAY_NEXT
+      ? state.currentSongIndex + 2 == state.songs.length
+      : action.index == state.songs.length - 1;
   switch (action.type) {
     case LOAD_QUEUE: {
       const songArray = Array.isArray(action.queue) ? action.queue : [];
@@ -141,10 +155,23 @@ export default function queueReducer(
       //   };
       // }
 
+      if (state.currentSong === null || state.songs.length == 0) {
+        console.log("ADDING FIRST SONG");
+        return {
+          ...state,
+          songs: [...currentSongs, action.song],
+          currentSong: {
+            ...[...currentSongs, action.song][state.currentSongIndex],
+            isFirst: true,
+            isLast: true,
+          },
+        };
+      }
+
       return {
         ...state,
         songs: [...currentSongs, action.song],
-        currentSong: [...currentSongs, action.song][state.currentSongIndex],
+        currentSong: { ...state.currentSong, isLast: false },
       };
     case SET_CURRENT_SONG_INDEX:
       return {
@@ -177,7 +204,11 @@ export default function queueReducer(
       return {
         ...state,
         currentSongIndex: state.currentSongIndex + 1,
-        currentSong: state.songs[state.currentSongIndex + 1],
+        currentSong: {
+          ...state.songs[state.currentSongIndex + 1],
+          isFirst,
+          isLast: state.currentSongIndex + 1 == state.songs.length - 1,
+        },
       };
     case PLAY_PREV:
       console.log("PLAYING PREV");
@@ -187,14 +218,22 @@ export default function queueReducer(
       return {
         ...state,
         currentSongIndex: state.currentSongIndex - 1,
-        currentSong: state.songs[state.currentSongIndex - 1],
+        currentSong: {
+          ...state.songs[state.currentSongIndex - 1],
+          isFirst,
+          isLast,
+        },
       };
     case PLAY_RANDOM:
       const randNum = Math.floor(Math.random() * state?.songs?.length || 0);
       return {
         ...state,
         currentSongIndex: randNum,
-        currentSong: state.songs[randNum],
+        currentSong: {
+          ...state.songs[randNum],
+          isFirst: randNum == 0,
+          isLast: randNum + 1 == state.songs.length,
+        },
       };
     case LOOP:
       return {

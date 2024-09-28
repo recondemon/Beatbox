@@ -74,6 +74,7 @@ export async function del(url) {
   const adjustedUrl = url.includes("api") ? url : "/api" + url;
   const data = await fetch(adjustedUrl, { method: "DELETE" });
   const json = await data.json();
+  console.log("DELETED DATA: ", json);
   if (data.ok) {
     return json;
   }

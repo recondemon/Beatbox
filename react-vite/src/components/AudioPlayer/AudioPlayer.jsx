@@ -144,7 +144,7 @@ export default function AudioPlayer() {
       } else {
         startSongOver();
       }
-    } else if (currentTime >= 5) {
+    } else if (currentTime >= 5 || isRepeatOne) {
       startSongOver();
     } else {
       dispatch(playPrev());

@@ -84,11 +84,8 @@ export const fetchPlaylist = (playlistId) => async (dispatch) => {
 
 export const putPlaylist = (playlist) => async (dispatch) => {
   const res = await put(`/api/playlists/${playlist.id}`, playlist);
-  if (res.ok) {
-    const data = await res.json();
-    dispatch(loadOne(data));
-    return data;
-  }
+  dispatch(loadOne(res));
+  return res;
 };
 
 export const fetchLiked = () => async (dispatch) => {
@@ -135,9 +132,9 @@ export const editPlaylist = (playlistData) => async (dispatch) => {
 
   try {
     const response = await fetch(`/api/playlists/${id}`, {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         name,
@@ -149,20 +146,20 @@ export const editPlaylist = (playlistData) => async (dispatch) => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.errors || 'Failed to update playlist');
+      throw new Error(errorData.errors || "Failed to update playlist");
     }
 
     const updatedPlaylist = await response.json();
 
     dispatch({
-      type: 'UPDATE_PLAYLIST',
+      type: "UPDATE_PLAYLIST",
       payload: updatedPlaylist,
     });
 
     return updatedPlaylist;
   } catch (error) {
     dispatch({
-      type: 'UPDATE_PLAYLIST_ERROR',
+      type: "UPDATE_PLAYLIST_ERROR",
       payload: error.message,
     });
 
@@ -170,25 +167,28 @@ export const editPlaylist = (playlistData) => async (dispatch) => {
   }
 };
 
+export const removeSongFromPlaylist =
+  (playlistId, songId) => async (dispatch) => {
+    try {
+      const response = await fetch(
+        `/api/playlists/${playlistId}/songs/${songId}`,
+        {
+          method: "DELETE",
+        }
+      );
 
-export const removeSongFromPlaylist = (playlistId, songId) => async (dispatch) => {
-  try {
-    const response = await fetch(`/api/playlists/${playlistId}/songs/${songId}`, {
-      method: "DELETE",
-    });
+      if (!response.ok) {
+        throw new Error("Failed to remove the song from the playlist");
+      }
 
-    if (!response.ok) {
-      throw new Error("Failed to remove the song from the playlist");
+      dispatch({
+        type: "REMOVE_SONG_FROM_PLAYLIST",
+        payload: { playlistId, songId },
+      });
+    } catch (error) {
+      console.error("Error removing song:", error);
     }
-
-    dispatch({
-      type: "REMOVE_SONG_FROM_PLAYLIST",
-      payload: { playlistId, songId },
-    });
-  } catch (error) {
-    console.error("Error removing song:", error);
-  }
-};
+  };
 
 export const createPlaylists = (playlistData) => async (dispatch) => {
   const newPlaylist = await post("/playlists/create", playlistData);

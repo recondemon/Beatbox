@@ -4,7 +4,7 @@ import {
   addSong,
   removeSongFromLibrary,
 } from "../../redux/library";
-import { Book, XIcon } from "lucide-react";
+import { Book } from "lucide-react";
 
 export default function AddToLibrary({ song }) {
   const isAdded = useSelector((state) => selectIsAdded(state, song.id));
@@ -12,8 +12,8 @@ export default function AddToLibrary({ song }) {
 
   if (isAdded) {
     return (
-      <XIcon
-        className="hover:cursor-pointer hover:text-red-500"
+      <Book
+        className="text-green-500 hover:cursor-pointer hover:text-red-500"
         onClick={() => dispatch(removeSongFromLibrary(song))}
       />
     );

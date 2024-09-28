@@ -2,9 +2,11 @@ import { post, del, get } from "./csrf";
 
 /* ACTION TYPES */
 
-const LOAD_PLAYLISTS = "library/loadPlaylists";
-const ADD_TO_PLAYLIST = "library/addSongToPlaylist";
-const REMOVE_FROM_PLAYLIST = "library/removeSongFromPlaylist";
+const LOAD_PLAYLISTS = "myPlaylist/loadPlaylists";
+const ADD_TO_PLAYLIST = "myPlaylist/addSongToPlaylist";
+const REMOVE_FROM_PLAYLIST = "myPlaylist/removeSongFromPlaylist";
+const UNLOAD_PLAYLIST = "myPlaylist/deletePlaylist";
+const LOAD_PLAYLIST = "myPlaylist/addPlaylist";
 
 /* ACTIONS */
 
@@ -20,18 +22,25 @@ export const removeSong = (playlistId, songId) => ({
   songId,
 });
 
-export const loadPlaylist = (playlists) => ({
+export const loadPlaylists = (playlists) => ({
   type: LOAD_PLAYLISTS,
   playlists,
+});
+export const loadPlaylist = (playlist) => ({
+  type: LOAD_PLAYLIST,
+  playlist,
+});
+
+export const unloadPlaylist = (playlistId) => ({
+  type: UNLOAD_PLAYLIST,
+  playlistId,
 });
 
 /* THUNKS */
 
 export const addSongToPlaylist = (song, playlist) => async (dispatch) => {
   const songId =
-    typeof song == "number" || typeof song == "string"
-      ? Number(song)
-      : song.id;
+    typeof song == "number" || typeof song == "string" ? Number(song) : song.id;
   const playlistId =
     typeof playlist == "number" || typeof playlist == "string"
       ? Number(playlist)
@@ -51,9 +60,7 @@ export const addSongToPlaylist = (song, playlist) => async (dispatch) => {
 
 export const removeSongFromPlaylist = (song, playlist) => async (dispatch) => {
   const songId =
-    typeof song == "number" || typeof song == "string"
-      ? Number(song)
-      : song.id;
+    typeof song == "number" || typeof song == "string" ? Number(song) : song.id;
   const playlistId =
     typeof playlist == "number" || typeof playlist == "string"
       ? Number(playlist)
@@ -68,8 +75,19 @@ export const fetchMyPlaylists = () => async (dispatch) => {
   const validPlaylists = playlists.filter(
     ({ name }) => !["Liked", "Library", "Queue"].includes(name)
   );
-  dispatch(loadPlaylist(validPlaylists));
+  dispatch(loadPlaylists(validPlaylists));
   return validPlaylists;
+};
+
+export const deletePlaylist = (playlistId) => async (dispatch) => {
+  const deleted = await del(`/api/playlists/${playlistId}`);
+  dispatch(unloadPlaylist(playlistId));
+  return deleted;
+};
+export const addPlaylist = (playlistData) => async (dispatch) => {
+  const data = await post(`/api/playlists`, playlistData);
+  dispatch(loadPlaylist(data));
+  return data;
 };
 
 /* SELECTORS */
@@ -85,7 +103,7 @@ const initialState = { playlistArray: [] };
 /* REDUCER */
 
 export default function myPlaylistsReducer(state = initialState, action) {
-  const playlistId = state.playlistId;
+  const playlistId = action.playlistId;
   const playlistAtId = state[playlistId] || null;
   switch (action.type) {
     case LOAD_PLAYLISTS:
@@ -96,6 +114,18 @@ export default function myPlaylistsReducer(state = initialState, action) {
           (obj, playlist, index) => ({ ...obj, [index]: playlist }),
           {}
         ),
+      };
+    case LOAD_PLAYLIST:
+      return {
+        ...state,
+        playlistArray: [...state.playlistArray, action.playlist],
+        [action.playlist.id]: action.playlist,
+      };
+    case UNLOAD_PLAYLIST:
+      return {
+        ...state,
+        playlistArray: state.playlistArray.filter(({ id }) => id != playlistId),
+        [playlistId]: undefined,
       };
     case ADD_TO_PLAYLIST:
       return {

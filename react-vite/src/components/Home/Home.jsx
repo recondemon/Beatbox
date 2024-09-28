@@ -17,7 +17,6 @@ const Home = () => {
   const { setModalContent, setOnModalClose } = useModal();
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const songsPerPage = 10;
   const { totalPages } = useSelector(selectPagination);
   const user = useSelector(state => state.session.user);
   const albums = useSelector(selectAlbumsArray);
@@ -28,8 +27,11 @@ const Home = () => {
   useEffect(() => {
     dispatch(fetchAlbums());
     dispatch(fetchPlaylists());
-    dispatch(fetchSongs(currentPage, songsPerPage));
-  }, [dispatch, currentPage, songsPerPage]);
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchSongs(currentPage));
+  }, [dispatch, currentPage])
 
   const handlePageChange = newPage => {
     setCurrentPage(newPage);

@@ -62,7 +62,7 @@ export const removeSong = songId => async dispatch => {
   return false;
 };
 
-export const fetchSongs = (page, limit) => async dispatch => {
+export const fetchSongs = (page, limit=10) => async dispatch => {
   const res = await fetch(`/api/songs?page=${page}&limit=${limit}`);
 
   if (res.ok) {

@@ -1,131 +1,69 @@
-# Flask React Project
+# Beatbox - Feel the Rhythm
 
-This is the starter for the Flask React project.
+Beatbox is a Spotify-inspired music streaming platform where artists can upload their own music and listen to their favorite tracks. This project combines the power of React and Flask to deliver a smooth music playback experience with full user authentication with playlist and album management.
 
-## Getting started
+![Beatbox Showcase](showcase.gif)
 
-1. Clone this repository (only this branch).
+## Technologies Used
 
-2. Install dependencies.
+- **Frontend**: React with Vite for fast, modern frontend development.
+- **State Management**: Redux for global state management.
+- **Backend**: Flask for handling server-side logic and API requests.
+- **ORM**: SQLAlchemy for robust and easy-to-easy object-relational-mapping.
+- **Database**: PostgreSQL for production and SQLite for development.
 
-   ```bash
-   pipenv install -r requirements.txt
-   ```
+## Local Development & Usage
 
-3. Create a __.env__ file based on the example with proper settings for your
-   development environment.
+### Prerequisites
 
-4. Make sure the SQLite3 database connection URL is in the __.env__ file.
+Ensure you have the following installed:
 
-5. This starter organizes all tables inside the `flask_schema` schema, defined
-   by the `SCHEMA` environment variable.  Replace the value for
-   `SCHEMA` with a unique name, **making sure you use the snake_case
-   convention.**
+- Node.js (v18 or higher)
+- npm (v9 or higher)
+- Python (v3.9.4 or higher)
+- PostgreSQL (v14 or higher)
 
-6. Get into your pipenv, migrate your database, seed your database, and run your
-   Flask app:
+### 1. **Clone the Repository**
 
-   ```bash
-   pipenv shell
-   ```
+```sh
+git clone https://github.com/your-username/Beatbox.git
+```
 
-   ```bash
-   flask db upgrade
-   ```
+### 2. Install Frontend Dependencies
 
-   ```bash
-   flask seed all
-   ```
+```sh
+cd react-vite && npm i
+```
 
-   ```bash
-   flask run
-   ```
+### 3. Set Up Backend
 
-7. The React frontend has no styling applied. Copy the __.css__ files from your
-   Authenticate Me project into the corresponding locations in the
-   __react-vite__ folder to give your project a unique look.
+```sh
+cd backend
+cp .env.example .env
+pipenv install -r requirements.txt
+pipenv shell
+flask db upgrade
+flask seed all
+```
+**Note**: You will have to add your own S3 bucket credentials to the .env file with the following keys:
+- `S3_BUCKET`
+- `S3_SECRET`
+- `S3_KEY`
 
-8. To run the React frontend in development, `cd` into the __react-vite__
-   directory and run `npm i` to install dependencies. Next, run `npm run build`
-   to create the `dist` folder. The starter has modified the `npm run build`
-   command to include the `--watch` flag. This flag will rebuild the __dist__
-   folder whenever you change your code, keeping the production version up to
-   date.
+## Running the Application
 
-## Deployment through Render.com
+### 1. Start the Backend Server
 
-First, recall that Vite is a development dependency, so it will not be used in
-production. This means that you must already have the __dist__ folder located in
-the root of your __react-vite__ folder when you push to GitHub. This __dist__
-folder contains your React code and all necessary dependencies minified and
-bundled into a smaller footprint, ready to be served from your Python API.
+```sh
+cd backend && flask run
+```
 
-Begin deployment by running `npm run build` in your __react-vite__ folder and
-pushing any changes to GitHub.
+### 2. Start the Frontend Server
 
-Refer to your Render.com deployment articles for more detailed instructions
-about getting started with [Render.com], creating a production database, and
-deployment debugging tips.
+```sh
+cd react-vite && npm run dev
+```
 
-From the Render [Dashboard], click on the "New +" button in the navigation bar,
-and click on "Web Service" to create the application that will be deployed.
+### 3. Access the Application
 
-Select that you want to "Build and deploy from a Git repository" and click
-"Next". On the next page, find the name of the application repo you want to
-deploy and click the "Connect" button to the right of the name.
-
-Now you need to fill out the form to configure your app. Most of the setup will
-be handled by the __Dockerfile__, but you do need to fill in a few fields.
-
-Start by giving your application a name.
-
-Make sure the Region is set to the location closest to you, the Branch is set to
-"main", and Runtime is set to "Docker". You can leave the Root Directory field
-blank. (By default, Render will run commands from the root directory.)
-
-Select "Free" as your Instance Type.
-
-### Add environment variables
-
-In the development environment, you have been securing your environment
-variables in a __.env__ file, which has been removed from source control (i.e.,
-the file is gitignored). In this step, you will need to input the keys and
-values for the environment variables you need for production into the Render
-GUI.
-
-Add the following keys and values in the Render GUI form:
-
-- SECRET_KEY (click "Generate" to generate a secure secret for production)
-- FLASK_ENV production
-- FLASK_APP app
-- SCHEMA (your unique schema name, in snake_case)
-
-In a new tab, navigate to your dashboard and click on your Postgres database
-instance.
-
-Add the following keys and values:
-
-- DATABASE_URL (copy value from the **External Database URL** field)
-
-**Note:** Add any other keys and values that may be present in your local
-__.env__ file. As you work to further develop your project, you may need to add
-more environment variables to your local __.env__ file. Make sure you add these
-environment variables to the Render GUI as well for the next deployment.
-
-### Deploy
-
-Now you are finally ready to deploy! Click "Create Web Service" to deploy your
-project. The deployment process will likely take about 10-15 minutes if
-everything works as expected. You can monitor the logs to see your Dockerfile
-commands being executed and any errors that occur.
-
-When deployment is complete, open your deployed site and check to see that you
-have successfully deployed your Flask application to Render! You can find the
-URL for your site just below the name of the Web Service at the top of the page.
-
-**Note:** By default, Render will set Auto-Deploy for your project to true. This
-setting will cause Render to re-deploy your application every time you push to
-main, always keeping it up to date.
-
-[Render.com]: https://render.com/
-[Dashboard]: https://dashboard.render.com/
+Visit `http://localhost:5173/` in your browser to start using Beatbox.

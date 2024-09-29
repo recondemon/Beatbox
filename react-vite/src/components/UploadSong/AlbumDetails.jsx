@@ -1,25 +1,22 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import AlbumInputs from './AlbumInputs';
-import { fetchAlbumById, fetchAlbumsByUserId, selectAlbumsArray } from '../../redux/albums';
+import { fetchAlbumsByUserId } from '../../redux/albums';
 
-const AlbumDetails = ({setAlbumId}) => {
+const AlbumDetails = ({ setAlbumId }) => {
   const [album, setAlbum] = useState('');
   const [creatingAlbum, setCreatingAlbum] = useState(false);
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.session.user);
+  const user = useSelector(state => state.session.user);
   const [albumName, setAlbumName] = useState('');
   const [albumCover, setAlbumCover] = useState('');
   const [albumArtist, setAlbumArtist] = useState('');
   const [albums, setAlbums] = useState([]);
 
-  {/* Grab all albums for user */}
   useEffect(() => {
     if (user) {
-      console.log('Fetching albums for user:', user.id);
-      {/* Does this route work? Need to test */}
       const fetchAlbums = async () => {
-        const data = await dispatch(fetchAlbumsByUserId(user.id)); // 
+        const data = await dispatch(fetchAlbumsByUserId(user.id)); //
         setAlbums(data);
         console.log('Fetched user albums:', data);
       };
@@ -28,23 +25,26 @@ const AlbumDetails = ({setAlbumId}) => {
     }
   }, [dispatch, user]);
 
-  const handleAlbumChange = (e) => {
-    
+  const handleAlbumChange = e => {
     const selectedValue = e.target.value;
     const selectedValueInt = parseInt(selectedValue, 10);
-  
+
     if (selectedValue === 'create-album') {
       handleCreateAlbumOption();
     } else {
       setAlbum(selectedValueInt);
-  
-      const selectedAlbum = albums.find((album) => album.id === selectedValueInt);
-      
+
+      const selectedAlbum = albums.find(album => album.id === selectedValueInt);
+
       if (selectedAlbum) {
         setAlbumId(selectedAlbum.id);
         setAlbumCover(selectedAlbum.albumCover);
         setAlbumName(selectedAlbum.name);
-        setAlbumArtist(selectedAlbum.artist.band_name? selectedAlbum.artist[0].band_name : selectedAlbum.artist[0].first_name + ' ' + selectedAlbum.artist[0].last_name);
+        setAlbumArtist(
+          selectedAlbum.artist.band_name
+            ? selectedAlbum.artist[0].band_name
+            : selectedAlbum.artist[0].first_name + ' ' + selectedAlbum.artist[0].last_name,
+        );
       } else {
         setAlbumCover('');
         setAlbumName('');
@@ -52,7 +52,7 @@ const AlbumDetails = ({setAlbumId}) => {
       }
     }
   };
-  
+
   const handleCreateAlbumOption = () => {
     setCreatingAlbum(true);
     setAlbum('');
@@ -66,7 +66,10 @@ const AlbumDetails = ({setAlbumId}) => {
     <div className='flex w-full border-b-2 border-border py-4'>
       {creatingAlbum ? (
         <div className='flex flex-col w-full'>
-          <AlbumInputs handleBackToSelect={handleBackToSelect} setAlbumId = {setAlbumId} />
+          <AlbumInputs
+            handleBackToSelect={handleBackToSelect}
+            setAlbumId={setAlbumId}
+          />
         </div>
       ) : (
         <div className='flex w-full gap-4'>
@@ -79,42 +82,38 @@ const AlbumDetails = ({setAlbumId}) => {
               className='w-full bg-input p-2 h-10 rounded-lg'
             >
               <option value=''>Select Album</option>
-              <option className='text-primary border-b-2 border-border pb-2' value='create-album'>Create Album</option>
-              {albums.length > 0 ? (
-                albums.map((album) => (
-                  <option key={album.id} value={album.id}>
-                    {album.name}
-                  </option>
-                ))
-              ) : null}
+              <option
+                className='text-primary border-b-2 border-border pb-2'
+                value='create-album'
+              >
+                Create Album
+              </option>
+              {albums.length > 0
+                ? albums.map(album => (
+                    <option
+                      key={album.id}
+                      value={album.id}
+                    >
+                      {album.name}
+                    </option>
+                  ))
+                : null}
             </select>
             <div>
-              <h1>
-                Album Name:
-              </h1>
-              <h1
-              className='text-1vw'
-              >
-                  {albumName}
-              </h1>
+              <h1>Album Name:</h1>
+              <h1 className='text-1vw'>{albumName}</h1>
             </div>
             <div>
-              <h1>
-                Artist:
-              </h1>
-              <h1 
-              className='text-1vw'
-              >
-                {albumArtist}
-              </h1>
+              <h1>Artist:</h1>
+              <h1 className='text-1vw'>{albumArtist}</h1>
             </div>
           </div>
           <div className='flex justify-center items-center border-2 border-border w-1/3 min-h-[10rem] rounded-lg mx-auto'>
             {album ? (
               <div className='flex justify-center h-auto w-full'>
-                <img 
-                src={albumCover}
-                className='h-full w-full object-cover'
+                <img
+                  src={albumCover}
+                  className='h-full w-full object-cover'
                 />
               </div>
             ) : (

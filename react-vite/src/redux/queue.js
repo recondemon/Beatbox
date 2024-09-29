@@ -63,8 +63,6 @@ export const addToQueue = (song) => async (dispatch) => {
     body: JSON.stringify({ song: song.id }),
   });
 
-  console.log("ADDING " + song.name + " TO QUEUE");
-
   if (res.ok) {
     dispatch(addSong(song));
     const data = await res.json();
@@ -81,8 +79,6 @@ export const addAllToQueue = (songs) => async (dispatch) => {
 };
 
 export const clearQueue = () => async (dispatch) => {
-  console.log("\n\n CLEARING QUEUE \n\n");
-
   const res = await fetch("/api/playlists/queue", {
     method: "DELETE",
   });
@@ -116,7 +112,6 @@ export default function queueReducer(
   switch (action.type) {
     case LOAD_QUEUE: {
       const songArray = Array.isArray(action.queue) ? action.queue : [];
-      console.log("INSIDE REDUCER:", songArray);
       return {
         songs: songArray,
         currentSongIndex: 0,
@@ -128,11 +123,6 @@ export default function queueReducer(
       };
     }
     case CLEAR:
-      console.log("CLEARED", {
-        songs: [],
-        currentSongIndex: 0,
-        currentSong: null,
-      });
       return {
         songs: [],
         currentSongIndex: 0,
@@ -156,7 +146,6 @@ export default function queueReducer(
       // }
 
       if (state.currentSong === null || state.songs.length == 0) {
-        console.log("ADDING FIRST SONG");
         return {
           ...state,
           songs: [...currentSongs, action.song],
@@ -184,13 +173,10 @@ export default function queueReducer(
         },
       };
     case PLAY_NEXT:
-      console.log("PLAYING NEXT");
       if (state.currentSongIndex >= state.songs.length - 1) {
-        console.log("NEXT IS DISABLED");
         return state;
       }
       if (state.currentSongIndex >= state.songs.length - 2) {
-        console.log("NOW PLAYING LAST SONG");
         return {
           ...state,
           currentSongIndex: state.currentSongIndex + 1,
@@ -200,7 +186,6 @@ export default function queueReducer(
           },
         };
       }
-      console.log("NOW PLAYING NEXT SONG");
       return {
         ...state,
         currentSongIndex: state.currentSongIndex + 1,
@@ -211,7 +196,6 @@ export default function queueReducer(
         },
       };
     case PLAY_PREV:
-      console.log("PLAYING PREV");
       if (state.currentSongIndex == 0) {
         return state;
       }

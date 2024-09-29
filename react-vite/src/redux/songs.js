@@ -91,7 +91,6 @@ export const createSong = songData => async dispatch => {
 export const fetchSong = songId => async dispatch => {
   const song = await get('/songs/' + songId);
   dispatch(loadOne(song));
-  console.log(song);
   return song;
 };
 

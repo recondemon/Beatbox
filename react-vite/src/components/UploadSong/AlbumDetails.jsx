@@ -12,6 +12,7 @@ const AlbumDetails = ({ setAlbumId }) => {
   const [albumCover, setAlbumCover] = useState('');
   const [albumArtist, setAlbumArtist] = useState('');
   const [albums, setAlbums] = useState([]);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   useEffect(() => {
     if (user) {
@@ -23,7 +24,7 @@ const AlbumDetails = ({ setAlbumId }) => {
 
       fetchAlbums();
     }
-  }, [dispatch, user]);
+  }, [dispatch, user, refreshTrigger]);
 
   const handleAlbumChange = e => {
     const selectedValue = e.target.value;
@@ -60,6 +61,7 @@ const AlbumDetails = ({ setAlbumId }) => {
 
   const handleBackToSelect = () => {
     setCreatingAlbum(false);
+    setRefreshTrigger(prev => prev + 1);
   };
 
   return (

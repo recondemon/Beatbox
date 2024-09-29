@@ -31,7 +31,7 @@ const Home = () => {
 
   useEffect(() => {
     dispatch(fetchSongs(currentPage));
-  }, [dispatch, currentPage])
+  }, [dispatch, currentPage]);
 
   const handlePageChange = newPage => {
     setCurrentPage(newPage);
@@ -71,6 +71,8 @@ const Home = () => {
           Unlock Your Music Adventure
         </h1>
 
+        <div className='absolute inset-0 bg-gradient-to-b from-transparent to-primary opacity-50'></div>
+
         <div className='flex gap-4 mt-14'>
           <button
             onClick={() => onClick(<SignupFormModal />)}
@@ -86,14 +88,6 @@ const Home = () => {
             Log In
           </button>
         </div>
-
-        <img
-          className='absolute z-[-1] h-1/2 w-full blur-md object-cover opacity-70 rounded-sm'
-          src='/banner.jpeg'
-          alt='record cover image'
-        />
-
-        <div className='absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-50 z-[-1]'></div>
       </div>
     );
   }

@@ -61,7 +61,7 @@ function LoginFormModal() {
         onSubmit={handleSubmit}
         className='flex flex-col gap-4 justify-center items-center'
       >
-        <div className='flex flex-col text-1vw'>
+        <div className='flex flex-col text-sm md:text-lg'>
           <label>Email:</label>
 
           <input
@@ -74,7 +74,7 @@ function LoginFormModal() {
 
         {errors.email && <p className='text-destructive italic'>{errors.email}</p>}
 
-        <div className='flex flex-col text-1vw'>
+        <div className='flex flex-col text-sm md:text-lg'>
           <label>Password:</label>
 
           <input
@@ -89,7 +89,7 @@ function LoginFormModal() {
 
         <button
           type='submit'
-          className='bg-primary text-foreground text-.8vw p-2 rounded-lg w-[10vw] hover:bg-muted'
+          className='bg-primary text-foreground text-sm md:text-lg p-2 rounded-lg py-2 px-4 transition duration-200 hover:bg-accent'
         >
           Log In
         </button>
@@ -97,7 +97,7 @@ function LoginFormModal() {
         <button
           type='button'
           onClick={handleDemoLogin}
-          className='bg-primary text-foreground text-.8vw p-2 rounded-lg w-[10vw] hover:bg-muted'
+          className='bg-primary text-foreground text-sm md:text-lg p-2 rounded-lg py-2 px-4 transition duration-200 hover:bg-accent'
         >
           Demo Login
         </button>

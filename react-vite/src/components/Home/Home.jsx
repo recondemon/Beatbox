@@ -71,19 +71,19 @@ const Home = () => {
           Unlock Your Music Adventure
         </h1>
 
-        <div className='absolute inset-0 bg-gradient-to-b from-transparent to-primary opacity-50'></div>
+        <div className='absolute inset-0 bg-gradient-to-b from-transparent to-primary opacity-50 z-[-1]'></div>
 
         <div className='flex gap-4 mt-14'>
           <button
             onClick={() => onClick(<SignupFormModal />)}
-            className='bg-primary text-foreground text-sm md:text-lg px-4 py-1 transition duration-300 rounded-md hover:bg-muted'
+            className='bg-primary text-foreground text-sm md:text-lg px-4 py-1 transition duration-200 rounded-md hover:bg-accent'
           >
             Sign Up
           </button>
 
           <button
             onClick={() => onClick(<LoginFormModal />)}
-            className='bg-primary text-foreground text-sm md:text-lg px-4 py-1 transition duration-300 rounded-md hover:bg-muted'
+            className='bg-primary text-foreground text-sm md:text-lg px-4 py-1 transition duration-200 rounded-md hover:bg-accent'
           >
             Log In
           </button>

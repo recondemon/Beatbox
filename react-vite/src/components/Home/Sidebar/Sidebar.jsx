@@ -5,7 +5,6 @@ import { selectLikedPlaylist, fetchLikedPlaylist } from '../../../redux/liked';
 import { fetchLibrary, selectLibraryPlaylist } from '../../../redux/library';
 import { useEffect } from 'react';
 import { SquarePlus } from 'lucide-react';
-// import CreatePlaylistModal from "../../ManagePlaylists/CreatePlaylistModal";
 import CreatePlaylistForm from '../../ManagePlaylists/CreatePlaylistForm';
 
 import { useModal } from '../../../context/Modal';
@@ -16,7 +15,6 @@ const Sidebar = () => {
   const playlists = useSelector(selectMyPlaylistsArray);
   const liked = useSelector(selectLikedPlaylist);
   const library = useSelector(selectLibraryPlaylist);
-  // const [isModalOpen, setIsModalOpen] = useState(false);
   const { setModalContent } = useModal();
 
   useEffect(() => {
@@ -26,14 +24,6 @@ const Sidebar = () => {
       dispatch(fetchMyPlaylists());
     }
   }, [dispatch, user]);
-
-  // const handleOpenModal = () => {
-  //   setIsModalOpen(true);
-  // };
-
-  // const handleCloseModal = () => {
-  //   setIsModalOpen(false);
-  // };
 
   return (
     <>
@@ -81,27 +71,25 @@ const Sidebar = () => {
             </div>
 
             <div className='flex flex-col h-full rounded-b-md w-full items-center justify-start'>
-              {playlists?.length ? (
-                playlists?.map(playlist => (
-                  <div
-                    key={playlist?.id}
-                    className='flex flex-col p-4 gap-4'
-                  >
-                    <Link
-                      to={`/playlist/${playlist?.id}`}
-                      title={playlist?.name}
+              {playlists?.length
+                ? playlists?.map(playlist => (
+                    <div
+                      key={playlist?.id}
+                      className='flex flex-col p-4 gap-4'
                     >
-                      <img
-                        className='w-12 h-12 rounded-md border border-muted hover:border-accent hover:scale-125 transition-all duration-200'
-                        src='/playlist.jpeg'
-                        alt='heart logo for favorites playlist'
-                      />
-                    </Link>
-                  </div>
-                ))
-              ) : (
-                <h2 className='text-2xl'>...</h2>
-              )}
+                      <Link
+                        to={`/playlist/${playlist?.id}`}
+                        title={playlist?.name}
+                      >
+                        <img
+                          className='w-12 h-12 rounded-md border border-muted hover:border-accent hover:scale-125 transition-all duration-200'
+                          src='/playlist.jpeg'
+                          alt='heart logo for favorites playlist'
+                        />
+                      </Link>
+                    </div>
+                  ))
+                : ''}
             </div>
           </div>
         </div>

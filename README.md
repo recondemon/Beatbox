@@ -2,7 +2,7 @@
 
 Beatbox is a Spotify-inspired music streaming platform where artists can upload their own music and listen to their favorite tracks. This project combines the power of React and Flask to deliver a smooth music playback experience with full user authentication with playlist and album management.
 
-![Beatbox Showcase](showcase.gif)
+![Beatbox Showcase](./public/imgs/showcase.png)
 
 ## Technologies Used
 

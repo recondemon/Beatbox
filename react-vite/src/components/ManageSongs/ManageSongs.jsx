@@ -211,6 +211,7 @@ const ManageSongs = () => {
 
       if (Object.keys(updatedData).length > 0) {
         dispatch(editSong(song.id, updatedData));
+        dispatch(fetchAlbumsByUserId(user.id));
       }
     });
 
@@ -218,8 +219,6 @@ const ManageSongs = () => {
       ...prevState,
       [albumId]: false,
     }));
-
-    dispatch(fetchAlbumById(albumId));
   };
 
   const handleDeleteSong = (songId, albumId) => {

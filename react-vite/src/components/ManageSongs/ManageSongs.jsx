@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { editAlbum, removeAlbum } from '../../redux/albums';
+import { editAlbum, fetchAlbums, removeAlbum, selectAlbums } from '../../redux/albums';
 import { editSong, removeSong } from '../../redux/songs';
 import { useEffect, useState } from 'react';
 import { ChevronUp, ChevronDown, Edit3, Trash2, Save, X } from 'lucide-react';
@@ -9,6 +9,7 @@ const ManageSongs = () => {
   const dispatch = useDispatch();
   const isLoading = useSelector(state => state.albums.isLoading);
   const user = useSelector(state => state.session.user);
+  const albums = useSelector(selectAlbums)
   const [albumsSongs, setAlbumsSongs] = useState({
     albums: [],
     songs: [],
@@ -23,20 +24,20 @@ const ManageSongs = () => {
   const [deleteType, setDeleteType] = useState(null);
 
   useEffect(() => {
-    if (user) {
-      setAlbumsSongs({
-        albums: user.albums || [],
-        songs: user.songs || [],
-      });
-    }
-  }, [user]);
+    dispatch(fetchAlbums())
+
+    setAlbumsSongs({
+      albums: user.albums || [],
+      songs: user.songs || [],
+    });
+  }, [dispatch, user]);
 
   if (isLoading) {
     return (
       <div className='flex w-3/5 min-h-4/5 justify-center items-center mx-auto mt-[20vh]'>
         <div className='flex flex-col gap-4'>
-          <h1 className='text-2vw'>Manage Songs</h1>
-          <p className='text-1vw text-center'>No albums found</p>
+          <h2 className='text-2xl'>Manage Songs</h2>
+          <h3 className='text-xl text-center'>No albums found</h3>
         </div>
       </div>
     );
@@ -46,8 +47,8 @@ const ManageSongs = () => {
     return (
       <div className='flex w-3/5 min-h-4/5 justify-center items-center mx-auto mt-[20vh]'>
         <div className='flex flex-col gap-4'>
-          <h1 className='text-2vw'>Manage Songs</h1>
-          <p className='text-1vw text-center'>No albums found</p>
+          <h2 className='text-2xl'>Manage Songs</h2>
+          <h3 className='text-xl text-center'>No albums found</h3>
         </div>
       </div>
     );
@@ -80,7 +81,7 @@ const ManageSongs = () => {
       ...albumInputValues,
       [album.id]: {
         name: album.name,
-        release_date: album.release_date,
+        release_date: new Date(album.release_date).getFullYear(),
         description: album.description,
       },
     });
@@ -239,12 +240,13 @@ const ManageSongs = () => {
 
   return (
     <div className='flex flex-col mx-auto mt-6 w-4/5 py-6 items-center min-h-[70vh]'>
-      <h1>Manage Songs</h1>
+      <h2 className='text-2xl mb-3'>Manage Songs</h2>
+
       <div className='grid grid-cols-2 gap-4'>
         {albumsSongs.albums.map(album => (
           <div
             key={album.id}
-            className='bg-card'
+            className='bg-card rounded-md'
           >
             <div className='flex'>
               <div className='flex flex-col gap-4 p-4'>
@@ -255,10 +257,12 @@ const ManageSongs = () => {
                     className='w-full h-full object-cover'
                   />
                 </div>
-                <button className='border-2 border-border rounded-lg bg-muted p-2'>
+
+                <button className='hover:bg-accent transition duration-200 border-2 border-border rounded-lg bg-muted p-2'>
                   Change album cover
                 </button>
               </div>
+
               <div className='flex flex-col p-4 gap-2'>
                 {editingAlbum === album.id ? (
                   <div className='flex flex-col gap-2'>
@@ -269,6 +273,7 @@ const ManageSongs = () => {
                       placeholder={album.name}
                       className='bg-input text-secondary-foreground p-2 w-full'
                     />
+
                     <input
                       type='date'
                       value={albumInputValues[album.id]?.release_date || ''}
@@ -276,6 +281,7 @@ const ManageSongs = () => {
                       placeholder={album.release_date}
                       className='bg-input text-secondary-foreground p-2 w-full'
                     />
+
                     <textarea
                       type='text'
                       value={albumInputValues[album.id]?.description || ''}
@@ -285,12 +291,13 @@ const ManageSongs = () => {
                   </div>
                 ) : (
                   <div className='flex flex-col gap-2'>
-                    <h1>{album.name}</h1>
-                    <h1>{album.release_date}</h1>
-                    <h1>{album.description}</h1>
+                    <p className='text-lg'>{album.name}</p>
+                    <p className='text-lg'>{new Date(album.release_date).getFullYear()}</p>
+                    <p className='text-lg'>{album.description}</p>
                   </div>
                 )}
               </div>
+
               <div className='pr-2 pt-2'>
                 {editingAlbum === album.id ? (
                   <div className='flex gap-2'>
@@ -326,7 +333,7 @@ const ManageSongs = () => {
               </div>
             </div>
             {/* need to add songs here */}
-            <div className='mt-1 text-1vw px-4'>
+            <div className='mt-1 text-md p-4'>
               <div className='flex justify-between items-center'>
                 <div className='flex gap-4'>
                   <h1>
@@ -343,6 +350,7 @@ const ManageSongs = () => {
                       >
                         <Save />
                       </button>
+
                       <button
                         onClick={() => handleCloseEditingSongs(album.id)}
                         className='p-2 text-red-500 rounded-lg'
@@ -395,6 +403,7 @@ const ManageSongs = () => {
           </div>
         ))}
       </div>
+
       {/* Delete Confirmation Modal */}
       <ConfirmDeleteModal
         isOpen={isDeleteModalOpen}

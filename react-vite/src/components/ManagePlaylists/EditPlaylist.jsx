@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { ChevronDown, ChevronUp, CircleMinus, Save, X } from 'lucide-react';
-import { selectLiked, fetchPlaylists, putPlaylist } from '../../redux/playlists';
+import { fetchPlaylists, putPlaylist } from '../../redux/playlists';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchArtist } from '../../redux/artists';
 import { selectCurrentSong } from '../../redux/queue';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDrop, useDrag, DndProvider } from 'react-dnd';
+import { selectIsLiked } from '../../redux/liked';
 
 {
   /* Able to move songs around, but unable to get backend to accept the changes. will need to add logs and trace the logic.  */
@@ -110,7 +111,7 @@ const EditPlaylist = ({ list, onClose }) => {
       ? `${list?.owner[0].band_name}`
       : `${list?.owner[0].first_name} ${list?.owner[0].last_name}`
     : null;
-  const liked = useSelector(selectLiked);
+  const liked = useSelector(selectIsLiked);
   const currentSong = useSelector(selectCurrentSong);
   const coverArt = list?.albumCover || '/playlist.jpeg';
   const [playlistName, setPlaylistName] = useState(list?.name || '');

@@ -41,7 +41,6 @@ const SongDetails = ({ albumId }) => {
   };
 
     const handleUploadSong = async () => {
-        console.log('Uploading songs:', songs);
         for(let i = 0; i < songs.length; i++){
             if(songs[i].file){
                 const updatedSongs = [...songs];
@@ -56,7 +55,6 @@ const SongDetails = ({ albumId }) => {
                 };
                 
                 try {
-                    console.log('Uploading song data:', songData); 
                     await dispatch(createSong(songData));
                 } catch (error) {
                 console.error('Upload failed for song:', songs[i].name, error)

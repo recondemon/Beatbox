@@ -28,7 +28,6 @@ const ManageSongs = () => {
         albums: user.albums || [],
         songs: user.songs || [],
       });
-      console.log(albumsSongs.albums, albumsSongs.songs);
     }
   }, [user]);
 
@@ -111,7 +110,6 @@ const ManageSongs = () => {
       updatedData.description = albumInputValues[albumId].description;
     }
     if (Object.keys(updatedData).length === 0) {
-      console.log('No changes detected, not sending the update request.');
       return;
     }
     dispatch(editAlbum(albumId, updatedData))
@@ -140,7 +138,6 @@ const ManageSongs = () => {
   };
 
   const handleDeleteAlbum = albumId => {
-    console.log('Deleting album:', albumId);
     dispatch(removeAlbum(albumId)).then(() => {
       setAlbumsSongs(prevState => ({
         ...prevState,

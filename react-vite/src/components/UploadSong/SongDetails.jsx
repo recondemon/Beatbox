@@ -4,13 +4,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchGenres, selectGenres } from '../../redux/genres';
 import { CirclePlus } from 'lucide-react';
 
-const SongDetails = ({ albumId, onClose }) => {
+const SongDetails = ({ albumId, onClose, errors, setErrors }) => {
   const dispatch = useDispatch();
   const genres = useSelector(selectGenres) || [];
   const [songs, setSongs] = useState([
     { name: '', genre: '', file: null, status: '', progress: 0 },
   ]);
-  const [errors, setErrors] = useState({});
+
 
   useEffect(() => {
     dispatch(fetchGenres());
@@ -39,8 +39,6 @@ const SongDetails = ({ albumId, onClose }) => {
   };
 
   const handleUploadSong = async () => {
-    setErrors({});
-
     if (!albumId) {
       setErrors({ ...errors, album: 'Please select or create an album for this song.' });
     }
@@ -99,7 +97,7 @@ const SongDetails = ({ albumId, onClose }) => {
           key={index}
         >
           {errors.name && <p className='text-destructive'>{errors.name}</p>}
-
+          {errors.genre && <p className='text-destructive'>{errors.genre}</p>}
           <div className='flex gap-2'>
             <input
               id={`song-name-${index}`}
@@ -126,8 +124,6 @@ const SongDetails = ({ albumId, onClose }) => {
                 </option>
               ))}
             </select>
-
-            {errors.genre && <p className='text-destructive'>{errors.genre}</p>}
           </div>
 
           <div>

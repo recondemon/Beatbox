@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import AlbumInputs from './AlbumInputs';
 import { fetchAlbumsByUserId } from '../../redux/albums';
 
-const AlbumDetails = ({ setAlbumId }) => {
+const AlbumDetails = ({ setAlbumId, errors, setErrors }) => {
   const [album, setAlbum] = useState('');
   const [creatingAlbum, setCreatingAlbum] = useState(false);
   const dispatch = useDispatch();
@@ -70,6 +70,8 @@ const AlbumDetails = ({ setAlbumId }) => {
           <AlbumInputs
             handleBackToSelect={handleBackToSelect}
             setAlbumId={setAlbumId}
+            errors={errors}
+            setErrors={setErrors}
           />
         </div>
       ) : (

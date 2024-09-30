@@ -4,6 +4,7 @@ import { editSong, removeSong } from '../../redux/songs';
 import { useEffect, useState } from 'react';
 import { ChevronUp, ChevronDown, Edit3, Trash2, Save, X } from 'lucide-react';
 import ConfirmDeleteModal from './ConfirmDeleteModal';
+import ChangeAlbumCoverModal from './ChangeAlbumCoverModal';
 
 const ManageSongs = () => {
   const dispatch = useDispatch();
@@ -22,6 +23,8 @@ const ManageSongs = () => {
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleteType, setDeleteType] = useState(null);
+  const [isAlbumCoverModalOpen, setAlbumCoverModalOpen] = useState(false);
+  const [albumToUpdate, setAlbumToUpdate] = useState(null);
 
   useEffect(() => {
     dispatch(fetchAlbumsByUserId(user.id))
@@ -240,6 +243,16 @@ const ManageSongs = () => {
     }));
   };
 
+  const handleChangeAlbumCover = (albumId) => {
+    setAlbumToUpdate(albumId);
+    setAlbumCoverModalOpen(true);
+  };
+
+  const handleCloseAlbumCoverModal = () => {
+    setAlbumCoverModalOpen(false);
+    setAlbumToUpdate(null);
+  };
+
   return (
     <div className='flex flex-col mx-auto mt-6 w-4/5 py-6 items-center min-h-[70vh]'>
       <h2 className='text-2xl mb-3'>Manage Songs</h2>
@@ -260,7 +273,10 @@ const ManageSongs = () => {
                   />
                 </div>
 
-                <button className='hover:bg-accent transition duration-200 border-2 border-border rounded-lg bg-muted p-2'>
+                <button 
+                  className='hover:bg-accent transition duration-200 border-2 border-border rounded-lg bg-muted p-2'
+                  onClick={() => handleChangeAlbumCover(album.id)}
+                >
                   Change album cover
                 </button>
               </div>
@@ -418,6 +434,14 @@ const ManageSongs = () => {
         onConfirm={handleConfirmDelete}
         itemType={deleteType}
       />
+
+      {/* Change Album Cover Modal */}
+      {isAlbumCoverModalOpen && (
+        <ChangeAlbumCoverModal
+          albumId={albumToUpdate}
+          onClose={handleCloseAlbumCoverModal}
+        />
+      )}
     </div>
   );
 };

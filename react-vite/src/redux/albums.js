@@ -1,5 +1,5 @@
 import { createSelector } from "reselect";
-import { post } from "./csrf";
+import { post, put } from "./csrf";
 
 const LOAD_ALL = "albums/loadAll";
 const LOAD_ONE = "albums/loadOne";
@@ -50,19 +50,10 @@ export const resetAlbums = () => {
 };
 
 export const editAlbum = (albumId, albumData) => async (dispatch) => {
-  const res = await fetch(`/api/albums/${albumId}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(albumData),
-  });
+  const res = await put(`/api/albums/${albumId}`, albumData)
+  console.log(albumData)
+  dispatch(updateAlbum(res))
 
-  if (res.ok) {
-    const data = await res.json();
-    dispatch(updateAlbum(data));
-    return data;
-  }
   return res;
 };
 

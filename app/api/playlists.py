@@ -94,16 +94,16 @@ def create_playlist():
         return bad_data
 
     playlist = Playlist(
-        is_public=data["is_public"],
         name=data["name"],
         description=data["description"],
+        is_public=data["is_public"],
         owner_id=current_user.id,
     )
 
     db.session.add(playlist)
     db.session.commit()
 
-    return playlist.to_json(),201
+    return playlist.to_json(), 201
 
 
 @playlists.route("/create", methods=["POST"])

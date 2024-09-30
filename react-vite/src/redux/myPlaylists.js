@@ -1,12 +1,12 @@
-import { post, del, get } from "./csrf";
+import { post, del, get } from './csrf';
 
 /* ACTION TYPES */
 
-const LOAD_PLAYLISTS = "myPlaylist/loadPlaylists";
-const ADD_TO_PLAYLIST = "myPlaylist/addSongToPlaylist";
-const REMOVE_FROM_PLAYLIST = "myPlaylist/removeSongFromPlaylist";
-const UNLOAD_PLAYLIST = "myPlaylist/deletePlaylist";
-const LOAD_PLAYLIST = "myPlaylist/addPlaylist";
+const LOAD_PLAYLISTS = 'myPlaylist/loadPlaylists';
+const ADD_TO_PLAYLIST = 'myPlaylist/addSongToPlaylist';
+const REMOVE_FROM_PLAYLIST = 'myPlaylist/removeSongFromPlaylist';
+const UNLOAD_PLAYLIST = 'myPlaylist/deletePlaylist';
+const LOAD_PLAYLIST = 'myPlaylist/addPlaylist';
 
 /* ACTIONS */
 
@@ -22,79 +22,83 @@ export const removeSong = (playlistId, songId) => ({
   songId,
 });
 
-export const loadPlaylists = (playlists) => ({
+export const loadPlaylists = playlists => ({
   type: LOAD_PLAYLISTS,
   playlists,
 });
-export const loadPlaylist = (playlist) => ({
+export const loadPlaylist = playlist => ({
   type: LOAD_PLAYLIST,
   playlist,
 });
 
-export const unloadPlaylist = (playlistId) => ({
+export const unloadPlaylist = playlistId => ({
   type: UNLOAD_PLAYLIST,
   playlistId,
 });
 
 /* THUNKS */
 
-export const addSongToPlaylist = (song, playlist) => async (dispatch) => {
-  const songId =
-    typeof song == "number" || typeof song == "string" ? Number(song) : song.id;
+export const addSongToPlaylist = (song, playlist) => async dispatch => {
+  const songId = typeof song == 'number' || typeof song == 'string' ? Number(song) : song.id;
   const playlistId =
-    typeof playlist == "number" || typeof playlist == "string"
-      ? Number(playlist)
-      : playlist.id;
+    typeof playlist == 'number' || typeof playlist == 'string' ? Number(playlist) : playlist.id;
 
   const updatedPlaylist = await post(`/api/playlists/${playlistId}/song`, {
     song_id: songId,
   });
-  if (typeof song == "object") {
+  if (typeof song == 'object') {
     dispatch(addSong(playlistId, song));
     return song;
   }
   return updatedPlaylist.songs.find(
-    (song) => song.id == songId && dispatch(addSong(playlistId, song))
+    song => song.id == songId && dispatch(addSong(playlistId, song)),
   );
 };
 
-export const removeSongFromPlaylist = (song, playlist) => async (dispatch) => {
-  const songId =
-    typeof song == "number" || typeof song == "string" ? Number(song) : song.id;
+export const removeSongFromPlaylist = (song, playlist) => async dispatch => {
+  const songId = typeof song == 'number' || typeof song == 'string' ? Number(song) : song.id;
   const playlistId =
-    typeof playlist == "number" || typeof playlist == "string"
-      ? Number(playlist)
-      : playlist.id;
+    typeof playlist == 'number' || typeof playlist == 'string' ? Number(playlist) : playlist.id;
   const res = await del(`/api/playlists/${playlistId}/songs/${songId}`);
   dispatch(removeSong(songId));
   return res;
 };
 
-export const fetchMyPlaylists = () => async (dispatch) => {
-  const playlists = await get("/api/playlists/current");
+export const fetchMyPlaylists = () => async dispatch => {
+  const playlists = await get('/api/playlists/current');
   const validPlaylists = playlists.filter(
-    ({ name }) => !["Liked", "Library", "Queue"].includes(name)
+    ({ name }) => !['Liked', 'Library', 'Queue'].includes(name),
   );
   dispatch(loadPlaylists(validPlaylists));
   return validPlaylists;
 };
 
-export const deletePlaylist = (playlistId) => async (dispatch) => {
+export const deletePlaylist = playlistId => async dispatch => {
   const deleted = await del(`/api/playlists/${playlistId}`);
   dispatch(unloadPlaylist(playlistId));
   return deleted;
 };
-export const addPlaylist = (playlistData) => async (dispatch) => {
-  const data = await post(`/api/playlists`, playlistData);
-  dispatch(loadPlaylist(data));
-  return data;
+
+export const addPlaylist = playlistData => async dispatch => {
+  const res = await fetch('/api/playlists', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(playlistData),
+  });
+
+  if (res.ok) {
+    const data = await res.json();
+    dispatch(loadPlaylist(data));
+    return data;
+  }
+
+  return res.json();
 };
 
 /* SELECTORS */
 
-export const selectMyPlaylists = (state) => state.myPlaylists;
-export const selectMyPlaylistsArray = (state) =>
-  state.myPlaylists.playlistArray;
+export const selectMyPlaylists = state => state.myPlaylists;
+export const selectMyPlaylistsArray = state => state.myPlaylists.playlistArray;
 
 /* INITIAL STATE */
 
@@ -110,17 +114,16 @@ export default function myPlaylistsReducer(state = initialState, action) {
       return {
         ...state,
         playlistArray: action.playlists,
-        ...action.playlists.reduce(
-          (obj, playlist, index) => ({ ...obj, [index]: playlist }),
-          {}
-        ),
+        ...action.playlists.reduce((obj, playlist, index) => ({ ...obj, [index]: playlist }), {}),
       };
-    case LOAD_PLAYLIST:
+    case LOAD_PLAYLIST: {
+      console.log('\n\n LOADING PLAYIST AFTER CREATION \n\n', action.playlist);
       return {
         ...state,
         playlistArray: [...state.playlistArray, action.playlist],
         [action.playlist.id]: action.playlist,
       };
+    }
     case UNLOAD_PLAYLIST:
       return {
         ...state,

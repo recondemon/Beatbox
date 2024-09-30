@@ -1,9 +1,9 @@
-import { useSelector } from "react-redux";
-import { selectMyPlaylistsArray } from "../../redux/myPlaylists";
-import { useEffect, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
-import { addSong } from "../../redux/myPlaylists";
-import { CirclePlus } from "lucide-react";
+import { useSelector } from 'react-redux';
+import { selectMyPlaylistsArray } from '../../redux/myPlaylists';
+import { useEffect, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { addSong } from '../../redux/myPlaylists';
+import { CirclePlus } from 'lucide-react';
 
 export default function DropDown({ song }) {
   const myPlaylists = useSelector(selectMyPlaylistsArray);
@@ -27,10 +27,10 @@ export default function DropDown({ song }) {
       return;
     }
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isVisible]);
 
@@ -43,15 +43,15 @@ export default function DropDown({ song }) {
       {isVisible && (
         <div
           ref={dropDownRef}
-          className="absolute z-10 origin-top-left w-56 rounded-md bg-background shadow-lg"
+          className='absolute z-10 origin-top-left w-56 rounded-md bg-background shadow-lg'
         >
-          {myPlaylists.map((playlist) => (
+          {myPlaylists.map(playlist => (
             <div
               key={playlist.id}
-              className="p-2 hover:bg-muted cursor-pointer"
+              className='p-2 hover:bg-muted cursor-pointer'
             >
               <span
-                className="text-sm"
+                className='text-sm'
                 key={playlist.id}
                 onClick={() => handleClick(playlist.id)}
               >

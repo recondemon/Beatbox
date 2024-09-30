@@ -28,8 +28,8 @@ const Sidebar = () => {
   return (
     <>
       {user && (
-        <div className='absolute rounded-md top-20 left-4 h-5/6'>
-          <div className='flex flex-col h-full bg-secondary rounded-md items-center'>
+        <div className='absolute rounded-md top-20 left-4 h-3/4'>
+          <div className='flex flex-col h-full bg-secondary rounded-md items-center  overflow-y-auto overflow-x-clip scrollbar-thin scrollbar-thumb-primary scrollbar-thumb-rounded-full scrollbar-track-transparent'>
             <div className='flex flex-col justify-between items-center'>
               <div className='flex flex-col p-4 gap-4'>
                 <Link

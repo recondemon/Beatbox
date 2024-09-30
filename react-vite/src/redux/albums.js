@@ -51,8 +51,8 @@ export const resetAlbums = () => {
 
 export const editAlbum = (albumId, albumData) => async (dispatch) => {
   const res = await put(`/api/albums/${albumId}`, albumData)
-  console.log(albumData)
   dispatch(updateAlbum(res))
+  dispatch(fetchAlbumsByUserId(res.artist[0].id))
 
   return res;
 };

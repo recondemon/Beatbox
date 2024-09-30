@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Trash, MoreHorizontal, Play } from "lucide-react";
+import { Trash, MoreHorizontal, Play, CircleMinus } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addToQueue,
@@ -16,6 +16,7 @@ import { useModal } from "../../../context/Modal";
 import { useParams } from "react-router-dom";
 import {
   fetchMyPlaylist,
+  removeSongFromPlaylist,
   selectMyPlaylistById,
   selectMyPlaylistsArray,
 } from "../../../redux/myPlaylists";
@@ -34,13 +35,15 @@ const PlaylistDetails = () => {
   const myPlaylist = useSelector(selectMyPlaylistById(playlistId));
   const playlist = useSelector(selectPlaylistById(playlistId));
   const isInMyPlaylists = myPlaylists?.some(
-    (playlist) => playlist.id === playlistId
+    (playlist) => playlist.id == playlistId
   );
   const activePlaylist = isInMyPlaylists ? myPlaylist : playlist;
   const [showAlert, setShowAlert] = useState(false);
   const dropdownRef = useRef(null);
   const { setModalContent } = useModal();
   const coverArt = "/playlist.jpeg";
+
+  console.log(activePlaylist);
 
   useEffect(() => {
     dispatch(fetchPlaylist(playlistId));
@@ -245,13 +248,20 @@ const PlaylistDetails = () => {
 
       <ul className="bg-card text-card-foreground w-full border border-border h-2/3 rounded-md">
         {activePlaylist?.songs?.length ? (
-          activePlaylist.songs.map((song) => (
+          activePlaylist.songs?.map((song) => (
             <li
               key={song.id}
               className="flex flex-col hover:bg-muted h-full rounded-sm"
             >
               <div className="flex mx-4 items-center py-4">
                 <div className="flex gap-4 items-center mr-2">
+                  <button
+                    onClick={() =>
+                      dispatch(removeSongFromPlaylist(song, playlistId))
+                    }
+                  >
+                    <CircleMinus />
+                  </button>
                   <AddToLibrary song={song} />
                   <LikeButton song={song} />
                   <DropDown song={song} />

@@ -156,16 +156,21 @@ def add_playlist_songs(playlist_id):
 def add_playlist_song(playlist_id):
     playlist = Playlist.query.get(playlist_id)
 
+    print("\n\n\n\n\n\n")
+    print(playlist)
+    print(playlist_id)
+    print("\n\n\n\n\n\n")
+
     db.session.add(
         PlaylistSong(
-            song_index=len(playlist.songs),
+            song_index=len(getattr(playlist, "songs", [])),
             song_id=request.get_json()["song_id"],  # pyright: ignore
             playlist_id=int(playlist_id),
         )
     )
     db.session.commit()
 
-    return playlist.to_json()
+    return Playlist.query.get(playlist_id).to_json()
 
 
 @playlists.route("/liked")

@@ -75,9 +75,9 @@ export const addSongToPlaylist = (song, playlist) => async (dispatch) => {
     dispatch(addSong(playlistId, song));
     return song;
   }
-  return updatedPlaylist.songs.find(
-    (song) => song.id == songId && dispatch(addSong(playlistId, song))
-  );
+  const songFound = updatedPlaylist.songs.find((song) => song.id == songId);
+  dispatch(addSong(playlistId, songFound));
+  return songFound;
 };
 
 export const removeSongFromPlaylist = (song, playlist) => async (dispatch) => {
@@ -88,7 +88,7 @@ export const removeSongFromPlaylist = (song, playlist) => async (dispatch) => {
       ? Number(playlist)
       : playlist.id;
   const res = await del(`/api/playlists/${playlistId}/songs/${songId}`);
-  dispatch(removeSong(songId));
+  dispatch(removeSong(playlistId, songId));
   return res;
 };
 
@@ -109,7 +109,7 @@ export const deletePlaylist = (playlistId) => async (dispatch) => {
 
 export const addPlaylist = (playlistData) => async (dispatch) => {
   const res = await post("/api/playlists", playlistData);
-  console.log("\n\n\n\nTHIS IS WHAT WE GET!!!!:",res,"\n\n\n")
+  console.log("\n\n\n\nTHIS IS WHAT WE GET!!!!:", res, "\n\n\n");
   dispatch(loadPlaylist(res));
   return res;
 };
@@ -170,11 +170,13 @@ export default function myPlaylistsReducer(state = initialState, action) {
       };
     }
     case REMOVE_FROM_PLAYLIST:
+      console.log(playlistAtId)
       return {
         ...state,
         [playlistId]: {
           ...playlistAtId,
-          songs: playlistAtId.songs.filter(({ id }) => id != action.songId),
+          songs:
+            playlistAtId?.songs?.filter(({ id }) => id != action.songId) || [],
         },
       };
     default:

@@ -169,7 +169,7 @@ def update_album(album_id):
 
         name = form_data.get("name", album.name)
         description = form_data.get("description", album.description)
-        release_date = form_data.get("release_date", album.release_date)
+        release_date = form_data.get("releaseDate", album.release_date)
 
         album.name = name
         album.description = description

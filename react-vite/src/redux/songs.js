@@ -1,65 +1,54 @@
-import { createSelector } from "reselect";
-import { post, get } from "./csrf";
-import { fetchAlbumsByUserId } from "./albums";
+import { createSelector } from 'reselect';
+import { post, get, put } from './csrf';
+import { fetchAlbumsByUserId } from './albums';
 
-const LOAD_ALL = "songs/loadAll";
-const LOAD_PAGINATED = "songs/loadPaginated";
-const LOAD_ONE = "songs/loadOne";
-const UPDATE_SONG = "songs/update";
-const DELETE_SONG = "songs/delete";
+const LOAD_ALL = 'songs/loadAll';
+const LOAD_PAGINATED = 'songs/loadPaginated';
+const LOAD_ONE = 'songs/loadOne';
+const UPDATE_SONG = 'songs/update';
+const DELETE_SONG = 'songs/delete';
 
-export const loadAll = (songs) => {
+export const loadAll = songs => {
   return {
     type: LOAD_ALL,
     songs,
   };
 };
-export const loadOne = (song) => {
+export const loadOne = song => {
   return {
     type: LOAD_ONE,
     song,
   };
 };
 
-export const loadPaginated = (data) => ({
+export const loadPaginated = data => ({
   type: LOAD_PAGINATED,
   data,
 });
 
-export const updateSong = (updatedSong) => {
+export const updateSong = updatedSong => {
   return {
     type: UPDATE_SONG,
     updatedSong,
   };
 };
 
-export const deleteSong = (songId) => {
+export const deleteSong = songId => {
   return {
     type: DELETE_SONG,
     songId,
   };
 };
 
-export const editSong = (songId, songData) => async (dispatch) => {
-  const res = await fetch(`/api/songs/${songId}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(songData),
-  });
-
-  if (res.ok) {
-    const data = await res.json();
-    dispatch(updateSong(data));
-    return data;
-  }
+export const editSong = (songId, songData) => async dispatch => {
+  const res = await put(`/api/songs/${songId}`, songData);
+  dispatch(updateSong(res));
   return res;
 };
 
-export const removeSong = (songId) => async (dispatch) => {
+export const removeSong = songId => async dispatch => {
   const res = await fetch(`/api/songs/${songId}`, {
-    method: "DELETE",
+    method: 'DELETE',
   });
 
   if (res.ok) {
@@ -71,7 +60,7 @@ export const removeSong = (songId) => async (dispatch) => {
 
 export const fetchSongs =
   (page, limit = 10) =>
-  async (dispatch) => {
+  async dispatch => {
     const res = await fetch(`/api/songs?page=${page}&limit=${limit}`);
 
     if (res.ok) {
@@ -82,7 +71,7 @@ export const fetchSongs =
           songs: data.songs,
           totalPages: data.total_pages,
           currentPage: data.current_page,
-        })
+        }),
       );
 
       return data;
@@ -90,7 +79,7 @@ export const fetchSongs =
 
     return res;
   };
-export const fetchAllSongs = () => async (dispatch) => {
+export const fetchAllSongs = () => async dispatch => {
   const res = await fetch(`/api/songs/all`);
 
   if (res.ok) {
@@ -104,25 +93,25 @@ export const fetchAllSongs = () => async (dispatch) => {
   return res;
 };
 
-export const createSong = (songData) => async (dispatch) => {
-  const song = await post("/songs", songData);
+export const createSong = songData => async dispatch => {
+  const song = await post('/songs', songData);
   dispatch(loadOne(song));
-  dispatch(fetchAlbumsByUserId(song.artist[0].id))
+  dispatch(fetchAlbumsByUserId(song.artist[0].id));
   return song;
 };
 
-export const fetchSong = (songId) => async (dispatch) => {
-  const song = await get("/songs/" + songId);
+export const fetchSong = songId => async dispatch => {
+  const song = await get('/songs/' + songId);
   dispatch(loadOne(song));
   return song;
 };
 
-export const selectSongs = (state) => state.songs;
-export const selectSongById = (songId) => (state) => state.songs[songId];
-export const selectSongsArray = createSelector(selectSongs, (songs) => {
+export const selectSongs = state => state.songs;
+export const selectSongById = songId => state => state.songs[songId];
+export const selectSongsArray = createSelector(selectSongs, songs => {
   return songs.paginated ? Object.values(songs.paginated) : [];
 });
-export const selectPagination = (state) => ({
+export const selectPagination = state => ({
   totalPages: state.songs.totalPages,
   currentPage: state.songs.currentPage,
 });
@@ -132,7 +121,7 @@ export default function songsReducer(state = {}, action) {
     case LOAD_PAGINATED: {
       const newState = { ...state, paginated: {} };
 
-      action.data.songs.forEach((song) => {
+      action.data.songs.forEach(song => {
         newState.paginated[song.id] = song;
       });
 
@@ -146,7 +135,7 @@ export default function songsReducer(state = {}, action) {
 
       return {
         ...state,
-        ...action.songs.reduce((obj, song) => ({ ...obj, [song.id]: song }),{}),
+        ...action.songs.reduce((obj, song) => ({ ...obj, [song.id]: song }), {}),
       };
     }
     case LOAD_ONE: {

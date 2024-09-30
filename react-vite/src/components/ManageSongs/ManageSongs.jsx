@@ -1,5 +1,11 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { editAlbum, fetchAlbumsByUserId, removeAlbum, selectAlbumsByUserId } from '../../redux/albums';
+import {
+  editAlbum,
+  fetchAlbumById,
+  fetchAlbumsByUserId,
+  removeAlbum,
+  selectAlbumsByUserId,
+} from '../../redux/albums';
 import { editSong, removeSong } from '../../redux/songs';
 import { useEffect, useState } from 'react';
 import { ChevronUp, ChevronDown, Edit3, Trash2, Save, X } from 'lucide-react';
@@ -10,7 +16,7 @@ const ManageSongs = () => {
   const dispatch = useDispatch();
   const isLoading = useSelector(state => state.albums.isLoading);
   const user = useSelector(state => state.session.user);
-  const albums = useSelector(selectAlbumsByUserId(user.id))
+  const albums = useSelector(selectAlbumsByUserId(user.id));
   // const [albumsSongs, setAlbumsSongs] = useState({
   //   albums: [],
   //   songs: [],
@@ -27,8 +33,8 @@ const ManageSongs = () => {
   const [albumToUpdate, setAlbumToUpdate] = useState(null);
 
   useEffect(() => {
-    dispatch(fetchAlbumsByUserId(user.id))
-  }, [dispatch, user])
+    dispatch(fetchAlbumsByUserId(user.id));
+  }, [dispatch, user]);
 
   // useEffect(() => {
   //   setAlbumsSongs({
@@ -86,7 +92,7 @@ const ManageSongs = () => {
       ...albumInputValues,
       [album.id]: {
         name: album.name,
-        releaseDate: new Date(album.releaseDate).getFullYear(),
+        releaseDate: new Date(album.releaseDate),
         description: album.description,
       },
     });
@@ -95,29 +101,31 @@ const ManageSongs = () => {
   const handleSaveAlbum = albumId => {
     const originalAlbum = albums.find(album => album.id === albumId);
     const updatedData = {};
+
     if (albumInputValues[albumId]?.name && albumInputValues[albumId].name !== originalAlbum.name) {
       updatedData.name = albumInputValues[albumId].name;
     }
+
     if (
       albumInputValues[albumId]?.releaseDate &&
-      albumInputValues[albumId].releaseDate !== originalAlbum.releaseDate
+      albumInputValues[albumId]?.releaseDate !== originalAlbum.releaseDate
     ) {
-      const formattedDate = new Date(albumInputValues[albumId].releaseDate)
-        .toISOString()
-        .split('T')[0];
-      updatedData.releaseDate = formattedDate;
+      updatedData.releaseDate = albumInputValues[albumId].releaseDate;
     } else {
       updatedData.releaseDate = new Date(originalAlbum.releaseDate).toISOString().split('T')[0];
     }
+
     if (
       albumInputValues[albumId]?.description &&
       albumInputValues[albumId].description !== originalAlbum.description
     ) {
       updatedData.description = albumInputValues[albumId].description;
     }
+
     if (Object.keys(updatedData).length === 0) {
       return;
     }
+
     dispatch(editAlbum(albumId, updatedData))
       .then(updatedAlbum => {
         // setAlbumsSongs(prevState => ({
@@ -190,7 +198,9 @@ const ManageSongs = () => {
   };
 
   const handleSaveSongs = albumId => {
-    const albumSongs = albums.map(album => album.songs.filter(song => song.album_id === albumId));
+    const albumSongs = albums.map(album =>
+      album.songs.filter(song => song.album_id === albumId),
+    )[0];
 
     albumSongs.forEach(song => {
       const updatedData = {};
@@ -200,12 +210,7 @@ const ManageSongs = () => {
       }
 
       if (Object.keys(updatedData).length > 0) {
-        dispatch(editSong(song.id, updatedData)).then(updatedSong => {
-          // setAlbumsSongs(prevState => ({
-          //   ...prevState,
-          //   songs: prevState.songs.map(s => (s.id === song.id ? { ...s, ...updatedData } : s)),
-          // }));
-        });
+        dispatch(editSong(song.id, updatedData));
       }
     });
 
@@ -213,6 +218,8 @@ const ManageSongs = () => {
       ...prevState,
       [albumId]: false,
     }));
+
+    dispatch(fetchAlbumById(albumId));
   };
 
   const handleDeleteSong = (songId, albumId) => {
@@ -225,7 +232,9 @@ const ManageSongs = () => {
   };
 
   const handleCloseEditingSongs = albumId => {
-    const originalSongs = albums.map(album => album.songs.filter(song => song.album_id === albumId));
+    const originalSongs = albums.map(album =>
+      album.songs.filter(song => song.album_id === albumId),
+    );
 
     const resetSongValues = {};
     originalSongs.forEach(song => {
@@ -243,7 +252,7 @@ const ManageSongs = () => {
     }));
   };
 
-  const handleChangeAlbumCover = (albumId) => {
+  const handleChangeAlbumCover = albumId => {
     setAlbumToUpdate(albumId);
     setAlbumCoverModalOpen(true);
   };
@@ -273,7 +282,7 @@ const ManageSongs = () => {
                   />
                 </div>
 
-                <button 
+                <button
                   className='hover:bg-accent transition duration-200 border-2 border-border rounded-lg bg-muted p-2'
                   onClick={() => handleChangeAlbumCover(album.id)}
                 >
@@ -294,9 +303,11 @@ const ManageSongs = () => {
 
                     <input
                       type='date'
-                      value={albumInputValues[album.id]?.releaseData || ''}
+                      value={
+                        new Date(albumInputValues[album.id].releaseDate).toISOString().split('T')[0]
+                      }
                       onChange={e => handleInputChange(album.id, 'releaseDate', e.target.value)}
-                      placeholder={album.releaseDate}
+                      placeholder={new Date(album.releaseDate).toISOString().split('T')[0]}
                       className='bg-input text-secondary-foreground p-2 w-full'
                     />
 
@@ -354,9 +365,7 @@ const ManageSongs = () => {
             <div className='mt-1 text-md p-4'>
               <div className='flex justify-between items-center'>
                 <div className='flex gap-4'>
-                  <p>
-                    Songs - {album.songs.length}
-                  </p>
+                  <p>Songs - {album.songs.length}</p>
 
                   <button onClick={() => toggleAlbumExpand(album.id)}>
                     {expandedAlbums[album.id] ? <ChevronUp /> : <ChevronDown />}

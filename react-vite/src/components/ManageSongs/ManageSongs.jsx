@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { editAlbum, fetchAlbums, removeAlbum, selectAlbums } from '../../redux/albums';
+import { editAlbum, fetchAlbumsByUserId, removeAlbum, selectAlbumsByUserId } from '../../redux/albums';
 import { editSong, removeSong } from '../../redux/songs';
 import { useEffect, useState } from 'react';
 import { ChevronUp, ChevronDown, Edit3, Trash2, Save, X } from 'lucide-react';
@@ -9,11 +9,11 @@ const ManageSongs = () => {
   const dispatch = useDispatch();
   const isLoading = useSelector(state => state.albums.isLoading);
   const user = useSelector(state => state.session.user);
-  const albums = useSelector(selectAlbums)
-  const [albumsSongs, setAlbumsSongs] = useState({
-    albums: [],
-    songs: [],
-  });
+  const albums = useSelector(selectAlbumsByUserId(user.id))
+  // const [albumsSongs, setAlbumsSongs] = useState({
+  //   albums: [],
+  //   songs: [],
+  // });
   const [expandedAlbums, setExpandedAlbums] = useState({});
   const [editingAlbum, setEditingAlbum] = useState(null);
   const [albumInputValues, setAlbumInputValues] = useState({});
@@ -24,13 +24,15 @@ const ManageSongs = () => {
   const [deleteType, setDeleteType] = useState(null);
 
   useEffect(() => {
-    dispatch(fetchAlbums())
+    dispatch(fetchAlbumsByUserId(user.id))
+  }, [dispatch, user])
 
-    setAlbumsSongs({
-      albums: user.albums || [],
-      songs: user.songs || [],
-    });
-  }, [dispatch, user]);
+  // useEffect(() => {
+  //   setAlbumsSongs({
+  //     albums: albums || [],
+  //     songs: user.songs || [],
+  //   });
+  // }, [dispatch, user]);
 
   if (isLoading) {
     return (
@@ -43,16 +45,16 @@ const ManageSongs = () => {
     );
   }
 
-  if (!albumsSongs.albums || albumsSongs.albums.length === 0) {
-    return (
-      <div className='flex w-3/5 min-h-4/5 justify-center items-center mx-auto mt-[20vh]'>
-        <div className='flex flex-col gap-4'>
-          <h2 className='text-2xl'>Manage Songs</h2>
-          <h3 className='text-xl text-center'>No albums found</h3>
-        </div>
-      </div>
-    );
-  }
+  // if (!albumsSongs.albums || albumsSongs.albums.length === 0) {
+  //   return (
+  //     <div className='flex w-3/5 min-h-4/5 justify-center items-center mx-auto mt-[20vh]'>
+  //       <div className='flex flex-col gap-4'>
+  //         <h2 className='text-2xl'>Manage Songs</h2>
+  //         <h3 className='text-xl text-center'>No albums found</h3>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   const handleOpenDeleteModal = (id, type) => {
     setDeleteTarget(id);
@@ -81,28 +83,28 @@ const ManageSongs = () => {
       ...albumInputValues,
       [album.id]: {
         name: album.name,
-        release_date: new Date(album.release_date).getFullYear(),
+        releaseDate: new Date(album.releaseDate).getFullYear(),
         description: album.description,
       },
     });
   };
 
   const handleSaveAlbum = albumId => {
-    const originalAlbum = albumsSongs.albums.find(album => album.id === albumId);
+    const originalAlbum = albums.find(album => album.id === albumId);
     const updatedData = {};
     if (albumInputValues[albumId]?.name && albumInputValues[albumId].name !== originalAlbum.name) {
       updatedData.name = albumInputValues[albumId].name;
     }
     if (
-      albumInputValues[albumId]?.release_date &&
-      albumInputValues[albumId].release_date !== originalAlbum.release_date
+      albumInputValues[albumId]?.releaseDate &&
+      albumInputValues[albumId].releaseDate !== originalAlbum.releaseDate
     ) {
-      const formattedDate = new Date(albumInputValues[albumId].release_date)
+      const formattedDate = new Date(albumInputValues[albumId].releaseDate)
         .toISOString()
         .split('T')[0];
-      updatedData.release_date = formattedDate;
+      updatedData.releaseDate = formattedDate;
     } else {
-      updatedData.release_date = new Date(originalAlbum.release_date).toISOString().split('T')[0];
+      updatedData.releaseDate = new Date(originalAlbum.releaseDate).toISOString().split('T')[0];
     }
     if (
       albumInputValues[albumId]?.description &&
@@ -115,12 +117,12 @@ const ManageSongs = () => {
     }
     dispatch(editAlbum(albumId, updatedData))
       .then(updatedAlbum => {
-        setAlbumsSongs(prevState => ({
-          ...prevState,
-          albums: prevState.albums.map(album =>
-            album.id === albumId ? { ...album, ...updatedData } : album,
-          ),
-        }));
+        // setAlbumsSongs(prevState => ({
+        //   ...prevState,
+        //   albums: prevState.albums.map(album =>
+        //     album.id === albumId ? { ...album, ...updatedData } : album,
+        //   ),
+        // }));
         setEditingAlbum(null);
       })
       .catch(error => {
@@ -140,11 +142,11 @@ const ManageSongs = () => {
 
   const handleDeleteAlbum = albumId => {
     dispatch(removeAlbum(albumId)).then(() => {
-      setAlbumsSongs(prevState => ({
-        ...prevState,
-        albums: prevState.albums.filter(album => album.id !== albumId),
-        songs: prevState.songs.filter(song => song.album_id !== albumId),
-      }));
+      // setAlbumsSongs(prevState => ({
+      //   ...prevState,
+      //   albums: prevState.albums.filter(album => album.id !== albumId),
+      //   songs: prevState.songs.filter(song => song.album_id !== albumId),
+      // }));
     });
   };
 
@@ -166,7 +168,7 @@ const ManageSongs = () => {
       ...prevState,
       [albumId]: !prevState[albumId],
     }));
-    const albumSongs = albumsSongs.songs.filter(song => song.album_id === albumId);
+    const albumSongs = albums.map(album => album.songs.filter(song => song.album_id === albumId));
     const songEdits = {};
     albumSongs.forEach(song => {
       songEdits[song.id] = { name: song.name };
@@ -185,7 +187,7 @@ const ManageSongs = () => {
   };
 
   const handleSaveSongs = albumId => {
-    const albumSongs = albumsSongs.songs.filter(song => song.album_id === albumId);
+    const albumSongs = albums.map(album => album.songs.filter(song => song.album_id === albumId));
 
     albumSongs.forEach(song => {
       const updatedData = {};
@@ -196,10 +198,10 @@ const ManageSongs = () => {
 
       if (Object.keys(updatedData).length > 0) {
         dispatch(editSong(song.id, updatedData)).then(updatedSong => {
-          setAlbumsSongs(prevState => ({
-            ...prevState,
-            songs: prevState.songs.map(s => (s.id === song.id ? { ...s, ...updatedData } : s)),
-          }));
+          // setAlbumsSongs(prevState => ({
+          //   ...prevState,
+          //   songs: prevState.songs.map(s => (s.id === song.id ? { ...s, ...updatedData } : s)),
+          // }));
         });
       }
     });
@@ -212,15 +214,15 @@ const ManageSongs = () => {
 
   const handleDeleteSong = (songId, albumId) => {
     dispatch(removeSong(songId)).then(() => {
-      setAlbumsSongs(prevState => ({
-        ...prevState,
-        songs: prevState.songs.filter(song => song.id !== songId),
-      }));
+      // setAlbumsSongs(prevState => ({
+      //   ...prevState,
+      //   songs: prevState.songs.filter(song => song.id !== songId),
+      // }));
     });
   };
 
   const handleCloseEditingSongs = albumId => {
-    const originalSongs = albumsSongs.songs.filter(song => song.album_id === albumId);
+    const originalSongs = albums.map(album => album.songs.filter(song => song.album_id === albumId));
 
     const resetSongValues = {};
     originalSongs.forEach(song => {
@@ -243,7 +245,7 @@ const ManageSongs = () => {
       <h2 className='text-2xl mb-3'>Manage Songs</h2>
 
       <div className='grid grid-cols-2 gap-4'>
-        {albumsSongs.albums.map(album => (
+        {albums.map(album => (
           <div
             key={album.id}
             className='bg-card rounded-md'
@@ -252,7 +254,7 @@ const ManageSongs = () => {
               <div className='flex flex-col gap-4 p-4'>
                 <div className='w-[10vw] h-auto'>
                   <img
-                    src={album.album_cover}
+                    src={album.albumCover}
                     alt='album cover'
                     className='w-full h-full object-cover'
                   />
@@ -276,9 +278,9 @@ const ManageSongs = () => {
 
                     <input
                       type='date'
-                      value={albumInputValues[album.id]?.release_date || ''}
-                      onChange={e => handleInputChange(album.id, 'release_date', e.target.value)}
-                      placeholder={album.release_date}
+                      value={albumInputValues[album.id]?.releaseData || ''}
+                      onChange={e => handleInputChange(album.id, 'releaseDate', e.target.value)}
+                      placeholder={album.releaseDate}
                       className='bg-input text-secondary-foreground p-2 w-full'
                     />
 
@@ -292,7 +294,7 @@ const ManageSongs = () => {
                 ) : (
                   <div className='flex flex-col gap-2'>
                     <p className='text-lg'>{album.name}</p>
-                    <p className='text-lg'>{new Date(album.release_date).getFullYear()}</p>
+                    <p className='text-lg'>{new Date(album.releaseDate).getFullYear()}</p>
                     <p className='text-lg'>{album.description}</p>
                   </div>
                 )}
@@ -336,12 +338,14 @@ const ManageSongs = () => {
             <div className='mt-1 text-md p-4'>
               <div className='flex justify-between items-center'>
                 <div className='flex gap-4'>
-                  <h1>
-                    Songs - {albumsSongs.songs.filter(song => song.album_id === album.id).length}
-                  </h1>
+                  <p>
+                    Songs - {album.songs.length}
+                  </p>
+
                   <button onClick={() => toggleAlbumExpand(album.id)}>
                     {expandedAlbums[album.id] ? <ChevronUp /> : <ChevronDown />}
                   </button>
+
                   {editingSongs[album.id] ? (
                     <div>
                       <button
@@ -367,9 +371,10 @@ const ManageSongs = () => {
                   )}
                 </div>
               </div>
+
               {expandedAlbums[album.id] && (
                 <div>
-                  {albumsSongs.songs
+                  {album.songs
                     .filter(song => song.album_id === album.id)
                     .map(song => (
                       <div
@@ -386,6 +391,7 @@ const ManageSongs = () => {
                         ) : (
                           <p className='w-full'>{song.name}</p>
                         )}
+
                         {editingSongs[album.id] && (
                           <button
                             onClick={() => handleOpenDeleteModal(song.id, 'song')}
@@ -396,6 +402,7 @@ const ManageSongs = () => {
                         )}
                       </div>
                     ))}
+
                   {editingSongs[album.id] && <div className='mt-2'></div>}
                 </div>
               )}

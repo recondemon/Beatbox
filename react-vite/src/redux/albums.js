@@ -105,7 +105,7 @@ export const fetchAlbumById = (id) => async (dispatch) => {
 };
 
 export const fetchAlbumsByUserId = (userId) => async (dispatch) => {
-  dispatch(resetAlbums());
+  // dispatch(resetAlbums());
 
   const res = await fetch(`/api/albums/user/${userId}`);
 
@@ -124,8 +124,8 @@ export const createAlbum = (album) => async (dispatch) => {
   return data;
 };
 
-export const selectAlbumByUserId = (userId) => (state) => {
-  return Object.values(state.albums).filter((album) => album.userId === userId);
+export const selectAlbumsByUserId = (userId) => (state) => {
+  return Object.values(state.albums).filter((album) => album.artistId === userId);
 };
 export const selectAlbums = (state) => state.albums;
 export const selectAlbumById = (albumId) => (state) => state.albums[albumId];
@@ -135,8 +135,8 @@ export const selectAlbumsArray = createSelector(selectAlbums, (albums) => {
 
 export default function albumsReducer(state = {}, action) {
   switch (action.type) {
-    case RESET_ALBUMS:
-      return {};
+    // case RESET_ALBUMS:
+    //   return {};
     case LOAD_ALL: {
       const newState = {};
       action.albums.forEach((album) => {

@@ -41,6 +41,7 @@ const SongDetails = ({ albumId, onClose, errors, setErrors }) => {
   const handleUploadSong = async () => {
     if (!albumId) {
       setErrors({ ...errors, album: 'Please select or create an album for this song.' });
+      return;
     }
 
     let uploadSuccess = true;

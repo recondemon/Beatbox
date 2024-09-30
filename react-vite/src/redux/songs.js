@@ -1,5 +1,6 @@
 import { createSelector } from "reselect";
 import { post, get } from "./csrf";
+import { fetchAlbumsByUserId } from "./albums";
 
 const LOAD_ALL = "songs/loadAll";
 const LOAD_PAGINATED = "songs/loadPaginated";
@@ -106,6 +107,7 @@ export const fetchAllSongs = () => async (dispatch) => {
 export const createSong = (songData) => async (dispatch) => {
   const song = await post("/songs", songData);
   dispatch(loadOne(song));
+  dispatch(fetchAlbumsByUserId(song.artist[0].id))
   return song;
 };
 

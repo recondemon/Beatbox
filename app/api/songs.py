@@ -11,7 +11,7 @@ songs = Blueprint("songs", __name__)
 
 
 @songs.route("")
-def all_songs():
+def pag_songs():
     query = Song.query
 
     query_dir = request.args.get("query")
@@ -20,15 +20,11 @@ def all_songs():
         query = query.filter(Song.genre.name == query_dir["genre"])
 
     if query_dir and "artist" in query_dir:
-        query = query.filter(
-            Song.artist.band_name.like(f"%{query_dir['artist']}%")
-        )
+        query = query.filter(Song.artist.band_name.like(f"%{query_dir['artist']}%"))
 
     page = request.args.get("page", 1, type=int)
     per_page = request.args.get("limit", 10, type=int)
-    paginated_songs = query.paginate(
-        page=page, per_page=per_page, error_out=False
-    )
+    paginated_songs = query.paginate(page=page, per_page=per_page, error_out=False)
 
     songs = [song.to_json() for song in paginated_songs.items]
 
@@ -39,6 +35,21 @@ def all_songs():
             "current_page": paginated_songs.page,
         }
     )
+
+
+@songs.route("/all")
+def all_songs():
+    query = Song.query
+
+    query_dir = request.args.get("query")
+
+    if query_dir and "genre" in query_dir:
+        query = query.filter(Song.genre.name == query_dir["genre"])
+
+    if query_dir and "artist" in query_dir:
+        query = query.filter(Song.artist.band_name.like(f"%{query_dir['artist']}%"))
+
+    return [song.to_json() for song in query.all()]
 
 
 @songs.route("", methods=["POST"])

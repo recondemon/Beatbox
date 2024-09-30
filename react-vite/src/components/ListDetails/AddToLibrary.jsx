@@ -7,7 +7,7 @@ import {
 import { Book } from "lucide-react";
 
 export default function AddToLibrary({ song }) {
-  const isAdded = useSelector((state) => selectIsAdded(state, song.id));
+  const isAdded = useSelector((state) => selectIsAdded(state, song?.id));
   const dispatch = useDispatch();
 
   if (isAdded) {

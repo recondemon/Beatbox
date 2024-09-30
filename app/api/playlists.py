@@ -156,10 +156,12 @@ def add_playlist_songs(playlist_id):
 def add_playlist_song(playlist_id):
     playlist = Playlist.query.get(playlist_id)
 
-    print("\n\n\n\n\n\n")
-    print(playlist)
-    print(playlist_id)
-    print("\n\n\n\n\n\n")
+    exists = PlaylistSong.query.filter_by(
+        song_id=request.get_json()["song_id"], playlist_id=int(playlist_id)
+    ).first()
+
+    if exists:
+        return {"errors": "Cannot add duplicate song"}, 400
 
     db.session.add(
         PlaylistSong(

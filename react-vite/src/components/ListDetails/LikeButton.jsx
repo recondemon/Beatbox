@@ -3,7 +3,7 @@ import { selectIsLiked, likeSong, unLikeSong } from "../../redux/liked";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
 
 export default function LikeButton({ song }) {
-  const isLiked = useSelector((state) => selectIsLiked(state, song.id));
+  const isLiked = useSelector((state) => selectIsLiked(state, song?.id));
   const dispatch = useDispatch();
 
   return (

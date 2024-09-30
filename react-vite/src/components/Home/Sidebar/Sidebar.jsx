@@ -8,6 +8,7 @@ import { SquarePlus } from 'lucide-react';
 import CreatePlaylistForm from '../../ManagePlaylists/CreatePlaylistForm';
 
 import { useModal } from '../../../context/Modal';
+import { fetchAllSongs } from '../../../redux/songs';
 
 const Sidebar = () => {
   const dispatch = useDispatch();
@@ -22,6 +23,7 @@ const Sidebar = () => {
       dispatch(fetchLikedPlaylist());
       dispatch(fetchLibrary());
       dispatch(fetchMyPlaylists());
+      dispatch(fetchAllSongs())
     }
   }, [dispatch, user]);
 

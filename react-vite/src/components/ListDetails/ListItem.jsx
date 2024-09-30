@@ -1,24 +1,46 @@
 import { useDispatch, useSelector } from "react-redux";
 import { selectSongById } from "../../redux/songs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddToLibrary from "./AddToLibrary";
 import LikeButton from "./LikeButton";
 import DropDown from "./DropDown";
+import { useParams } from "react-router-dom";
+import { CircleMinus } from "lucide-react";
+import { addToQueue, clearQueue, selectCurrentSong } from "../../redux/queue";
+import { removeSongFromPlaylist } from "../../redux/myPlaylists";
 
-export default function ListItem({ songId }) {
+export default function ListItem({ songId, isMyPlaylist = false }) {
+  const { playlistId } = useParams();
   const song = useSelector(selectSongById(songId));
+  const currentSong = useSelector(selectCurrentSong);
   const [duration, setDuration] = useState(0);
+  const dispatch = useDispatch();
+
+  const formatTime = (time) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  };
+
+  const playSong = (song) => {
+    dispatch(clearQueue()).then(() => dispatch(addToQueue(song)));
+  };
 
   return (
-    <li
-      key={index + "1"}
-      className="flex flex-col hover:bg-muted h-full rounded-sm"
-    >
+    <li className="flex flex-col hover:bg-muted h-full rounded-sm">
       <div className="flex mx-4 items-center py-4">
         <div className="flex gap-4 items-center mr-2">
-          <AddToLibrary key={index + "2"} song={song} />
+          {isMyPlaylist && (
+            <button
+              onClick={() => dispatch(removeSongFromPlaylist(song, playlistId))}
+            >
+              <CircleMinus />
+            </button>
+          )}
 
-          <LikeButton key={index + "3"} song={song} />
+          <AddToLibrary song={song} />
+
+          <LikeButton song={song} />
 
           <DropDown song={song} />
         </div>
@@ -28,7 +50,7 @@ export default function ListItem({ songId }) {
           onClick={() => playSong(song)}
         >
           <audio
-            src={song.url}
+            src={song?.url}
             onLoadedMetadata={(e) => setDuration(e.target?.duration)}
             className="hidden"
           />
@@ -36,32 +58,30 @@ export default function ListItem({ songId }) {
           <div className="flex-1">
             <h3
               className={`font-semibold ${
-                currentSong?.id === song.id ? "text-green-500" : ""
+                currentSong?.id === song?.id ? "text-green-500" : ""
               }`}
             >
-              {song.name}
+              {song?.name}
             </h3>
           </div>
 
           <div className="flex-1 text-center">
             <p
               className={`font-semibold ${
-                currentSong?.id === song.id ? "text-green-500" : ""
+                currentSong?.id === song?.id ? "text-green-500" : ""
               }`}
             >
-              {artist}
+              {song?.artist?.[0]?.band_name}
             </p>
           </div>
 
           <div className="flex-1 text-right">
             <p
               className={`font-semibold ${
-                currentSong?.id === song.id ? "text-green-500" : ""
+                currentSong?.id === song?.id ? "text-green-500" : ""
               }`}
             >
-              {songDurations[song.id]
-                ? formatTime(songDurations[song.id])
-                : "--:--"}
+              {duration ? formatTime(duration) : "--:--"}
             </p>
           </div>
         </div>

@@ -161,23 +161,41 @@ export default function myPlaylistsReducer(state = initialState, action) {
         [playlistId]: undefined,
       };
     case ADD_TO_PLAYLIST: {
+      const newPlaylistData = {
+        ...playlistAtId,
+        songs: [
+          ...playlistAtId.songs.filter(({ id }) => id != action.song.id),
+          action.song,
+        ],
+      };
       return {
         ...state,
-        [playlistId]: {
-          ...playlistAtId,
-          songs: [...playlistAtId.songs, action.song],
-        },
+        [playlistId]: newPlaylistData,
+        playlistArray: state.playlistArray.map((playlist) => {
+          if (playlist.id == playlistId) {
+            return newPlaylistData;
+          } else {
+            return playlist;
+          }
+        }),
       };
     }
     case REMOVE_FROM_PLAYLIST:
-      console.log(playlistAtId)
+      const newPlaylistData = {
+        ...playlistAtId,
+        songs:
+          playlistAtId?.songs?.filter(({ id }) => id != action.songId) || [],
+      };
       return {
         ...state,
-        [playlistId]: {
-          ...playlistAtId,
-          songs:
-            playlistAtId?.songs?.filter(({ id }) => id != action.songId) || [],
-        },
+        [playlistId]: newPlaylistData,
+        playlistArray: state.playlistArray.map((playlist) => {
+          if (playlist.id == playlistId) {
+            return newPlaylistData;
+          } else {
+            return playlist;
+          }
+        }),
       };
     default:
       return state;

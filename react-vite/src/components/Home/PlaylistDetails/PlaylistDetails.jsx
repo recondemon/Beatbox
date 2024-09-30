@@ -21,15 +21,14 @@ import {
   selectMyPlaylistsArray,
 } from "../../../redux/myPlaylists";
 import { fetchPlaylist, selectPlaylistById } from "../../../redux/playlists";
+import ListItem from "../../ListDetails/ListItem";
+import { fetchAllSongs } from "../../../redux/songs";
 
 const PlaylistDetails = () => {
   const dispatch = useDispatch();
-  const [songDurations, setSongDurations] = useState({});
   const [editingPlaylist, setEditingPlaylist] = useState(false);
-  const [artists, setArtists] = useState({});
   const [menuOpen, setMenuOpen] = useState(false);
   const user = useSelector((state) => state.session.user);
-  const currentSong = useSelector(selectCurrentSong);
   const { playlistId } = useParams();
   const myPlaylists = useSelector(selectMyPlaylistsArray);
   const myPlaylist = useSelector(selectMyPlaylistById(playlistId));
@@ -43,61 +42,22 @@ const PlaylistDetails = () => {
   const { setModalContent } = useModal();
   const coverArt = "/playlist.jpeg";
 
-  console.log(activePlaylist);
-
   useEffect(() => {
-    dispatch(fetchPlaylist(playlistId));
-    dispatch(fetchMyPlaylist(playlistId));
+    if (playlistId) {
+      dispatch(fetchPlaylist(playlistId));
+      dispatch(fetchMyPlaylist(playlistId));
+    }
   }, [dispatch, playlistId]);
-
-  useEffect(() => {
-    const fetchArtists = async () => {
-      const artistPromises = activePlaylist?.songs?.map(async (song) =>
-        dispatch(fetchArtist(song.artist_id))
-      );
-
-      const artistData = await Promise.all(artistPromises);
-      const artists = {};
-
-      artistData.forEach((artist) => {
-        const artistName = artist.bandName
-          ? artist.bandName
-          : `${artist.firstName} ${artist.lastName}`;
-        artists[artist.id] = artistName;
-      });
-
-      setArtists(artists);
-    };
-
-    fetchArtists();
-  }, [dispatch, activePlaylist]);
-
-  const handleLoadedMetadata = (songId, audioElement) => {
-    const duration = audioElement?.duration;
-    setSongDurations((prevDurations) => ({
-      ...prevDurations,
-      [songId]: duration,
-    }));
-  };
-
-  const formatTime = (time) => {
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-  };
 
   const handlePlayAllSongs = () => {
     if (playlist.songs?.length > 0) {
       dispatch(clearQueue()).then(() => {
-        playlist.songs.forEach((song) => {
+        playlist.songs.forEach((song, index) => {
+          console.log("adding", song.name, index);
           dispatch(addToQueue(song));
         });
       });
     }
-  };
-
-  const playSong = (song) => {
-    dispatch(clearQueue()).then(() => dispatch(addToQueue(song)));
   };
 
   const toggleMenu = () => {
@@ -248,71 +208,12 @@ const PlaylistDetails = () => {
 
       <ul className="bg-card text-card-foreground w-full border border-border h-2/3 rounded-md">
         {activePlaylist?.songs?.length ? (
-          activePlaylist.songs?.map((song) => (
-            <li
-              key={song.id}
-              className="flex flex-col hover:bg-muted h-full rounded-sm"
-            >
-              <div className="flex mx-4 items-center py-4">
-                <div className="flex gap-4 items-center mr-2">
-                  <button
-                    onClick={() =>
-                      dispatch(removeSongFromPlaylist(song, playlistId))
-                    }
-                  >
-                    <CircleMinus />
-                  </button>
-                  <AddToLibrary song={song} />
-                  <LikeButton song={song} />
-                  <DropDown song={song} />
-                </div>
-
-                <div
-                  className="flex w-full mx-2 items-center justify-evenly cursor-pointer"
-                  onClick={() => playSong(song)}
-                >
-                  <audio
-                    src={song.url}
-                    onLoadedMetadata={(e) =>
-                      handleLoadedMetadata(song.id, e.target)
-                    }
-                    className="hidden"
-                  />
-
-                  <div className="flex-1">
-                    <h3
-                      className={`font-semibold ${
-                        currentSong?.id === song.id ? "text-green-500" : ""
-                      }`}
-                    >
-                      {song.name}
-                    </h3>
-                  </div>
-
-                  <div className="flex-1 text-center">
-                    <p
-                      className={`font-semibold ${
-                        currentSong?.id === song.id ? "text-green-500" : ""
-                      }`}
-                    >
-                      {artists[song.artist_id]}
-                    </p>
-                  </div>
-
-                  <div className="flex-1 text-right">
-                    <p
-                      className={`font-semibold ${
-                        currentSong?.id === song.id ? "text-green-500" : ""
-                      }`}
-                    >
-                      {songDurations[song.id]
-                        ? formatTime(songDurations[song.id])
-                        : "--:--"}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </li>
+          activePlaylist.songs?.map((song, index) => (
+            <ListItem
+              songId={song.id}
+              isMyPlaylist={isInMyPlaylists}
+              key={index}
+            />
           ))
         ) : (
           <h2 className="text-center text-2xl my-2">No songs yet</h2>

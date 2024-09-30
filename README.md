@@ -9,7 +9,7 @@ Beatbox is a Spotify-inspired music streaming platform where artists can upload 
 - **Frontend**: React with Vite for fast, modern frontend development.
 - **State Management**: Redux for global state management.
 - **Backend**: Flask for handling server-side logic and API requests.
-- **ORM**: SQLAlchemy for robust and easy-to-easy object-relational-mapping.
+- **ORM**: SQLAlchemy for robust and easy-to-use object-relational-mapping.
 - **Database**: PostgreSQL for production and SQLite for development.
 
 ## Local Development & Usage

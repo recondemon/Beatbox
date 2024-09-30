@@ -38,6 +38,18 @@ export const unloadPlaylist = playlistId => ({
 
 /* THUNKS */
 
+export const fetchMyPlaylist = playlistId => async dispatch => {
+  const res = await fetch(`/api/playlist/${playlistId}`)
+
+  if (res.ok) {
+    const data = await res.json();
+    dispatch(loadPlaylist(data))
+    return data;
+  }
+
+  return res.json();
+}
+
 export const addSongToPlaylist = (song, playlist) => async dispatch => {
   const songId = typeof song == 'number' || typeof song == 'string' ? Number(song) : song.id;
   const playlistId =
@@ -99,6 +111,7 @@ export const addPlaylist = playlistData => async dispatch => {
 
 export const selectMyPlaylists = state => state.myPlaylists;
 export const selectMyPlaylistsArray = state => state.myPlaylists.playlistArray;
+export const selectMyPlaylistById = playlistId => state => state.myPlaylists[playlistId];
 
 /* INITIAL STATE */
 
@@ -133,7 +146,6 @@ export default function myPlaylistsReducer(state = initialState, action) {
         [playlistId]: undefined,
       };
     case ADD_TO_PLAYLIST: {
-      // FIXME: not properly updating state
       return {
         ...state,
         [playlistId]: {

@@ -161,7 +161,6 @@ def create_album():
 @albums.route("/<int:album_id>", methods=["PUT"])
 def update_album(album_id):
     album = Album.query.get(int(album_id))
-    print('\n\n\n\n', request.form , '\n\n\n\n')
     if not album:
         return {"errors": "Album not found"}, 404
 

@@ -53,6 +53,7 @@ def create_album():
     bad_data = ({"errors": "BAD DATA"}, 400)
 
     file = request.files["file"]
+    file.filename = get_unique_filename(file.filename)
     url = upload_file_to_s3(file)
 
     if "errors" in url.keys():
@@ -181,6 +182,7 @@ def update_album(album_id):
 
     elif "file" in request.files:
         file = request.files["file"]
+        file.filename = get_unique_filename(file.filename)
         url = upload_file_to_s3(file)
 
         if "errors" in url.keys():

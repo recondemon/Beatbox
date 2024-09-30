@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchGenres, selectGenres } from '../../redux/genres';
 import { CirclePlus } from 'lucide-react';
 
-const SongDetails = ({ albumId }) => {
+const SongDetails = ({ albumId, onClose }) => {
   const dispatch = useDispatch();
   const genres = useSelector(selectGenres) || [];
   const [songs, setSongs] = useState([
@@ -39,18 +39,26 @@ const SongDetails = ({ albumId }) => {
   };
 
   const handleUploadSong = async () => {
-    setErrors({})
+    setErrors({});
 
     if (!albumId) {
-      setErrors({ ...errors, album: 'Please select or create an album for this song.' })
+      setErrors({ ...errors, album: 'Please select or create an album for this song.' });
     }
+
+    let uploadSuccess = true;
 
     for (let i = 0; i < songs.length; i++) {
       if (!songs[i].name) {
         setErrors({ name: 'Song name is required.' });
-      } else if (songs[i].file && songs[i].file.name.endsWith('.mp4')) {
+        uploadSuccess = false;
+        continue;
+      } else if (!songs[i].genre) {
+        setErrors({ genre: 'Please select a genre.' });
+        uploadSuccess = false;
+        continue;
+      } else if (songs[i].file && songs[i].file.name.endsWith('.mp3')) {
         const updatedSongs = [...songs];
-        updatedSongs[i].status = 'uploading';
+        updatedSongs[i].status = 'Uploading...';
         setSongs(updatedSongs);
 
         const songData = {
@@ -65,15 +73,21 @@ const SongDetails = ({ albumId }) => {
         } catch (error) {
           console.error('Upload failed for song:', songs[i].name, error);
           updatedSongs[i].status = 'failed';
-          setErrors({...errors, error});
+          setErrors({ ...errors, error });
         }
-        updatedSongs[i].status = 'successful uploaded';
+        updatedSongs[i].status = 'Upload complete.';
         setSongs(updatedSongs);
       } else if (!songs[i].file) {
         setErrors({ ...errors, file: 'No file selected.' });
+        uploadSuccess = false;
       } else {
         setErrors({ ...errors, file: 'File must be of type MP4.' });
+        uploadSuccess = false;
       }
+    }
+
+    if (uploadSuccess) {
+      onClose();
     }
   };
 
@@ -112,13 +126,15 @@ const SongDetails = ({ albumId }) => {
                 </option>
               ))}
             </select>
+
+            {errors.genre && <p className='text-destructive'>{errors.genre}</p>}
           </div>
 
           <div>
             <input
               id={`file-${index}`}
               type='file'
-              accept='audio/mp4'
+              accept='audio/mp3'
               className='w-full bg-input text-secondary-foreground p-2 h-10 rounded-lg mt-4'
               onChange={e => handleFileChange(index, e)}
               required
@@ -129,7 +145,7 @@ const SongDetails = ({ albumId }) => {
 
           {/* Status goes here */}
           <div>
-            {/* {song.status && <div>{song.status}</div>} */}
+            {song.status && <div className='text-green-500'>{song.status}</div>}
 
             {song.status === 'uploading' && (
               <div className='relative pt-1'>

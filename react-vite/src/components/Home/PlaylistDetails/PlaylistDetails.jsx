@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { Trash, MoreHorizontal, Play } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToQueue, clearQueue, selectCurrentSong } from '../../../redux/queue';
-import { fetchPlaylist, selectPlaylistById } from '../../../redux/playlists';
 import { fetchArtist } from '../../../redux/artists';
 import LikeButton from '../../ListDetails/LikeButton';
 import AddToLibrary from '../../ListDetails/AddToLibrary';
@@ -11,6 +10,12 @@ import DropDown from '../../ListDetails/DropDown';
 import DeletePlaylistModal from '../../ListDetails/DeletePlaylistModal';
 import { useModal } from '../../../context/Modal';
 import { useParams } from 'react-router-dom';
+import {
+  fetchMyPlaylist,
+  selectMyPlaylistById,
+  selectMyPlaylistsArray,
+} from '../../../redux/myPlaylists';
+import { fetchPlaylist, selectPlaylistById } from '../../../redux/playlists';
 
 const PlaylistDetails = () => {
   const dispatch = useDispatch();
@@ -21,21 +26,24 @@ const PlaylistDetails = () => {
   const user = useSelector(state => state.session.user);
   const currentSong = useSelector(selectCurrentSong);
   const { playlistId } = useParams();
+  const myPlaylists = useSelector(selectMyPlaylistsArray);
+  const myPlaylist = useSelector(selectMyPlaylistById(playlistId));
   const playlist = useSelector(selectPlaylistById(playlistId));
+  const isInMyPlaylists = myPlaylists?.some(playlist => playlist.id === playlistId);
+  const activePlaylist = isInMyPlaylists ? myPlaylist : playlist;
   const [showAlert, setShowAlert] = useState(false);
   const dropdownRef = useRef(null);
   const { setModalContent } = useModal();
   const coverArt = '/playlist.jpeg';
 
-  console.log('\n\n ARTISTS \n\n', artists)
-
   useEffect(() => {
     dispatch(fetchPlaylist(playlistId));
+    dispatch(fetchMyPlaylist(playlistId));
   }, [dispatch, playlistId]);
 
   useEffect(() => {
     const fetchArtists = async () => {
-      const artistPromises = playlist?.songs?.map(async song =>
+      const artistPromises = activePlaylist?.songs?.map(async song =>
         dispatch(fetchArtist(song.artist_id)),
       );
 
@@ -53,7 +61,7 @@ const PlaylistDetails = () => {
     };
 
     fetchArtists();
-  }, [dispatch]);
+  }, [dispatch, activePlaylist]);
 
   const handleLoadedMetadata = (songId, audioElement) => {
     const duration = audioElement?.duration;
@@ -138,9 +146,9 @@ const PlaylistDetails = () => {
           <img
             className='max-w-56 max-h-56 rounded-md border border-accent'
             src={
-              playlist?.name === 'Liked'
+              activePlaylist?.name === 'Liked'
                 ? '/liked.jpeg'
-                : playlist?.name === 'Library'
+                : activePlaylist?.name === 'Library'
                   ? '/library.jpeg'
                   : coverArt
             }
@@ -168,7 +176,7 @@ const PlaylistDetails = () => {
                   }}
                   className='relative'
                 >
-                  {playlist?.ownerId === user.id && (
+                  {activePlaylist?.ownerId === user.id && (
                     <Trash
                       className='ml-2 text-destructive cursor-pointer hover:bg-muted rounded-lg hover:text-foreground'
                       size={30}
@@ -216,8 +224,8 @@ const PlaylistDetails = () => {
               )}
             </div>
 
-            <h1 className='text-3xl font-bold'>{playlist?.name}</h1>
-            <p className='text-sm text-wrap w-fit'>{playlist?.description}</p>
+            <h1 className='text-3xl font-bold'>{activePlaylist?.name}</h1>
+            <p className='text-sm text-wrap w-fit'>{activePlaylist?.description}</p>
           </div>
 
           <div className='absolute bottom-2 left-40 ml-2'>
@@ -232,8 +240,8 @@ const PlaylistDetails = () => {
       </div>
 
       <ul className='bg-card text-card-foreground w-full border border-border h-2/3 rounded-md'>
-        {playlist?.songs?.length ? (
-          playlist?.songs?.map(song => (
+        {activePlaylist?.songs?.length ? (
+          activePlaylist.songs.map(song => (
             <li
               key={song.id}
               className='flex flex-col hover:bg-muted h-full rounded-sm'

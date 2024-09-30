@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from app.models import Models, db
 from flask_login import current_user, login_required
-from app.api.aws_upload import upload_file_to_s3
+from app.api.aws_upload import get_unique_filename, upload_file_to_s3
 from app.forms.song_form import SongForm
 
 Song = Models.Song
@@ -60,6 +60,7 @@ def create_song():
     form_data = dict(request.form)
 
     file = request.files["file"]
+    file.filename = get_unique_filename(file.filename)
     url = upload_file_to_s3(file)
 
     if "errors" in url.keys():

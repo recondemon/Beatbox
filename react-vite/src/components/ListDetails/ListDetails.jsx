@@ -1,21 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 import { Trash, MoreHorizontal, Play } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchArtist } from '../../redux/artists';
 import { selectCurrentSong, addToQueue, addAllToQueue, clearQueue } from '../../redux/queue';
 import LikeButton from './LikeButton';
 import AddToLibrary from './AddToLibrary';
 import EditPlaylist from '../ManagePlaylists/EditPlaylist';
 import DropDown from './DropDown';
-import { useModal } from '../../context/Modal';
 import { useParams } from 'react-router-dom';
-import DeletePlaylistModal from './DeletePlaylistModal';
 
 export default function ListDetails({ list }) {
   // Reordered declarations to keep things in consistent order, moved hooks to top to prevent the error of "more hooks rendered than previous render" on refresh
   const dispatch = useDispatch();
-  const url = window.location.href;
-  const [artists, setArtists] = useState({});
   const [songDurations, setSongDurations] = useState({});
   const [editingPlaylist, setEditingPlaylist] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -23,32 +18,6 @@ export default function ListDetails({ list }) {
   const currentSong = useSelector(selectCurrentSong);
   const [showAlert, setShowAlert] = useState(false);
   const dropdownRef = useRef(null);
-  const { setModalContent, closeModal } = useModal();
-  const { playlistId } = useParams();
-
-  useEffect(() => {
-    if (url.includes('playlist') && list?.songs) {
-      const fetchArtists = async () => {
-        const artistPromises = list?.songs?.map(async song =>
-          dispatch(fetchArtist(song.artist_id)),
-        );
-
-        const artistData = await Promise.all(artistPromises);
-        const artists = {};
-
-        artistData.forEach(artist => {
-          const artistName = artist.bandName
-            ? artist.bandName
-            : `${artist.firstName} ${artist.lastName}`;
-          artists[artist.id] = artistName;
-        });
-
-        setArtists(artists);
-      };
-
-      fetchArtists();
-    }
-  }, [dispatch, list?.songs, url, list]);
 
   const handleLoadedMetadata = (songId, audioElement) => {
     const duration = audioElement?.duration;
@@ -186,35 +155,8 @@ export default function ListDetails({ list }) {
           <div className='flex flex-col justify-center space-y-1'>
             <div className='flex justify-between items-center space-y-1 relative'>
               <p className='flex font-semibold justify-start'>
-                {playlistId ? 'Playlist' : 'Album'}
+                Album
               </p>
-
-              {!!playlistId && !['Liked', 'Library', 'Queue'].includes(list?.name) && (
-                <div>
-                  <button
-                    onClick={toggleMenu}
-                    className='relative'
-                  >
-                    <MoreHorizontal
-                      className='text-primary cursor-pointer hover:bg-muted rounded-lg hover:text-foreground'
-                      size={30}
-                    />
-                  </button>
-                  <button
-                    onClick={() => {
-                      setModalContent(<DeletePlaylistModal playlistId={playlistId} />);
-                    }}
-                    className='relative'
-                  >
-                    {list?.owner?.[0].id === user.id && (
-                      <Trash
-                        className='ml-2 text-destructive cursor-pointer hover:bg-muted rounded-lg hover:text-foreground'
-                        size={30}
-                      />
-                    )}
-                  </button>
-                </div>
-              )}
 
               {menuOpen && (
                 <div
@@ -327,7 +269,7 @@ export default function ListDetails({ list }) {
                         currentSong?.id === song.id ? 'text-green-500' : ''
                       }`}
                     >
-                      {song.artist_id in artists && artists[song.artist_id]}
+                      {artist}
                     </p>
                   </div>
 

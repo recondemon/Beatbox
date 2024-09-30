@@ -33,9 +33,7 @@ function LoginFormModal() {
 
     if (serverResponse) {
       setErrors(serverResponse);
-    }
-
-    if (!Object.values(errors).length) {
+    } else if (!Object.values(errors).length) {
       closeModal();
     }
   };

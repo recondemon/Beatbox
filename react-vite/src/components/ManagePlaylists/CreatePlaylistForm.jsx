@@ -30,7 +30,7 @@ const CreatePlaylistForm = () => {
     // FIXME: Something is going wrong here
     try {
       dispatch(addPlaylist(playlistData)).then((playlist) => {
-        nav(`playlist/${playlist.id}`);
+        // nav(`playlist/${playlist.id}`);
         closeModal();
       });
     } catch (err) {

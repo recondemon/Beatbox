@@ -12,8 +12,8 @@ export default function DropDown({ song }) {
   const dropDownRef = useRef();
 
   function handleClick(playlistId) {
-    setIsVisible(false);
     dispatch(addSong(playlistId, song));
+    setIsVisible(false);
   }
 
   function handleClickOutside(e) {

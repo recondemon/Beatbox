@@ -48,12 +48,6 @@ export const fetchPlaylist = playlistId => async dispatch => {
   return res;
 };
 
-export const putPlaylist = playlist => async dispatch => {
-  const res = await put(`/api/playlists/${playlist.id}`, playlist);
-  dispatch(loadOne(res));
-  return res;
-};
-
 export const editPlaylist = playlistData => async dispatch => {
   const { id, name, description, is_public, songs } = playlistData;
 

@@ -1,10 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  selectPlaylistById,
-  fetchPlaylist,
-  putPlaylist,
-} from "../../redux/playlists";
+import { selectPlaylistById, fetchPlaylist } from "../../redux/playlists";
 import { useEffect, useState } from "react";
 export default function ManagePlaylists() {
   const { playlistId } = useParams();
@@ -27,20 +23,22 @@ export default function ManagePlaylists() {
   const [errors, setErrors] = useState(null);
 
   function submit() {
-    try {
-      dispatch(
-        putPlaylist({
-          id: playlist?.id,
-          name,
-          description,
-          is_public: isPublic,
-          ownerId: user?.id,
-        })
-      );
-    } catch (err) {
-      setErrors(err?.errors || { errors: "Something went wrong" });
-    }
+    // try {
+    //   dispatch(
+    //     putPlaylist({
+    //       id: playlist?.id,
+    //       name,
+    //       description,
+    //       is_public: isPublic,
+    //       ownerId: user?.id,
+    //     })
+    //   );
+    // } catch (err) {
+    //   setErrors(err?.errors || { errors: "Something went wrong" });
+    // }
   }
+
+  return <p>nope</p>;
 
   return (
     <form

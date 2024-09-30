@@ -29,7 +29,6 @@ export default function ListDetails({ list }) {
   const { playlistId } = useParams();
 
   useEffect(() => {
-    console.log('list', list);
     if (url.includes('playlist') && list?.songs) {
       const fetchArtists = async () => {
         const artistPromises = list?.songs?.map(async song =>

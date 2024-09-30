@@ -26,16 +26,6 @@ export default function ManagePlaylists() {
   const [isPublic, setIsPublic] = useState(playlist?.isPublic || false);
   const [errors, setErrors] = useState(null);
 
-  useEffect(() => {
-    console.log({
-      id: playlist?.id,
-      name,
-      description,
-      isPublic,
-      ownerId: user?.id,
-    });
-  }, [name, description, isPublic]);
-
   function submit() {
     try {
       dispatch(

@@ -37,7 +37,6 @@ const AlbumInputs = ({ handleBackToSelect, setAlbumId }) => {
     try {
       const result = await dispatch(createAlbum(formData));
       if (!result.errors) {
-        console.log('result:', result);
         setAlbumId(result.id);
         handleBackToSelect();
       } else {

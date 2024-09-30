@@ -19,7 +19,6 @@ const AlbumDetails = ({ setAlbumId }) => {
       const fetchAlbums = async () => {
         const data = await dispatch(fetchAlbumsByUserId(user.id)); //
         setAlbums(data);
-        console.log('Fetched user albums:', data);
       };
 
       fetchAlbums();

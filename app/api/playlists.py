@@ -103,7 +103,10 @@ def create_playlist():
     db.session.add(playlist)
     db.session.commit()
 
-    return playlist.to_json(), 201
+
+    # changing this to to_dict() magically fixed it...
+    # don't change or else!
+    return playlist.to_dict(), 201
 
 
 @playlists.route("/create", methods=["POST"])

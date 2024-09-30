@@ -114,7 +114,10 @@ export default function myPlaylistsReducer(state = initialState, action) {
       return {
         ...state,
         playlistArray: action.playlists,
-        ...action.playlists.reduce((obj, playlist, index) => ({ ...obj, [index]: playlist }), {}),
+        ...action.playlists.reduce((obj, playlist) => {
+          obj[playlist.id] = playlist;
+          return obj;
+        }, {}),
       };
     case LOAD_PLAYLIST: {
       console.log('\n\n LOADING PLAYIST AFTER CREATION \n\n', action.playlist);
@@ -130,14 +133,25 @@ export default function myPlaylistsReducer(state = initialState, action) {
         playlistArray: state.playlistArray.filter(({ id }) => id != playlistId),
         [playlistId]: undefined,
       };
-    case ADD_TO_PLAYLIST:
+    case ADD_TO_PLAYLIST: {
+      console.log(state);
+      const playlist = state[playlistId];
+
+      if (!playlist) {
+        console.error(`Playlist with id ${playlistId} does not exist!`);
+        return state;
+      }
+
+      const updatedPlaylist = {
+        ...playlist,
+        songs: [...playlist.songs, action.song],
+      };
+
       return {
         ...state,
-        [playlistId]: {
-          ...playlistAtId,
-          songs: [...playlistAtId.songs, action.song],
-        },
+        [playlistId]: updatedPlaylist,
       };
+    }
     case REMOVE_FROM_PLAYLIST:
       return {
         ...state,

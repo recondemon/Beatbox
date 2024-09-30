@@ -35,7 +35,7 @@ export default function DropDown({ song }) {
   }, [isVisible]);
 
   return (
-    <div>
+    <div className='overflow-y-auto'>
       <button onClick={() => setIsVisible(true)}>
         <CirclePlus />
       </button>

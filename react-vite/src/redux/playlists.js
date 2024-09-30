@@ -214,12 +214,11 @@ export default function playlistsReducer(state = {}, action) {
       });
       return newState;
     }
-    case LOAD_ONE: {
+    case LOAD_ONE:
       return {
         ...state,
-        [action.playlist.id]: action.playlist,
+        [action.playlist.id]: { ...action.playlist },
       };
-    }
     case LOAD_LIKED:
       return {
         ...state,

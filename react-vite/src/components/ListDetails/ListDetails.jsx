@@ -12,9 +12,7 @@ import { useParams } from 'react-router-dom';
 import DeletePlaylistModal from './DeletePlaylistModal';
 
 export default function ListDetails({ list }) {
-  {
-    /* Reordered declarations to keep things in consistent order, moved hooks to top to prevent the error of "more hooks rendered than previous render" on refresh */
-  }
+  // Reordered declarations to keep things in consistent order, moved hooks to top to prevent the error of "more hooks rendered than previous render" on refresh
   const dispatch = useDispatch();
   const url = window.location.href;
   const [artists, setArtists] = useState({});

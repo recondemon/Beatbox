@@ -41,6 +41,7 @@ const CreatePlaylistForm = () => {
   return (
     <div className="flex flex-col justify-center items-center p-4">
       <h1 className="text-2vw mb-5">Create Playlist</h1>
+
       <form className="flex flex-col gap-4 w-full" onSubmit={handleSubmit}>
         <div className="flex flex-col">
           <label htmlFor="playlistName">Playlist Name</label>
@@ -52,6 +53,7 @@ const CreatePlaylistForm = () => {
             onChange={(e) => setPlaylistName(e.target.value)}
           />
         </div>
+
         <div className="flex flex-col">
           <label htmlFor="description">Description</label>
           <textarea
@@ -62,6 +64,7 @@ const CreatePlaylistForm = () => {
             onChange={(e) => setDescription(e.target.value)}
           />
         </div>
+
         <div className="flex gap-2">
           <label htmlFor="isPublic">Show playlist to public?</label>
           <input

@@ -120,7 +120,6 @@ export default function myPlaylistsReducer(state = initialState, action) {
         }, {}),
       };
     case LOAD_PLAYLIST: {
-      console.log('\n\n LOADING PLAYIST AFTER CREATION \n\n', action.playlist);
       return {
         ...state,
         playlistArray: [...state.playlistArray, action.playlist],
@@ -134,22 +133,13 @@ export default function myPlaylistsReducer(state = initialState, action) {
         [playlistId]: undefined,
       };
     case ADD_TO_PLAYLIST: {
-      console.log(state);
-      const playlist = state[playlistId];
-
-      if (!playlist) {
-        console.error(`Playlist with id ${playlistId} does not exist!`);
-        return state;
-      }
-
-      const updatedPlaylist = {
-        ...playlist,
-        songs: [...playlist.songs, action.song],
-      };
-
+      // FIXME: not properly updating state
       return {
         ...state,
-        [playlistId]: updatedPlaylist,
+        [playlistId]: {
+          ...playlistAtId,
+          songs: [...playlistAtId.songs, action.song],
+        },
       };
     }
     case REMOVE_FROM_PLAYLIST:

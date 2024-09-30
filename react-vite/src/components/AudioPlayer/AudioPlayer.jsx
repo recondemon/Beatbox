@@ -198,7 +198,7 @@ export default function AudioPlayer() {
           <div className='flex gap-4'>
             <div className='w-12 h-12'>
               <img
-                src={songDetails?.album?.[0].album_cover}
+                src={songDetails?.album?.[0]?.album_cover}
                 alt={currentSong?.name}
                 className='w-full h-full object-cover rounded-md border border-accent'
               />

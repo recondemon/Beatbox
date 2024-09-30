@@ -7,6 +7,7 @@ from app.forms.song_form import SongForm
 Song = Models.Song
 Genre = Models.Genre
 Like = Models.Like
+PlaylistSong = Models.PlaylistSong
 songs = Blueprint("songs", __name__)
 
 
@@ -161,6 +162,7 @@ def edit_song(song_id):
 def delete_song(song_id):
     try:
         song = Song.query.get(song_id)
+
         if not song:
             return jsonify({"errors": "Song not found"}), 404
 
@@ -168,8 +170,13 @@ def delete_song(song_id):
             for like in song.likes:
                 db.session.delete(like)
 
-        db.session.delete(song)
+        playlistSongs = PlaylistSong.query.filter_by(song_id=song_id).all()
 
+        for pSong in playlistSongs:
+            db.session.delete(pSong)
+
+        db.session.commit()
+        db.session.delete(song)
         db.session.commit()
 
         return jsonify({"message": "Song deleted successfully"}), 200

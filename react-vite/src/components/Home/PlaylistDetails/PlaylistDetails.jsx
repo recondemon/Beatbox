@@ -119,34 +119,40 @@ const PlaylistDetails = () => {
             alt="album artwork"
           />
 
-          <div className="flex flex-col justify-center space-y-1">
+          <div className="flex flex-col justify-center space-y-1 w-1/6">
             <div className="flex justify-between items-center space-y-1 relative">
               <p className="flex font-semibold justify-start">Playlist</p>
 
-              <div>
-                <button onClick={toggleMenu} className="relative">
-                  <MoreHorizontal
-                    className="text-primary cursor-pointer hover:bg-muted rounded-lg hover:text-foreground"
-                    size={30}
-                  />
-                </button>
+              {playlist?.ownerId == user?.id &&
+                !["Liked", "Library"].includes(playlist?.name) && (
+                  <div>
+                    <button
+                      onClick={() => setEditingPlaylist(true)}
+                      className="relative"
+                    >
+                      <MoreHorizontal
+                        className="text-primary cursor-pointer hover:bg-muted rounded-lg hover:text-foreground"
+                        size={30}
+                      />
+                    </button>
 
-                <button
-                  onClick={() => {
-                    setModalContent(
-                      <DeletePlaylistModal playlistId={playlistId} />
-                    );
-                  }}
-                  className="relative"
-                >
-                  {activePlaylist?.ownerId === user.id && (
-                    <Trash
-                      className="ml-2 text-destructive cursor-pointer hover:bg-muted rounded-lg hover:text-foreground"
-                      size={30}
-                    />
-                  )}
-                </button>
-              </div>
+                    <button
+                      onClick={() => {
+                        setModalContent(
+                          <DeletePlaylistModal playlistId={playlistId} />
+                        );
+                      }}
+                      className="relative"
+                    >
+                      {activePlaylist?.ownerId === user.id && (
+                        <Trash
+                          className="ml-2 text-destructive cursor-pointer hover:bg-muted rounded-lg hover:text-foreground"
+                          size={30}
+                        />
+                      )}
+                    </button>
+                  </div>
+                )}
 
               {menuOpen && (
                 <div
@@ -170,26 +176,11 @@ const PlaylistDetails = () => {
                   </ul>
                 </div>
               )}
-
-              {showAlert && (
-                <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center">
-                  <div className="bg-card p-6 rounded-lg shadow-lg">
-                    <h3 className="text-xl font-semibold">Permission Denied</h3>
-                    <p className="mt-2">
-                      You don't have permission to edit this playlist.
-                    </p>
-                    <button
-                      onClick={handleCloseAlert}
-                      className="mt-4 px-4 py-2 bg-primary text-white rounded-lg"
-                    >
-                      Close
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
 
-            <h1 className="text-3xl font-bold">{activePlaylist?.name}</h1>
+            <h1 className="text-3xl font-bold flex-wrap">
+              {activePlaylist?.name}
+            </h1>
             <p className="text-sm text-wrap w-fit">
               {activePlaylist?.description}
             </p>

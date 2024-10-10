@@ -63,12 +63,12 @@ pipenv run flask db upgrade && pipenv run flask db seed all
 pipenv run flask run
 ```
 
-### 2. Start the Frontend Server
+### 3. Start the Frontend Server
 
 ```sh
 cd react-vite && npm run dev
 ```
 
-### 3. Access the Application
+### 4. Access the Application
 
 Visit `http://localhost:5173/` in your browser to start using Beatbox.

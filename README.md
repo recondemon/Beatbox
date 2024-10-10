@@ -26,7 +26,7 @@ Ensure you have the following installed:
 ### 1. **Clone the Repository**
 
 ```sh
-git clone https://github.com/your-username/Beatbox.git
+git clone https://github.com/recondemon/Beatbox.git
 ```
 
 ### 2. Install Frontend Dependencies

@@ -38,7 +38,6 @@ cd react-vite && npm i
 ### 3. Set Up Backend
 
 ```sh
-cd backend
 cp .env.example .env
 pipenv install -r requirements.txt
 pipenv shell

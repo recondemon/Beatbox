@@ -51,10 +51,16 @@ flask seed all
 
 ## Running the Application
 
-### 1. Start the Backend Server
+### 1. Set Up Database
 
 ```sh
-cd backend && flask run
+pipenv run flask db upgrade && pipenv run flask db seed all
+```
+
+### 2. Start the Backend Server
+
+```sh
+pipenv run flask run
 ```
 
 ### 2. Start the Frontend Server
